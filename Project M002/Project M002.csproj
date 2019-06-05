@@ -58,9 +58,12 @@
     <Compile Include="ConsoleLog.xaml.cs">
       <DependentUpon>ConsoleLog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\Daily.cs" />
+    <Compile Include="Model\Monthly.cs" />
     <Compile Include="Model\NotifialeObject.cs" />
     <Compile Include="Model\Repeater.cs" />
     <Compile Include="Model\Task.cs" />
+    <Compile Include="Model\Weekly.cs" />
     <Compile Include="WindowResize.cs" />
     <Page Include="ConsoleLog.xaml">
       <SubType>Designer</SubType>

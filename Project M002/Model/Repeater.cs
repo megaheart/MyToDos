@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace MyToDos.Model
 {
-    public enum RepeatMode
+    public enum RepeaterMode
     {
         Once,
         MultiTimes
     }
-    public enum RepeatType
+    public enum RepeaterType
     {
         Daily,
         Weekly,
@@ -19,14 +19,10 @@ namespace MyToDos.Model
         Once,
         NonRepeater
     }
-    public enum TaskType
+    public abstract class Repeater
     {
-        Schedule,
-        ToDo
-    }
-    public sealed class Repeater : NotifiableObject
-    {
-        protected int[] dates;
+        public event Action RepeaterInfoChanged;
+        protected int[] _dates;
         private TimeDuration? _time;
         private TimeSpan _duration;
         public TimeDuration? Time
@@ -35,10 +31,19 @@ namespace MyToDos.Model
             {
                 if (value != _time)
                 {
-                    if (value.HasValue && value.Value.FinishTime <= value.Value.StartTime) throw new Exception("Can't set finishTime equal to or less then startTime");
-                    _time = value;
-                    Duration = value.Value.FinishTime - value.Value.StartTime;
-                    OnPropertyChanged("Time");
+                    if (value.HasValue)
+                    {
+
+                        if (value.Value.FinishTime <= value.Value.StartTime) throw new Exception("Can't set finishTime equal to or less then startTime");
+                        _time = value;
+                        Duration = value.Value.FinishTime - value.Value.StartTime;
+                        RepeaterInfoChanged?.Invoke();
+                    }
+                    else
+                    {
+                        _time = value;
+                        RepeaterInfoChanged?.Invoke();
+                    }
                 }
             }
             get => _time;
@@ -51,23 +56,47 @@ namespace MyToDos.Model
                 if(_duration != value)
                 {
                     _duration = value;
-                    OnPropertyChanged("Duration");
+                    RepeaterInfoChanged?.Invoke();
                 }
             }
             get => _duration;
         }
-        public RepeatType Type { get; private set; }
-        //public RepeatType 
-        public TaskType TaskType { private set; get; }
-        public bool IsUsableOn(DateTime date)
+        private RepeaterType _type;
+        public RepeaterType Type
         {
-            if (Type == RepeatType.Daily || Type == RepeatType.NonRepeater) return true;
-            if(Type == RepeatType.Weekly)
+            get => _type;
+            set {
+                if (value != _type)
+                {
+                    _type = value;
+                    RepeaterInfoChanged?.Invoke();
+                }
+            }
         }
+        private RepeaterMode _mode;
+        public RepeaterMode Mode
+        {
+            get => _mode;
+            set
+            {
+                if (value != _mode)
+                {
+                    _mode = value;
+                    RepeaterInfoChanged?.Invoke();
+                }
+            }
+        }
+        protected void OnRepeaterInfoChanged() => RepeaterInfoChanged?.Invoke();
+        public abstract bool IsUsableOn(DateTime date);
         public struct TimeDuration
         {
-            public TimeSpan StartTime;
-            public TimeSpan FinishTime;
+            public TimeDuration(TimeSpan startTime, TimeSpan finishTime)
+            {
+                StartTime = startTime;
+                FinishTime = finishTime;
+            }
+            public TimeSpan StartTime { get; private set; }
+            public TimeSpan FinishTime { get; private set; }
             public static bool operator ==(TimeDuration t1, TimeDuration t2)
             {
                 return (t1.StartTime == t2.StartTime) && (t1.FinishTime == t2.FinishTime);
@@ -76,18 +105,6 @@ namespace MyToDos.Model
             {
                 return !((t1.StartTime == t2.StartTime) && (t1.FinishTime == t2.FinishTime));
             }
-        }
-        public static Repeater Parse(string encode)
-        {
-
-        }
-        public static Repeater TryParse(string encode)
-        {
-
-        }
-        public string Encode(string encode)
-        {
-
         }
     }
 }
