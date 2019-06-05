@@ -33,7 +33,6 @@ namespace MyToDos.Model
                 {
                     if (value.HasValue)
                     {
-
                         if (value.Value.FinishTime <= value.Value.StartTime) throw new Exception("Can't set finishTime equal to or less then startTime");
                         _time = value;
                         Duration = value.Value.FinishTime - value.Value.StartTime;
@@ -42,6 +41,7 @@ namespace MyToDos.Model
                     else
                     {
                         _time = value;
+                        Duration = TimeSpan.Zero;
                         RepeaterInfoChanged?.Invoke();
                     }
                 }
@@ -106,5 +106,6 @@ namespace MyToDos.Model
                 return !((t1.StartTime == t2.StartTime) && (t1.FinishTime == t2.FinishTime));
             }
         }
+        //public abstract string ToDurationString();
     }
 }
