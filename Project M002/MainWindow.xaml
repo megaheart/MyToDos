@@ -1,0 +1,51 @@
+﻿<Window x:Class="MyToDos.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyToDos"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="MainWindow" MinHeight="650" MinWidth="970" Height="650" Width="970">
+    <Window.Background>
+        <ImageBrush ImageSource="E:\Download\73057257_p0.jpg" Stretch="UniformToFill"></ImageBrush>
+    </Window.Background>
+    <Window.Style>
+        <Style TargetType="Window">
+            <Setter Property="WindowStyle" Value="None"></Setter>
+            <Setter Property="ResizeMode" Value="NoResize"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Window">
+                        <Grid Background="{TemplateBinding Background}" MouseLeftButtonDown="MoveWindow">
+                            <ContentPresenter Margin="25"></ContentPresenter>
+                            <Thumb x:Name="top" Height="6" Margin="14,0" VerticalAlignment="Top" Cursor="SizeNS" Opacity="0" PreviewMouseLeftButtonDown="Resize"/>
+                            <Thumb x:Name="topLeft" Height="14" Width="14" VerticalAlignment="Top" HorizontalAlignment="Left" Cursor="SizeNWSE"  Opacity="0" PreviewMouseLeftButtonDown="Resize"/>
+                            <Thumb x:Name="bottom" Height="6" Margin="14,0" VerticalAlignment="Bottom" Cursor="SizeNS" Opacity="0" PreviewMouseLeftButtonDown="Resize"/>
+                            <Thumb x:Name="topRight" Height="14" Width="14" VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="SizeNESW"  Opacity="0" PreviewMouseLeftButtonDown="Resize"/>
+                            <Thumb x:Name="right" HorizontalAlignment="Right" Margin="0,14" Width="6" Cursor="SizeWE"  Opacity="0" PreviewMouseLeftButtonDown="Resize"/>
+                            <Thumb x:Name="bottomRight" Height="14" Width="14" VerticalAlignment="Bottom" HorizontalAlignment="Right" Cursor="SizeNWSE"  Opacity="0" PreviewMouseLeftButtonDown="Resize"/>
+                            <Thumb x:Name="left" HorizontalAlignment="Left" Margin="0,14" Width="6" Cursor="SizeWE"  Opacity="0" PreviewMouseLeftButtonDown="Resize"/>
+                            <Thumb x:Name="bottomLeft" Height="14" Width="14" VerticalAlignment="Bottom" HorizontalAlignment="Left" Cursor="SizeNESW"  Opacity="0" PreviewMouseLeftButtonDown="Resize"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Style>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="2" Orientation="Horizontal">
+            <Button Click="MinimizeWindow">minimize</Button>
+            <Button Click="MaximizeWindow">max</Button>
+            <Button Click="CloseWindow">close</Button>
+        </StackPanel>
+    </Grid>
+</Window>
