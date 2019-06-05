@@ -64,6 +64,8 @@
     <Compile Include="Model\Repeater.cs" />
     <Compile Include="Model\Task.cs" />
     <Compile Include="Model\Weekly.cs" />
+    <Compile Include="NonRepeater.cs" />
+    <Compile Include="Once.cs" />
     <Compile Include="WindowResize.cs" />
     <Page Include="ConsoleLog.xaml">
       <SubType>Designer</SubType>
