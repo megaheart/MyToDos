@@ -31,6 +31,11 @@ namespace MyToDos.Model
             Mode = RepeaterMode.MultiTimes;
             _dates = new int[] { date.Day, date.Month, date.Year };
         }
+        public void SetDate(DateTime date)
+        {
+            _dates = new int[] { date.Day, date.Month, date.Year };
+            OnRepeaterInfoChanged();
+        }
         public override bool IsUsableOn(DateTime date)
         {
             return date.Year == _dates[2] && date.Month == _dates[1] && date.Day == _dates[0];

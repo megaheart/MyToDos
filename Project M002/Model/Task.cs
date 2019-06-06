@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace MyToDos.Model
 {
@@ -11,32 +13,25 @@ namespace MyToDos.Model
         public Task()
         {
         }
-        //public int Index
-        //{
-        //    get
-        //    {
-        //        return (int)_repeat.Type;
-        //    }
-        //}
-        public long LastChange { private set; get; }
-        protected IRepeat _repeat;
-        public IRepeat Repeat
+        //public long LastChange { private set; get; }
+        protected Repeater _repeater;
+        public Repeater Repeater
         {
             set
             {
-                if (_repeat != value)
+                if (_repeater != value)
                 {
-                    _repeat = value;
-                    OnPropertyChanged("Repeat");
-                    //OnPropertyChanged("Index");
-                    LastChange = DateTime.Now.Ticks;
+                    _repeater = value;
+                    _repeater.RepeaterInfoChanged += OnRepeaterInfoChanged;
+                    OnPropertyChanged("Repeater");
                 }
             }
             get
             {
-                return _repeat;
+                return _repeater;
             }
         }
+        private void OnRepeaterInfoChanged() => OnPropertyChanged("Repeater");
         protected string _title;
         public string Title
         {
@@ -46,7 +41,6 @@ namespace MyToDos.Model
                 {
                     _title = value;
                     OnPropertyChanged("Title");
-                    LastChange = DateTime.Now.Ticks;
                 }
             }
             get
@@ -63,7 +57,6 @@ namespace MyToDos.Model
                 {
                     _description = value;
                     OnPropertyChanged("Description");
-                    LastChange = DateTime.Now.Ticks;
                 }
             }
             get
@@ -71,13 +64,25 @@ namespace MyToDos.Model
                 return _description;
             }
         }
-        public NotifiableCollection<uint> Tags { set; get; }
-        private uint _id;
-        public uint ID
+        private ObservableCollection<Tag> _tags;
+        public ObservableCollection<Tag> Tags
+        {
+            get => _tags;
+            set
+            {
+                if (_tags != value)
+                {
+                    _tags = value;
+                    OnPropertyChanged("Tags");
+                }
+            }
+        }
+        private string _id = "";
+        public string ID
         {
             set
             {
-                if (_id != 0) throw new InvalidOperationException("Don't allow to set this ID value");
+                if (_id != "") throw new InvalidOperationException("Don't allow to set this ID value");
                 _id = value;
             }
             get
@@ -85,8 +90,6 @@ namespace MyToDos.Model
                 return _id;
             }
         }
-        //public Note Note;
-        //------------- Will add file-working function
         private string _webAddress;
         public string WebAddress
         {
@@ -95,21 +98,11 @@ namespace MyToDos.Model
                 if (_webAddress != value)
                 {
                     _webAddress = value;
-                    OnPropertyChanged("HasWebAddress");
-                    LastChange = DateTime.Now.Ticks;
                 }
             }
             get => _webAddress;
         }
-        public bool HasWebAddress
-        {
-            get => !String.IsNullOrEmpty(_webAddress);
-        }
-        //---------------
-        public bool Equals(Task task)
-        {
-            return ID == task.ID;
-        }
+        public FlowDocument Note;
         public override string ToString()
         {
             return this.GetType() + " id:" + ID.ToString();

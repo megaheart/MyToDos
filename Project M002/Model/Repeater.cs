@@ -13,14 +13,24 @@ namespace MyToDos.Model
     }
     public enum RepeaterType
     {
-        Daily,
-        Weekly,
-        Monthly,
-        Once,
-        NonRepeater
+        NonRepeater = 0,
+        Daily = 1,
+        Weekly = 2,
+        Monthly = 3,
+        Once = 4
     }
     public abstract class Repeater
     {
+        public int Index
+        {
+            get
+            {
+                int index = 0;
+                if (Time.HasValue) index = 2;
+                else if (Duration != TimeSpan.Zero) index = 1;
+                return ((int)Type) * 3 + index;
+            }
+        }
         public event Action RepeaterInfoChanged;
         protected int[] _dates;
         private TimeDuration? _time;

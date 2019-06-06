@@ -64,6 +64,7 @@
     <Compile Include="Model\NotifialeObject.cs" />
     <Compile Include="Model\Once.cs" />
     <Compile Include="Model\Repeater.cs" />
+    <Compile Include="Model\Tag.cs" />
     <Compile Include="Model\Task.cs" />
     <Compile Include="Model\Weekly.cs" />
     <Compile Include="WindowResize.cs" />
