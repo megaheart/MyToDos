@@ -20,5 +20,10 @@ namespace MyToDos.Model
         {
             return date.Date == DateTime.Now.Date;
         }
+        public override Repeater Clone()
+        {
+            NonRepeater repeater = this;
+            return repeater;
+        }
     }
 }

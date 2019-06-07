@@ -33,8 +33,8 @@ namespace MyToDos.Model
         }
         public event Action RepeaterInfoChanged;
         protected int[] _dates;
-        private TimeDuration? _time;
-        private TimeSpan _duration;
+        protected TimeDuration? _time;
+        protected TimeSpan _duration;
         public TimeDuration? Time
         {
             set
@@ -71,7 +71,7 @@ namespace MyToDos.Model
             }
             get => _duration;
         }
-        private RepeaterType _type;
+        protected RepeaterType _type;
         public RepeaterType Type
         {
             get => _type;
@@ -83,7 +83,7 @@ namespace MyToDos.Model
                 }
             }
         }
-        private RepeaterMode _mode;
+        protected RepeaterMode _mode;
         public RepeaterMode Mode
         {
             get => _mode;
@@ -98,6 +98,7 @@ namespace MyToDos.Model
         }
         protected void OnRepeaterInfoChanged() => RepeaterInfoChanged?.Invoke();
         public abstract bool IsUsableOn(DateTime date);
+        public abstract Repeater Clone();
         public struct TimeDuration
         {
             public TimeDuration(TimeSpan startTime, TimeSpan finishTime)

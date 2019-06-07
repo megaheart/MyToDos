@@ -35,5 +35,12 @@ namespace MyToDos.Model
         {
             return true;
         }
+        public override Repeater Clone()
+        {
+            Daily repeater = new Daily();
+            repeater._duration = this._duration;
+            repeater._time = this._time;
+            return repeater;
+        }
     }
 }

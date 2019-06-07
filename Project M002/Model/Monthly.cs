@@ -43,5 +43,16 @@ namespace MyToDos.Model
         {
             return _dates.Contains((int)date.DayOfWeek);
         }
+        private Monthly() { }
+        public override Repeater Clone()
+        {
+            Monthly repeater = new Monthly();
+            repeater._dates = this._dates;
+            repeater._duration = this._duration;
+            repeater._time = this._time;
+            repeater._type = this._type;
+            repeater._mode = this._mode;
+            return repeater;
+        }
     }
 }

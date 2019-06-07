@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,26 @@ namespace MyToDos.Model
     class Task : NotifiableObject
     {
         public Task()
+        {}
+        private void CheckPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            throw new Exception("Can't change Task's properties because IsReadOnly is true");
+        }
+        //This property can be copied or cloned
+        private bool _isReadOnly;
+        public bool IsReadOnly
+        {
+            set
+            {
+                if(value != _isReadOnly)
+                {
+                    if (value)
+                    {
+                        PropertyChanged += CheckPropertyChanged;
+                    }
+                    else PropertyChanged -= CheckPropertyChanged;
+                }
+            }
         }
         //public long LastChange { private set; get; }
         protected Repeater _repeater;
@@ -98,15 +118,30 @@ namespace MyToDos.Model
                 if (_webAddress != value)
                 {
                     _webAddress = value;
+                    if (_isReadOnly) CheckPropertyChanged(null, null);
                 }
             }
             get => _webAddress;
         }
-        public FlowDocument Note;
+        /// <returns>
+        /// a copy of this Task, but new Task doesn't have ID or IsReadObly properties
+        /// </returns>
+        public Task Clone()
+        {
+            Task task = new Task();
+            task._description = this._description;
+            task._id = this._id;
+            task._repeater = this._repeater.Clone();
+            task._tags = new ObservableCollection<Tag>(this._tags);
+            task._title = this._title;
+            task._webAddress = this._webAddress;
+            return task;
+        }
+        
         public override string ToString()
         {
             return this.GetType() + " id:" + ID.ToString();
         }
     }
 }
-}
+
