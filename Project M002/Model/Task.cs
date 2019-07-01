@@ -9,6 +9,12 @@ using System.Windows.Documents;
 
 namespace MyToDos.Model
 {
+    enum TaskStatus
+    {
+        Available,
+        Unavailable,
+        Expired
+    }
     class Task : NotifiableObject
     {
         public Task()
@@ -122,6 +128,38 @@ namespace MyToDos.Model
                 }
             }
             get => _webAddress;
+        }
+        private DateTime _activatedTime;
+        public DateTime ActivatedTime
+        {
+            set
+            {
+                if (_activatedTime != value)
+                {
+                    _activatedTime = value;
+                    if (_isReadOnly) CheckPropertyChanged(null, null);
+                }
+            }
+            get => _activatedTime;
+        }
+        private DateTime _expiryTime;
+        public DateTime ExpiryTime
+        {
+            set
+            {
+                if (_expiryTime != value)
+                {
+                    _expiryTime = value;
+                    if (_isReadOnly) CheckPropertyChanged(null, null);
+                }
+            }
+            get => _expiryTime;
+        }
+        public TaskStatus GetStatusOn(DateTime date)
+        {
+            if (date >= _expiryTime) return TaskStatus.Expired;
+            if (date < _activatedTime && !_repeater.IsUsableOn(date)) return TaskStatus.Unavailable;
+            return TaskStatus.Available;
         }
         /// <returns>
         /// a copy of this Task, but new Task doesn't have ID or IsReadObly properties
