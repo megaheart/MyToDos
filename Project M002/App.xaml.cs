@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 
+
 namespace MyToDos
 {
     /// <summary>
@@ -17,9 +18,10 @@ namespace MyToDos
         {
             App.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
             ConsoleLog.Initialize();
-            SQL sQL = new SQL();
+            //SQL sQL = new SQL();
+
+            // App.Current.Shutdown();
             
-           // App.Current.Shutdown();
         }
 
         //private void Application_Exit(object sender, ExitEventArgs e)

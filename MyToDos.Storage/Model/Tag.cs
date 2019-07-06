@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace MyToDos.Model
 {
@@ -47,8 +46,8 @@ namespace MyToDos.Model
                 return _id;
             }
         }
-        protected Brush _color;
-        public Brush Color
+        protected string _color;
+        public string Color
         {
             set
             {

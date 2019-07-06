@@ -116,6 +116,14 @@ namespace MyToDos.Model
             {
                 return !((t1.StartTime == t2.StartTime) && (t1.FinishTime == t2.FinishTime));
             }
+            public override bool Equals(object obj)
+            {
+                if(obj.GetType() == typeof(TimeDuration))
+                {
+                    return this == (TimeDuration)obj;
+                }
+                return false;
+            }
         }
         //public abstract string ToDurationString();
     }
