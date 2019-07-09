@@ -7,11 +7,12 @@ using System.Data.SQLite;
 using System.Data;
 using System.Security;
 
-namespace MyToDos.ViewModel
+
+namespace MyToDos.Storage
 {
-    public class SQL
+    internal class SQL
     {
-        private string _dataSourceAddress;
+        //private string _dataSourceAddress;
         //public string Password
         //{
         //    set
@@ -20,15 +21,27 @@ namespace MyToDos.ViewModel
         //    }
         //}
         private SQLiteConnection _sQLite;
-        private DataSet _dataSet = new DataSet();
-        private DataTable _dataTable = new DataTable();
-        //private SQLiteDataAdapter _dataAdapter;
-        public SQL(string dataSourceAddress, string password)
+        internal SQL(string dataSourceAddress, string password)
         {
-            _dataSourceAddress = dataSourceAddress;
-            _sQLite = new SQLiteConnection("Data Source = " + _dataSourceAddress + "; Version = 3;");
+            //_dataSourceAddress = dataSourceAddress;
+            _sQLite = new SQLiteConnection("Data Source = " + dataSourceAddress + "; Version = 3;");
             
         }
-
+        internal void InsertTaskToDB(MyToDos.Model.Task task)
+        {
+            string cmd = String.Format(@"INSERT INTO tasks(Title, ID, Repeater, ActivatedTime, ExpiryTime) VALUES 
+                                        ('{0}', '{1}', '{2}', 'Date({3})', 'Date({4})');",
+                task.Title, task.ID, RepeaterStorageConverter.RepeaterToString(task.Repeater), 
+                task.ActivatedTime.ToString("yyyy-MM-dd HH:mm"), task.ExpiryTime.ToString("yyyy-MM-dd HH:mm"));
+            ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
+        }
+        internal async Task ExecuteQuery(string cmd)
+        {
+            await _sQLite.OpenAsync();
+            SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
+            sQLiteCommand.CommandText = cmd;
+            await sQLiteCommand.ExecuteNonQueryAsync();
+            _sQLite.Close();
+        }
     }
 }

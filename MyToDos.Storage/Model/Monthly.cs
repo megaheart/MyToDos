@@ -11,35 +11,16 @@ namespace MyToDos.Model
         /// <param name="dates">items must have value from 1 to 31</param>
         public Monthly(int[] dates)
         {
-            Duration = TimeSpan.Zero;
-            Time = null;
             _dates = dates;
             Type = RepeaterType.Monthly;
             Mode = RepeaterMode.MultiTimes;
         }
-        /// <param name="dates">items must have value from 1 to 31</param>
-        public Monthly(int[] dates, TimeSpan duration)
-        {
-            Duration = duration;
-            Time = null;
-            _dates = dates;
-            Type = RepeaterType.Monthly;
-            Mode = RepeaterMode.MultiTimes;
-        }
-        /// <param name="dates">items must have value from 1 to 31</param>
-        public Monthly(int[] dates, TimeDuration time)
-        {
-            Time = time;
-            _dates = dates;
-            Type = RepeaterType.Monthly;
-            Mode = RepeaterMode.MultiTimes;
-        }
-        public void SetDates(int[] dates)
+        internal void SetDates(int[] dates)
         {
             _dates = dates;
             OnRepeaterInfoChanged();
         }
-        public override bool IsUsableOn(DateTime date)
+        internal override bool IsUsableOn(DateTime date)
         {
             return _dates.Contains((int)date.DayOfWeek);
         }
@@ -47,9 +28,8 @@ namespace MyToDos.Model
         public override Repeater Clone()
         {
             Monthly repeater = new Monthly();
-            repeater._dates = this._dates;
-            repeater._duration = this._duration;
-            repeater._time = this._time;
+            repeater._dates = new int[_dates.Length];
+            Array.Copy(this._dates, repeater._dates, _dates.Length);
             repeater._type = this._type;
             repeater._mode = this._mode;
             return repeater;

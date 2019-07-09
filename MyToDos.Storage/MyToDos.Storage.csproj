@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\CustomRepeater.cs" />
     <Compile Include="Model\Daily.cs" />
     <Compile Include="Model\Monthly.cs" />
     <Compile Include="Model\NonRepeater.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Model\Weekly.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\DataManager.cs" />
+    <Compile Include="Storage\RepeaterStorageConverter.cs" />
     <Compile Include="Storage\SQL.cs" />
   </ItemGroup>
   <ItemGroup>

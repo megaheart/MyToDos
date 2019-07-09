@@ -11,64 +11,28 @@ namespace MyToDos.Model
         /// <param name="dates">Sun,Mon,Tue,...,Sat -> 0,1,2,...,6</param>
         public Weekly(int[] dates)
         {
-            Duration = TimeSpan.Zero;
-            Time = null;
-            _dates = dates;
-            Type = RepeaterType.Weekly;
-            Mode = RepeaterMode.MultiTimes;
-        }
-        /// <param name="dates">Sun,Mon,Tue,...,Sat -> 0,1,2,...,6</param>
-        public Weekly(int[] dates, TimeSpan duration)
-        {
-            Duration = duration;
-            Time = null;
-            _dates = dates;
-            Type = RepeaterType.Weekly;
-            Mode = RepeaterMode.MultiTimes;
-        }
-        /// <param name="dates">Sun,Mon,Tue,...,Sat -> 0,1,2,...,6</param>
-        public Weekly(int[] dates, TimeDuration time)
-        {
-            Time = time;
             _dates = dates;
             Type = RepeaterType.Weekly;
             Mode = RepeaterMode.MultiTimes;
         }
         public Weekly(DayOfWeek[] dates)
         {
-            Duration = TimeSpan.Zero;
-            Time = null;
             _dates = Array.ConvertAll(dates, IntFromDayOfWeek);
             Type = RepeaterType.Weekly;
             Mode = RepeaterMode.MultiTimes;
         }
-        public Weekly(DayOfWeek[] dates, TimeSpan duration)
-        {
-            Duration = duration;
-            Time = null;
-            _dates = Array.ConvertAll(dates, IntFromDayOfWeek);
-            Type = RepeaterType.Weekly;
-            Mode = RepeaterMode.MultiTimes;
-        }
-        public Weekly(DayOfWeek[] dates, TimeDuration time)
-        {
-            Time = time;
-            _dates = Array.ConvertAll(dates, IntFromDayOfWeek);
-            Type = RepeaterType.Weekly;
-            Mode = RepeaterMode.MultiTimes;
-        }
-        public void SetDates(int[] dates)
+        internal void SetDates(int[] dates)
         {
             _dates = dates;
             OnRepeaterInfoChanged();
         }
-        public void SetDates(DayOfWeek[] dates)
+        internal void SetDates(DayOfWeek[] dates)
         {
             _dates = Array.ConvertAll(dates, IntFromDayOfWeek);
             OnRepeaterInfoChanged();
         }
         static int IntFromDayOfWeek(DayOfWeek day) => (int)day;
-        public override bool IsUsableOn(DateTime date)
+        internal override bool IsUsableOn(DateTime date)
         {
             return _dates.Contains((int)date.DayOfWeek);
         }
@@ -76,9 +40,8 @@ namespace MyToDos.Model
         public override Repeater Clone()
         {
             Weekly repeater = new Weekly();
-            repeater._dates = this._dates;
-            repeater._duration = this._duration;
-            repeater._time = this._time;
+            repeater._dates = new int[_dates.Length];
+            Array.Copy(this._dates, repeater._dates, _dates.Length);
             repeater._type = this._type;
             repeater._mode = this._mode;
             return repeater;

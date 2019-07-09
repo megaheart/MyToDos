@@ -10,13 +10,11 @@ namespace MyToDos.Model
     {
         public NonRepeater()
         {
-            Time = null;
-            Duration = TimeSpan.Zero;
             _dates = null;
             Type = RepeaterType.NonRepeater;
             Mode = RepeaterMode.Once;
         }
-        public override bool IsUsableOn(DateTime date)
+        internal override bool IsUsableOn(DateTime date)
         {
             return date.Date == DateTime.Now.Date;
         }

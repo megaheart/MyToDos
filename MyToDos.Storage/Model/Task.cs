@@ -18,31 +18,18 @@ namespace MyToDos.Model
     {
         public Task()
         {}
-        private void CheckPropertyChanged(object sender, PropertyChangedEventArgs e)
+        public Task(string title, Repeater repeater, DateTime? activatedTime, DateTime? expiryTime)
         {
-            throw new Exception("Can't change Task's properties because IsReadOnly is true");
-        }
-        //This property can be copied or cloned
-        private bool _isReadOnly;
-        public bool IsReadOnly
-        {
-            set
-            {
-                if(value != _isReadOnly)
-                {
-                    if (value)
-                    {
-                        PropertyChanged += CheckPropertyChanged;
-                    }
-                    else PropertyChanged -= CheckPropertyChanged;
-                }
-            }
+            _title = title;
+            _repeater = repeater;
+            _activatedTime = activatedTime.HasValue ? activatedTime.Value : DateTime.MinValue;
+            _expiryTime = expiryTime.HasValue ? expiryTime.Value : DateTime.MaxValue;
         }
         //public long LastChange { private set; get; }
         protected Repeater _repeater;
         public Repeater Repeater
         {
-            set
+            internal set
             {
                 if (_repeater != value)
                 {
@@ -60,7 +47,7 @@ namespace MyToDos.Model
         protected string _title;
         public string Title
         {
-            set
+            internal set
             {
                 if (_title != value)
                 {
@@ -76,7 +63,7 @@ namespace MyToDos.Model
         protected string _description;
         public string Description
         {
-            set
+            internal set
             {
                 if (_description != value)
                 {
@@ -93,7 +80,7 @@ namespace MyToDos.Model
         public ObservableCollection<Tag> Tags
         {
             get => _tags;
-            set
+            internal set
             {
                 if (_tags != value)
                 {
@@ -105,7 +92,7 @@ namespace MyToDos.Model
         private string _id = "";
         public string ID
         {
-            set
+            internal set
             {
                 if (_id != "") throw new InvalidOperationException("Don't allow to set this ID value");
                 _id = value;
@@ -118,12 +105,11 @@ namespace MyToDos.Model
         private string _webAddress;
         public string WebAddress
         {
-            set
+            internal set
             {
                 if (_webAddress != value)
                 {
                     _webAddress = value;
-                    if (_isReadOnly) CheckPropertyChanged(null, null);
                 }
             }
             get => _webAddress;
@@ -131,12 +117,11 @@ namespace MyToDos.Model
         private DateTime _activatedTime;
         public DateTime ActivatedTime
         {
-            set
+            internal set
             {
                 if (_activatedTime != value)
                 {
                     _activatedTime = value;
-                    if (_isReadOnly) CheckPropertyChanged(null, null);
                 }
             }
             get => _activatedTime;
@@ -144,12 +129,11 @@ namespace MyToDos.Model
         private DateTime _expiryTime;
         public DateTime ExpiryTime
         {
-            set
+            internal set
             {
                 if (_expiryTime != value)
                 {
                     _expiryTime = value;
-                    if (_isReadOnly) CheckPropertyChanged(null, null);
                 }
             }
             get => _expiryTime;
