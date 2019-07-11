@@ -39,6 +39,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -65,15 +68,18 @@
     <Compile Include="Model\NonRepeater.cs" />
     <Compile Include="Model\NotifialeObject.cs" />
     <Compile Include="Model\Once.cs" />
+    <Compile Include="Model\IRecyclable.cs" />
     <Compile Include="Model\Repeater.cs" />
     <Compile Include="Model\Tag.cs" />
     <Compile Include="Model\Task.cs" />
+    <Compile Include="Model\TimeInfo.cs" />
     <Compile Include="Model\WeatherInformation.cs" />
     <Compile Include="Model\Weekly.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\DataManager.cs" />
     <Compile Include="Storage\RepeaterStorageConverter.cs" />
     <Compile Include="Storage\SQL.cs" />
+    <Compile Include="Storage\TimeInfoStorageConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -20,7 +20,7 @@ namespace MyToDos.Storage
             }
             return output;
         }
-        internal static Repeater ToRepeater(string storageStr)
+        internal static Repeater Parse(string storageStr)
         {
             int[] type_dates = Array.ConvertAll(storageStr.Split('|'), int.Parse);
             if (type_dates[0] == 1)

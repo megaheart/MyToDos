@@ -14,18 +14,30 @@ namespace MyToDos.Model
         Unavailable,
         Expired
     }
-    class Task : NotifiableObject
+    class Task : NotifiableObject, IRecyclable
     {
         public Task()
         {}
-        public Task(string title, Repeater repeater, DateTime? activatedTime, DateTime? expiryTime)
+        public Task(string title, string id, Repeater repeater, DateTime? activatedTime, DateTime? expiryTime,TimeInfo time)
         {
+            _id = ID;
             _title = title;
             _repeater = repeater;
             _activatedTime = activatedTime.HasValue ? activatedTime.Value : DateTime.MinValue;
             _expiryTime = expiryTime.HasValue ? expiryTime.Value : DateTime.MaxValue;
+            _time = time;
         }
         //public long LastChange { private set; get; }
+        private TimeInfo _time;
+        public TimeInfo Time
+        {
+            internal set
+            {
+                _time = value;
+                OnPropertyChanged("Time");
+            }
+            get =>_time;
+        }
         protected Repeater _repeater;
         public Repeater Repeater
         {
@@ -94,7 +106,7 @@ namespace MyToDos.Model
         {
             internal set
             {
-                if (_id != "") throw new InvalidOperationException("Don't allow to set this ID value");
+                if (_id != "") throw new InvalidOperationException("ID is only set once.");
                 _id = value;
             }
             get
@@ -158,7 +170,6 @@ namespace MyToDos.Model
             task._webAddress = this._webAddress;
             return task;
         }
-        
         public override string ToString()
         {
             return this.GetType() + " id:" + ID.ToString();
