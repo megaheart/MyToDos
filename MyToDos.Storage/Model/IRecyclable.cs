@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace MyToDos.Model
 {
+    /// <summary>
+    /// IRecyclable inteface can be restored from garbage
+    /// </summary>
     interface IRecyclable
     {
     }

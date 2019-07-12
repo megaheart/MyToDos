@@ -21,6 +21,32 @@ namespace MyToDos.Storage
         //        CONNECTION_STRING = "Data Source=" + _dataSourceAddress + ";Version=3;Password=" + value + ";";
         //    }
         //}
+        public class SQLType
+        {
+            public SQLType(string tableName, bool isRecyclable = false)
+            {
+                TableName = tableName;
+                IsRecyclable = isRecyclable;
+            }
+            public string TableName { get; private set; }
+            public bool IsRecyclable { get; private set; }
+        }
+        private SQLType _task = new SQLType("Tasks", true);
+        internal SQLType Task
+        {
+            get
+            {
+                return _task;
+            }
+        }
+        private SQLType _note = new SQLType("Notes");
+        internal SQLType Note
+        {
+            get
+            {
+                return _note;
+            }
+        }
         private SQLiteConnection _sQLite;
         internal SQL(string dataSourceAddress, string password)
         {
@@ -35,39 +61,33 @@ namespace MyToDos.Storage
                 task.ExpiryTime.ToString("yyyy-MM-dd HH:mm"), TimeInfoStorageConverter.ToString(task.Time));
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void Update<T>(string id, string property, string newValue)
+        internal void Update(SQLType type, string id, string property, string newValue)
         {
-            string dataBase = typeof(T).Name + "s";
-            string cmd = String.Format("UPDATE {0} SET {2} = '{3}' WHERE {1} = 0;", dataBase, id, property, newValue);
+            string cmd = String.Format("UPDATE {0} SET {2} = '{3}' WHERE ID = '{1}';", type.TableName, id, property, newValue);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void Remove<T>(string id)
+        internal void Remove(SQLType type, string id)
         {
-            string dataBase = typeof(T).Name + "s";
-            string cmd = String.Format("DELETE FROM {0} WHERE ID = {1};", dataBase, id);
+            if (type.IsRecyclable) throw new Exception("Can't remove a IRecyclable type, please use SQL.MoveToGarbage method");
+            string cmd = String.Format("DELETE FROM {0} WHERE ID = '{1}';", type.TableName, id);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void MoveToGarbage<T>(string id)
-            where T:IRecyclable
+        internal void MoveToGarbage(SQLType type, string id)
         {
-            string dataBase = typeof(T).Name + "s";
-            string cmd = String.Format("INSERT INTO {0}Garbage SELECT * FROM {0} WHERE id = {1};DELETE FROM {0} WHERE ID = {1};", 
-                dataBase, id);
+            if (!type.IsRecyclable) throw new Exception("Can't move it to garbage, please use SQL.Remove method");
+            string cmd = String.Format("INSERT INTO {0}Garbage SELECT * FROM {0} WHERE ID = '{1}';DELETE FROM {0} WHERE ID = '{1}';", 
+                type.TableName, id);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void RemoveFromGarbage<T>(string id)
-            where T : IRecyclable
+        internal void RemoveFromGarbage(SQLType type, string id)
         {
-            string garbage = typeof(T).Name + "sGarbage";
-            string cmd = String.Format(@"DELETE FROM {0} WHERE ID = {1};", garbage, id);
+            string cmd = String.Format(@"DELETE FROM {0}Garbage WHERE ID = '{1}';", type.TableName, id);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void RestoreFromGarbage<T>(string id)
-            where T : IRecyclable
+        internal void RestoreFromGarbage(SQLType type, string id)
         {
-            string dataBase = typeof(T).Name + "s";
-            string cmd = String.Format(@"INSERT INTO {0} SELECT * FROM {0}Garbage WHERE id = {1};DELETE FROM {0}Garbage WHERE ID = {1};", 
-                dataBase, id);
+            string cmd = String.Format(@"INSERT INTO {0} SELECT * FROM {0}Garbage WHERE ID = '{1}';DELETE FROM {0}Garbage WHERE ID = '{1}';", 
+                type.TableName, id);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
         internal async System.Threading.Tasks.Task ExecuteQuery(string cmd)
@@ -82,7 +102,7 @@ namespace MyToDos.Storage
         {
             await _sQLite.OpenAsync();
             SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
-            sQLiteCommand.CommandText = "SELECT Note FROM Notes WHERE ID = " + id + ";";
+            sQLiteCommand.CommandText = "SELECT Note FROM Notes WHERE ID = '" + id + "';";
             DbDataReader reader = await sQLiteCommand.ExecuteReaderAsync();
             await reader.ReadAsync();
             string output = reader["Note"].ToString();
@@ -90,7 +110,7 @@ namespace MyToDos.Storage
             return output;
         }
         private static bool AlwaysTrue(object o) => true;
-        internal async System.Threading.Tasks.Task<ObservableCollection<Task>> GetTaskList(Predicate<Task> predicate, bool isGarbage = false)
+        internal async System.Threading.Tasks.Task<ObservableCollection<Task>> GetTaskList(Predicate<Task> predicate = null, bool isGarbage = false)
         {
             ObservableCollection<Task> tasks = new ObservableCollection<Task>();
             await _sQLite.OpenAsync();
@@ -107,17 +127,55 @@ namespace MyToDos.Storage
             if (predicate == null) predicate = AlwaysTrue;
             while (await reader.ReadAsync())
             {
-                string title = reader.GetString(0);
+                string title = reader[0].ToString();
                 string ID = reader[1].ToString();
-                Repeater repeater = RepeaterStorageConverter.Parse(reader.GetString(2));
+                Repeater repeater = RepeaterStorageConverter.Parse(reader[2].ToString());
                 DateTime activatedTime = reader.GetDateTime(3);
                 DateTime expiryTime = reader.GetDateTime(4);
-                TimeInfo time = TimeInfoStorageConverter.Parse(reader.GetString(5));
+                TimeInfo time = TimeInfoStorageConverter.Parse(reader[5].ToString());
                 Task task = new Task(title, ID, repeater, activatedTime, expiryTime, time);
                 if (predicate(task)) tasks.Add(task);
             }
             _sQLite.Close();
             return tasks;
+        }
+        internal void InsertToDoComment(ToDoComment comment)
+        {
+            string cmd = String.Format(@"INSERT INTO ToDoComments(Time, Content) VALUES (DATE('{0}'), '{1}');",
+                comment.Time, comment.Content);
+            ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
+        }
+        ///<summary>
+        /// typeparameter T must be <c>ToDoComment</c>
+        ///</summary>
+        internal void UpdateToDoCommand(string id, ToDoComment comment)
+        {
+            string cmd = String.Format("UPDATE ToDoComments SET Content = '{0}' WHERE ID = '{1}' AND Time = DATE('{2}');", 
+                comment.Content, id, comment.Time);
+            ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
+        }
+        internal void RemoveToDoComment(string id, ToDoComment comment)
+        {
+            string cmd = String.Format(@"DELETE FROM ToDoComments WHERE ID = '{0}' AND Time = DATE('{1}');",
+                id, comment.Time);
+            ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
+        }
+        internal async System.Threading.Tasks.Task<ObservableCollection<ToDoComment>> GetCommentList(string id, DateTime startTime, DateTime lastTime)
+        {
+            ObservableCollection<ToDoComment> comments = new ObservableCollection<ToDoComment>();
+            await _sQLite.OpenAsync();
+            SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
+            sQLiteCommand.CommandText = String.Format(@"SELECT Time,Content FROM ToDoComments WHERE ID = '{0}' AND Time BETWEEN 
+                DATE('{1}') AND DATE('{2}');", id, startTime.ToString("yyyy-MM-dd HH:mm"), startTime.ToString("yyyy-MM-dd HH:mm"));
+            DbDataReader reader = await sQLiteCommand.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                string content = reader[1].ToString();
+                DateTime time = reader.GetDateTime(0);
+                comments.Add(new ToDoComment(time, content));
+            }
+            _sQLite.Close();
+            return comments;
         }
     }
 }
