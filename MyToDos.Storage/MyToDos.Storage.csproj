@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Model\CustomRepeater.cs" />
     <Compile Include="Model\Daily.cs" />
+    <Compile Include="Model\DailyWeatherInformation.cs" />
     <Compile Include="Model\Monthly.cs" />
     <Compile Include="Model\NonRepeater.cs" />
     <Compile Include="Model\NotifialeObject.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Storage\RepeaterStorageConverter.cs" />
     <Compile Include="Storage\SQL.cs" />
     <Compile Include="Storage\TimeInfoStorageConverter.cs" />
+    <Compile Include="Storage\WeatherInfoConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -11,6 +11,9 @@ using System.Collections.ObjectModel;
 
 namespace MyToDos.Storage
 {
+    /// <summary>
+    /// SQL query for application
+    /// </summary>
     internal class SQL
     {
         //private string _dataSourceAddress;
@@ -66,6 +69,12 @@ namespace MyToDos.Storage
             string cmd = String.Format("UPDATE {0} SET {2} = '{3}' WHERE ID = '{1}';", type.TableName, id, property, newValue);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
+        internal void Update(SQLType type, string id, string property, DateTime newValue)
+        {
+            string cmd = String.Format("UPDATE {0} SET {2} = DATE('{3}') WHERE ID = '{1}';", 
+                type.TableName, id, property, newValue.ToString("yyyy-MM-dd HH:mm:ss"));
+            ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
+        }
         internal void Remove(SQLType type, string id)
         {
             if (type.IsRecyclable) throw new Exception("Can't remove a IRecyclable type, please use SQL.MoveToGarbage method");
@@ -110,6 +119,18 @@ namespace MyToDos.Storage
             return output;
         }
         private static bool AlwaysTrue(object o) => true;
+        /// <summary>
+        /// Query a list of tasks which predicate(task) returns true :)
+        /// </summary>
+        /// <param name="predicate">
+        /// The boolean function to filter Tasks
+        /// </param>
+        /// <param name="isGarbage">
+        /// Return Tasks from garbage if set true
+        /// Return Tasks from main database if set false
+        /// Default value is false
+        /// </param>
+        /// <returns></returns>
         internal async System.Threading.Tasks.Task<ObservableCollection<Task>> GetTaskList(Predicate<Task> predicate = null, bool isGarbage = false)
         {
             ObservableCollection<Task> tasks = new ObservableCollection<Task>();

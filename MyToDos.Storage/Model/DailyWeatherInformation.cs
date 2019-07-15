@@ -1,28 +1,22 @@
 ﻿using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace MyToDos.Model
 {
-    //public enum WeatherInformationType
-    //{
-    //    Current,
-    //    DailyForecast,
-    //    HourlyForecast
-    //}
-    /// <summary>
-    /// weather information at a specific time
-    /// </summary>
-    public class WeatherInformation
+    class DailyWeatherInformation
     {
-        public WeatherInformation(){}
+
         /// <summary>
         /// Celsius Degree
         /// </summary>
-        public float Temperature { get; protected set; }
+        public float MaxTemperature { get; protected set; }
         /// <summary>
-        /// mm/h
+        /// Celsius Degree
         /// </summary>
+        public float MinTemperature { get; protected set; }
         public float Rain { get; protected set; }
         /// <summary>
         /// Persent
