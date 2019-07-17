@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Config.cs" />
     <Compile Include="Model\CustomRepeater.cs" />
     <Compile Include="Model\Daily.cs" />
     <Compile Include="Model\DailyWeatherInformation.cs" />

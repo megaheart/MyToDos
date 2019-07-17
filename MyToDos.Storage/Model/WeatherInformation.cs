@@ -19,24 +19,24 @@ namespace MyToDos.Model
         /// <summary>
         /// Celsius Degree
         /// </summary>
-        public float Temperature { get; protected set; }
+        public float Temperature { get; internal set; }
         /// <summary>
         /// mm/h
         /// </summary>
-        public float Rain { get; protected set; }
+        public bool IsRainy { get; internal set; }
         /// <summary>
         /// Persent
         /// </summary>
-        public int Clouds { get; protected set; }
+        public int CloudCover { get; internal set; }
         /// <summary>
         /// Name of weather
         /// </summary>
-        public string Type { get; protected set; }
-        public string Description { get; protected set; }
-        public string Icon { get; protected set; }
+        public string Title { get; internal set; }
+        //public string Description { get; internal set; }
+        public string Icon { get; internal set; }
         /// <summary>
         /// time when the weather be like
         /// </summary>
-        public DateTime Time { get; protected set; }
+        public DateTime Time { get; internal set; }
     }
 }
