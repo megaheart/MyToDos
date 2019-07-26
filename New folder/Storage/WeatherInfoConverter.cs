@@ -37,7 +37,7 @@ namespace MyToDos.Storage
             daily.Moon.Set = moon.Value<DateTime>("Set").TimeOfDay;
             return daily;
         }
-        public static WeatherInformation GetWeatherInformation(JToken jObject)
+        public static WeatherInformation GetCurrentWeatherInformation(JToken jObject)
         {
             WeatherInformation weather = new WeatherInformation();
             weather.Time = jObject.Value<DateTime>("LocalObservationDateTime");

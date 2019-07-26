@@ -116,9 +116,9 @@
     <Resource Include="Resources\Images\aaa.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MyToDos.Storage\MyToDos.Storage.csproj">
-      <Project>{1045839d-47dc-427f-903c-31c327f14915}</Project>
-      <Name>MyToDos.Storage</Name>
+    <ProjectReference Include="..\Storage\Storage.csproj">
+      <Project>{030ee38f-0fcd-438c-b6a0-ebe5a6fe9cab}</Project>
+      <Name>Storage</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

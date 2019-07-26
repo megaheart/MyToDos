@@ -1,11 +1,11 @@
-﻿using MyToDos.ViewModel;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-
+using MyToDos.ViewModel;
+using Storage;
 
 namespace MyToDos
 {
@@ -17,11 +17,11 @@ namespace MyToDos
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             App.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
-            ConsoleLog.Initialize();
-            //SQL sQL = new SQL();
-
-            // App.Current.Shutdown();
-            
+            //MyToDos.Properties.Settings.Default.
+            DataManager.Current.Initialize().ContinueWith(t=> {
+                if (t.IsFaulted) throw t.Exception;
+                else MessageBox.Show("successful");
+            });
         }
 
         //private void Application_Exit(object sender, ExitEventArgs e)

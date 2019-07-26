@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyToDos.Model
 {
-    class DailyWeatherInformation
+    public class DailyWeatherInformation
     {
         public DailyWeatherInformation()
         {

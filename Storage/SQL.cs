@@ -5,11 +5,11 @@ using System.Text;
 using System.Data.SQLite;
 using System.Data;
 using System.Security;
-using MyToDos.Model;
+using Storage.Model;
 using System.Data.Common;
 using System.Collections.ObjectModel;
 
-namespace MyToDos.Storage
+namespace Storage
 {
     /// <summary>
     /// SQL query for application
@@ -50,18 +50,42 @@ namespace MyToDos.Storage
                 return _note;
             }
         }
+        private SQLType _tag = new SQLType("Tags", true);
+        internal SQLType Tag
+        {
+            get
+            {
+                return _tag;
+            }
+        }
         private SQLiteConnection _sQLite;
-        internal SQL(string dataSourceAddress, string password)
+        internal SQL(string dataSourceAddress/*, string password*/)
         {
             //_dataSourceAddress = dataSourceAddress;
             _sQLite = new SQLiteConnection("Data Source = " + dataSourceAddress + "; Version = 3;");
         }
         internal void Insert(Task task)
         {
-            string cmd = String.Format(@"INSERT INTO tasks(Title, ID, Repeater, ActivatedTime, ExpiryTime, Time) VALUES 
-                                        ('{0}', '{1}', '{2}', Date('{3}'), Date('{4}', '{5}'));",
+            string tags;
+            if (task.Tags.Count == 0) tags = "";
+            else
+            {
+                tags = task.Tags[0].ID;
+                for(var i = 1; i < task.Tags.Count; i++)
+                {
+                    tags += "," + task.Tags[i].ID;
+                }
+            }
+            string cmd = String.Format(@"INSERT INTO tasks(Title, ID, Repeater, ActivatedTime, ExpiryTime, Time, Tags, WebAddress) VALUES 
+                                        ('{0}', '{1}', '{2}', Date('{3}'), Date('{4}'), '{5}', '{6}', '{7}');",
                 task.Title, task.ID, RepeaterStorageConverter.ToString(task.Repeater), task.ActivatedTime.ToString("yyyy-MM-dd HH:mm"), 
-                task.ExpiryTime.ToString("yyyy-MM-dd HH:mm"), TimeInfoStorageConverter.ToString(task.Time));
+                task.ExpiryTime.ToString("yyyy-MM-dd HH:mm"), TimeInfosStorageConverter.ToString(task.Time), tags, task.WebAddress);
+            ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
+        }
+        internal void Insert(Tag tag)
+        {
+            string cmd = String.Format(@"INSERT INTO tags(Title, ID, IsDefault, Color) VALUES('{0}', '{1}', {2}, '{3}');",
+                tag.Title, tag.ID, tag.IsDefault, tag.Color);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
         internal void Update(SQLType type, string id, string property, string newValue)
@@ -131,7 +155,8 @@ namespace MyToDos.Storage
         /// Default value is false
         /// </param>
         /// <returns></returns>
-        internal async System.Threading.Tasks.Task<ObservableCollection<Task>> GetTaskList(Predicate<Task> predicate = null, bool isGarbage = false)
+        internal async System.Threading.Tasks.Task<ObservableCollection<Task>> 
+            GetTaskList(Predicate<Task> predicate, bool isGarbage, ObservableCollection<Tag> tagList)
         {
             ObservableCollection<Task> tasks = new ObservableCollection<Task>();
             await _sQLite.OpenAsync();
@@ -153,8 +178,10 @@ namespace MyToDos.Storage
                 Repeater repeater = RepeaterStorageConverter.Parse(reader[2].ToString());
                 DateTime activatedTime = reader.GetDateTime(3);
                 DateTime expiryTime = reader.GetDateTime(4);
-                TimeInfo time = TimeInfoStorageConverter.Parse(reader[5].ToString());
-                Task task = new Task(title, ID, repeater, activatedTime, expiryTime, time);
+                ObservableCollection<TimeInfo> time = TimeInfosStorageConverter.Parse(reader[5].ToString());
+                Tag[] tags = Array.ConvertAll<string,Tag>(reader[6].ToString().Split(','), x => tagList.First(y => y.ID == x));
+                string webAddress = reader[7].ToString();
+                Task task = new Task(title, ID, repeater, activatedTime, expiryTime, time, new ObservableCollection<Tag>(tags), webAddress);
                 if (predicate(task)) tasks.Add(task);
             }
             _sQLite.Close();
@@ -181,7 +208,8 @@ namespace MyToDos.Storage
                 id, comment.Time);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal async System.Threading.Tasks.Task<ObservableCollection<ToDoComment>> GetCommentList(string id, DateTime startTime, DateTime lastTime)
+        internal async System.Threading.Tasks.Task<ObservableCollection<ToDoComment>> 
+            GetCommentList(string id, DateTime startTime, DateTime lastTime)
         {
             ObservableCollection<ToDoComment> comments = new ObservableCollection<ToDoComment>();
             await _sQLite.OpenAsync();
@@ -197,6 +225,25 @@ namespace MyToDos.Storage
             }
             _sQLite.Close();
             return comments;
+        }
+        internal async System.Threading.Tasks.Task<ObservableCollection<Tag>> 
+            GetTagList()
+        {
+            ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
+            await _sQLite.OpenAsync();
+            SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
+            sQLiteCommand.CommandText = String.Format(@"SELECT * FROM Tags;");
+            DbDataReader reader = await sQLiteCommand.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                string title = reader[0].ToString();
+                string id = reader[1].ToString();
+                bool isDefault = reader.GetBoolean(2);
+                string color = reader[3].ToString();
+                tags.Add(new Tag(isDefault) { Title = title, ID = id, Color = color });
+            }
+            _sQLite.Close();
+            return tags;
         }
     }
 }

@@ -8,33 +8,43 @@ using System.Threading.Tasks;
 
 namespace MyToDos.Model
 {
-    enum TaskStatus
+    public enum TaskStatus
     {
         Available,
         Unavailable,
         Expired
     }
-    class Task : NotifiableObject, IRecyclable
+    public class Task : NotifiableObject, IRecyclable
     {
         public Task()
-        {}
-        public Task(string title, string id, Repeater repeater, DateTime? activatedTime, DateTime? expiryTime,TimeInfo time)
+        {
+            _tags = new ObservableCollection<Tag>();
+            _time = new ObservableCollection<TimeInfo>();
+        }
+        public Task(string title, string id, Repeater repeater, DateTime? activatedTime, DateTime? expiryTime, ObservableCollection<TimeInfo> time, ObservableCollection<Tag> tags, string webAddress)
         {
             _id = ID;
             _title = title;
             _repeater = repeater;
             _activatedTime = activatedTime.HasValue ? activatedTime.Value : DateTime.MinValue;
             _expiryTime = expiryTime.HasValue ? expiryTime.Value : DateTime.MaxValue;
-            _time = time;
+            if (time == null) _time = new ObservableCollection<TimeInfo>();
+            else _time = time;
+            if (tags == null) _tags = new ObservableCollection<Tag>();
+            else _tags = tags;
+            _webAddress = webAddress;
         }
         //public long LastChange { private set; get; }
-        private TimeInfo _time;
-        public TimeInfo Time
+        private ObservableCollection<TimeInfo> _time;
+        public ObservableCollection<TimeInfo> Time
         {
             internal set
             {
-                _time = value;
-                OnPropertyChanged("Time");
+                if(value != _time)
+                {
+                    _time = value;
+                    OnPropertyChanged("Time");
+                }
             }
             get =>_time;
         }
