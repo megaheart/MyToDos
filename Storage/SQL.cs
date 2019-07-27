@@ -14,7 +14,7 @@ namespace Storage
     /// <summary>
     /// SQL query for application
     /// </summary>
-    internal class SQL
+    public class SQL
     {
         //private string _dataSourceAddress;
         //public string Password
@@ -35,7 +35,7 @@ namespace Storage
             public bool IsRecyclable { get; private set; }
         }
         private SQLType _task = new SQLType("Tasks", true);
-        internal SQLType Task
+        public SQLType Task
         {
             get
             {
@@ -43,7 +43,7 @@ namespace Storage
             }
         }
         private SQLType _note = new SQLType("Notes");
-        internal SQLType Note
+        public SQLType Note
         {
             get
             {
@@ -51,7 +51,7 @@ namespace Storage
             }
         }
         private SQLType _tag = new SQLType("Tags", true);
-        internal SQLType Tag
+        public SQLType Tag
         {
             get
             {
@@ -59,12 +59,12 @@ namespace Storage
             }
         }
         private SQLiteConnection _sQLite;
-        internal SQL(string dataSourceAddress/*, string password*/)
+        public SQL(string dataSourceAddress/*, string password*/)
         {
             //_dataSourceAddress = dataSourceAddress;
             _sQLite = new SQLiteConnection("Data Source = " + dataSourceAddress + "; Version = 3;");
         }
-        internal void Insert(Task task)
+        public void Insert(Task task)
         {
             string tags;
             if (task.Tags.Count == 0) tags = "";
@@ -82,48 +82,48 @@ namespace Storage
                 task.ExpiryTime.ToString("yyyy-MM-dd HH:mm"), TimeInfosStorageConverter.ToString(task.Time), tags, task.WebAddress);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void Insert(Tag tag)
+        public void Insert(Tag tag)
         {
             string cmd = String.Format(@"INSERT INTO tags(Title, ID, IsDefault, Color) VALUES('{0}', '{1}', {2}, '{3}');",
                 tag.Title, tag.ID, tag.IsDefault, tag.Color);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void Update(SQLType type, string id, string property, string newValue)
+        public void Update(SQLType type, string id, string property, string newValue)
         {
             string cmd = String.Format("UPDATE {0} SET {2} = '{3}' WHERE ID = '{1}';", type.TableName, id, property, newValue);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void Update(SQLType type, string id, string property, DateTime newValue)
+        public void Update(SQLType type, string id, string property, DateTime newValue)
         {
             string cmd = String.Format("UPDATE {0} SET {2} = DATE('{3}') WHERE ID = '{1}';", 
                 type.TableName, id, property, newValue.ToString("yyyy-MM-dd HH:mm:ss"));
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void Remove(SQLType type, string id)
+        public void Remove(SQLType type, string id)
         {
             if (type.IsRecyclable) throw new Exception("Can't remove a IRecyclable type, please use SQL.MoveToGarbage method");
             string cmd = String.Format("DELETE FROM {0} WHERE ID = '{1}';", type.TableName, id);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void MoveToGarbage(SQLType type, string id)
+        public void MoveToGarbage(SQLType type, string id)
         {
             if (!type.IsRecyclable) throw new Exception("Can't move it to garbage, please use SQL.Remove method");
             string cmd = String.Format("INSERT INTO {0}Garbage SELECT * FROM {0} WHERE ID = '{1}';DELETE FROM {0} WHERE ID = '{1}';", 
                 type.TableName, id);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void RemoveFromGarbage(SQLType type, string id)
+        public void RemoveFromGarbage(SQLType type, string id)
         {
             string cmd = String.Format(@"DELETE FROM {0}Garbage WHERE ID = '{1}';", type.TableName, id);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void RestoreFromGarbage(SQLType type, string id)
+        public void RestoreFromGarbage(SQLType type, string id)
         {
             string cmd = String.Format(@"INSERT INTO {0} SELECT * FROM {0}Garbage WHERE ID = '{1}';DELETE FROM {0}Garbage WHERE ID = '{1}';", 
                 type.TableName, id);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal async System.Threading.Tasks.Task ExecuteQuery(string cmd)
+        public async System.Threading.Tasks.Task ExecuteQuery(string cmd)
         {
             await _sQLite.OpenAsync();
             SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
@@ -131,7 +131,7 @@ namespace Storage
             await sQLiteCommand.ExecuteNonQueryAsync();
             _sQLite.Close();
         }
-        internal async System.Threading.Tasks.Task<string> GetNoteText(string id)
+        public async System.Threading.Tasks.Task<string> GetNoteText(string id)
         {
             await _sQLite.OpenAsync();
             SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
@@ -155,7 +155,7 @@ namespace Storage
         /// Default value is false
         /// </param>
         /// <returns></returns>
-        internal async System.Threading.Tasks.Task<ObservableCollection<Task>> 
+        public async System.Threading.Tasks.Task<ObservableCollection<Task>> 
             GetTaskList(Predicate<Task> predicate, bool isGarbage, ObservableCollection<Tag> tagList)
         {
             ObservableCollection<Task> tasks = new ObservableCollection<Task>();
@@ -187,7 +187,7 @@ namespace Storage
             _sQLite.Close();
             return tasks;
         }
-        internal void InsertToDoComment(ToDoComment comment)
+        public void InsertToDoComment(ToDoComment comment)
         {
             string cmd = String.Format(@"INSERT INTO ToDoComments(Time, Content) VALUES (DATE('{0}'), '{1}');",
                 comment.Time, comment.Content);
@@ -196,19 +196,19 @@ namespace Storage
         ///<summary>
         /// typeparameter T must be <c>ToDoComment</c>
         ///</summary>
-        internal void UpdateToDoCommand(string id, ToDoComment comment)
+        public void UpdateToDoCommand(string id, ToDoComment comment)
         {
             string cmd = String.Format("UPDATE ToDoComments SET Content = '{0}' WHERE ID = '{1}' AND Time = DATE('{2}');", 
                 comment.Content, id, comment.Time);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal void RemoveToDoComment(string id, ToDoComment comment)
+        public void RemoveToDoComment(string id, ToDoComment comment)
         {
             string cmd = String.Format(@"DELETE FROM ToDoComments WHERE ID = '{0}' AND Time = DATE('{1}');",
                 id, comment.Time);
             ExecuteQuery(cmd).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; });
         }
-        internal async System.Threading.Tasks.Task<ObservableCollection<ToDoComment>> 
+        public async System.Threading.Tasks.Task<ObservableCollection<ToDoComment>> 
             GetCommentList(string id, DateTime startTime, DateTime lastTime)
         {
             ObservableCollection<ToDoComment> comments = new ObservableCollection<ToDoComment>();
@@ -226,7 +226,7 @@ namespace Storage
             _sQLite.Close();
             return comments;
         }
-        internal async System.Threading.Tasks.Task<ObservableCollection<Tag>> 
+        public async System.Threading.Tasks.Task<ObservableCollection<Tag>> 
             GetTagList()
         {
             ObservableCollection<Tag> tags = new ObservableCollection<Tag>();

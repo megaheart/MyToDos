@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project M002", "Project M00
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage", "Storage\Storage.csproj", "{030EE38F-0FCD-438C-B6A0-EBE5A6FE9CAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyToDos.Test", "MyToDos.Test\MyToDos.Test.csproj", "{896AF838-3C04-47EF-A019-45E67318490F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{47AF57C4-5222-4649-97DF-16928319A5A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{030EE38F-0FCD-438C-B6A0-EBE5A6FE9CAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{030EE38F-0FCD-438C-B6A0-EBE5A6FE9CAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{030EE38F-0FCD-438C-B6A0-EBE5A6FE9CAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{896AF838-3C04-47EF-A019-45E67318490F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{896AF838-3C04-47EF-A019-45E67318490F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{896AF838-3C04-47EF-A019-45E67318490F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{896AF838-3C04-47EF-A019-45E67318490F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47AF57C4-5222-4649-97DF-16928319A5A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47AF57C4-5222-4649-97DF-16928319A5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47AF57C4-5222-4649-97DF-16928319A5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47AF57C4-5222-4649-97DF-16928319A5A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

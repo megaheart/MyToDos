@@ -18,10 +18,10 @@ namespace MyToDos
         {
             App.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
             //MyToDos.Properties.Settings.Default.
-            DataManager.Current.Initialize().ContinueWith(t=> {
-                if (t.IsFaulted) throw t.Exception;
-                else MessageBox.Show("successful");
-            });
+            //DataManager.Current.Initialize().Wait();//.ContinueWith(t=> {
+            //    if (t.IsFaulted) throw t.Exception;
+            //    else MessageBox.Show("successful");
+            //});
         }
 
         //private void Application_Exit(object sender, ExitEventArgs e)

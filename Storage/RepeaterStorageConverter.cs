@@ -6,9 +6,9 @@ using Storage.Model;
 
 namespace Storage
 {
-    internal static class RepeaterStorageConverter
+    public static class RepeaterStorageConverter
     {
-        internal static string ToString(Repeater repeater)
+        public static string ToString(Repeater repeater)
         {
             string output = ((int)repeater.Type).ToString();
             if(repeater.Type != RepeaterType.Daily && repeater.Type == RepeaterType.NonRepeater)
@@ -20,7 +20,7 @@ namespace Storage
             }
             return output;
         }
-        internal static Repeater Parse(string storageStr)
+        public static Repeater Parse(string storageStr)
         {
             int[] type_dates = Array.ConvertAll(storageStr.Split('|'), int.Parse);
             if (type_dates[0] == 1)

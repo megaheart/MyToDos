@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Storage
 {
-    internal static class WeatherInfoConverter
+    public static class WeatherInfoConverter
     {
         public static DailyWeatherInformation GetDailyWeatherInformation(JToken jObject)
         {

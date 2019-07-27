@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    class ToDoComment : NotifiableObject
+    public class ToDoComment : NotifiableObject
     {
         public ToDoComment(/*int orderNumber,*/DateTime time, string content)
         {

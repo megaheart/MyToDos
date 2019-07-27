@@ -17,15 +17,17 @@ namespace Storage
                 return _current;
             }
         }
-        private static string AppFolder = System.AppDomain.CurrentDomain.BaseDirectory;
-        private static string ResourcesFolder = AppFolder + @"Resources/";
-        private static string DataBaseFile = ResourcesFolder + "mega.db";
-        private static string DailyWeatherFile = ResourcesFolder + "dailyweather.json";
-        private static string CurrentWeatherFile = ResourcesFolder + "currentweather.json";
-        public DataManager(){}
+        public static string AppFolder = System.AppDomain.CurrentDomain.BaseDirectory;
+        public static string ResourcesFolder = AppFolder + @"Resources/";
+        public static string DataBaseFile = ResourcesFolder + "mega.db";
+        public static string DailyWeatherFile = ResourcesFolder + "dailyweather.json";
+        public static string CurrentWeatherFile = ResourcesFolder + "currentweather.json";
+        public DataManager()
+        {
+            _sQL = new SQL(DataBaseFile);
+        }
         public async System.Threading.Tasks.Task Initialize()
         {
-            _sQL = new SQL(ResourcesFolder);
             Tags = await _sQL.GetTagList();
             Tasks = await _sQL.GetTaskList(null, false, Tags);
         }

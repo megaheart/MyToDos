@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Storage
 {
-    static class TimeInfosStorageConverter
+    public static class TimeInfosStorageConverter
     {
         public static ObservableCollection<TimeInfo> Parse(string s)
         {
