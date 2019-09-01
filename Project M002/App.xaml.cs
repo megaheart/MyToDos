@@ -17,6 +17,7 @@ namespace MyToDos
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             App.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
+            (new MainWindow()).ShowDialog();
             //MyToDos.Properties.Settings.Default.
             //DataManager.Current.Initialize().Wait();//.ContinueWith(t=> {
             //    if (t.IsFaulted) throw t.Exception;

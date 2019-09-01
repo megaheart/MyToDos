@@ -14,7 +14,7 @@ namespace Storage
         {
             ObservableCollection<TimeInfo> ouput = new ObservableCollection<TimeInfo>();
             string[] list = s.Split('|');
-            for(int i = 1; i < s.Length; i += 2)
+            for(int i = 1; i < list.Length; i += 2)
             {
                 TimeSpan? activeTimeOfDay = null;
                 if (list[i - 1].Length != 0) activeTimeOfDay = TimeSpan.ParseExact(list[i - 1], "hhmm", null);
@@ -35,7 +35,7 @@ namespace Storage
                 else output += '|';
                 for (int i = 1; i < timeInfos.Count; i ++)
                 {
-                    if (timeInfos[i].ActiveTimeOfDay.HasValue) output += timeInfos[i].ActiveTimeOfDay.Value.ToString("hhmm");
+                    if (timeInfos[i].ActiveTimeOfDay.HasValue) output += '|' + timeInfos[i].ActiveTimeOfDay.Value.ToString("hhmm");
                     if (timeInfos[i].Limit.HasValue) output += '|' + timeInfos[i].Limit.Value.ToString("hhmm");
                     else output += '|';
                 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    class CustomRepeater : Repeater
+    public class CustomRepeater : Repeater
     {
         public CustomRepeater(int repeatEveryNDays)
         {

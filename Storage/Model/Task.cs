@@ -14,7 +14,7 @@ namespace Storage.Model
         Unavailable,
         Expired
     }
-    public class Task : NotifiableObject, IRecyclable
+    public class Task : NotifiableObject, IRecyclable, INoteTaking, ISQLUpdatePropertyChanged
     {
         public Task()
         {
@@ -23,7 +23,7 @@ namespace Storage.Model
         }
         public Task(string title, string id, Repeater repeater, DateTime? activatedTime, DateTime? expiryTime, ObservableCollection<TimeInfo> time, ObservableCollection<Tag> tags, string webAddress)
         {
-            _id = ID;
+            _id = id;
             _title = title;
             _repeater = repeater;
             _activatedTime = activatedTime.HasValue ? activatedTime.Value : DateTime.MinValue;
@@ -38,26 +38,35 @@ namespace Storage.Model
         private ObservableCollection<TimeInfo> _time;
         public ObservableCollection<TimeInfo> Time
         {
-            internal set
+            set
             {
                 if(value != _time)
                 {
                     _time = value;
+                    _time.CollectionChanged += TimeChanged;
                     OnPropertyChanged("Time");
+                    SQLUpdateProperty?.Invoke(ID, "Time", TimeInfosStorageConverter.ToString(_time));
                 }
             }
             get =>_time;
         }
+
+        private void TimeChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            SQLUpdateProperty?.Invoke(ID, "Time", TimeInfosStorageConverter.ToString(_time));
+        }
+
         protected Repeater _repeater;
         public Repeater Repeater
         {
-            internal set
+            set
             {
                 if (_repeater != value)
                 {
                     _repeater = value;
                     _repeater.RepeaterInfoChanged += OnRepeaterInfoChanged;
                     OnPropertyChanged("Repeater");
+                    SQLUpdateProperty?.Invoke(ID, "Repeater", RepeaterStorageConverter.ToString(_repeater));
                 }
             }
             get
@@ -65,16 +74,22 @@ namespace Storage.Model
                 return _repeater;
             }
         }
-        private void OnRepeaterInfoChanged() => OnPropertyChanged("Repeater");
+        private void OnRepeaterInfoChanged()
+        {
+            OnPropertyChanged("Repeater");
+            SQLUpdateProperty?.Invoke(ID, "Repeater", RepeaterStorageConverter.ToString(_repeater));
+        }
+
         protected string _title;
         public string Title
         {
-            internal set
+            set
             {
                 if (_title != value)
                 {
                     _title = value;
                     OnPropertyChanged("Title");
+                    SQLUpdateProperty?.Invoke(ID, "Title", _title);
                 }
             }
             get
@@ -82,39 +97,67 @@ namespace Storage.Model
                 return _title;
             }
         }
-        protected string _description;
-        public string Description
-        {
-            internal set
-            {
-                if (_description != value)
-                {
-                    _description = value;
-                    OnPropertyChanged("Description");
-                }
-            }
-            get
-            {
-                return _description;
-            }
-        }
+        //protected string _description;
+        //public string Description
+        //{
+        //    set
+        //    {
+        //        if (_description != value)
+        //        {
+        //            _description = value;
+        //            OnPropertyChanged("Description");
+        //        }
+        //    }
+        //    get
+        //    {
+        //        return _description;
+        //    }
+        //}
         private ObservableCollection<Tag> _tags;
         public ObservableCollection<Tag> Tags
         {
             get => _tags;
-            internal set
+            set
             {
                 if (_tags != value)
                 {
                     _tags = value;
+                    _tags.CollectionChanged += TagsChanged;
                     OnPropertyChanged("Tags");
+                    string tags;
+                    if (_tags.Count == 0) tags = "";
+                    else
+                    {
+                        tags = _tags[0].ID;
+                        for (int i = 1; i < _tags.Count; ++i)
+                        {
+                            tags += "," + _tags[i].ID;
+                        }
+                    }
+                    SQLUpdateProperty?.Invoke(ID, "Tags", tags);
                 }
             }
         }
+
+        private void TagsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            string tags;
+            if (_tags.Count == 0) tags = "";
+            else
+            {
+                tags = _tags[0].ID;
+                for (int i = 1; i < _tags.Count; ++i)
+                {
+                    tags += "," + _tags[i].ID;
+                }
+            }
+            SQLUpdateProperty?.Invoke(ID, "Tags", tags);
+        }
+
         private string _id = "";
         public string ID
         {
-            internal set
+            set
             {
                 if (_id != "") throw new InvalidOperationException("ID is only set once.");
                 _id = value;
@@ -127,11 +170,12 @@ namespace Storage.Model
         private string _webAddress;
         public string WebAddress
         {
-            internal set
+            set
             {
                 if (_webAddress != value)
                 {
                     _webAddress = value;
+                    SQLUpdateProperty?.Invoke(ID, "WebAddress", _webAddress);
                 }
             }
             get => _webAddress;
@@ -139,27 +183,35 @@ namespace Storage.Model
         private DateTime _activatedTime;
         public DateTime ActivatedTime
         {
-            internal set
+            set
             {
                 if (_activatedTime != value)
                 {
                     _activatedTime = value;
+                    SQLUpdateProperty?.Invoke(ID, "ActivatedTime", value.ToString("yyyy-MM-dd HH:mm"));
                 }
             }
             get => _activatedTime;
         }
         private DateTime _expiryTime;
+
+        public event SQLUpdatePropertyChangedEventHandler SQLUpdateProperty;
+
         public DateTime ExpiryTime
         {
-            internal set
+            set
             {
                 if (_expiryTime != value)
                 {
                     _expiryTime = value;
+                    SQLUpdateProperty?.Invoke(ID, "ExpiryTime", value.ToString("yyyy-MM-dd HH:mm"));
                 }
             }
             get => _expiryTime;
         }
+
+        public bool HasNote { internal set; get; }
+
         public TaskStatus GetStatusOn(DateTime date)
         {
             if (date >= _expiryTime) return TaskStatus.Expired;
@@ -172,7 +224,7 @@ namespace Storage.Model
         public Task Clone()
         {
             Task task = new Task();
-            task._description = this._description;
+            //task._description = this._description;
             task._id = this._id;
             task._repeater = this._repeater.Clone();
             task._tags = new ObservableCollection<Tag>(this._tags);
