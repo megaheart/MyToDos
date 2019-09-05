@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public interface IIdentifiedObject
+    public class NoteTaking : IdentifiedObject, INoteTaking
     {
-        string ID { get; set; }
+        public bool HasNote { get; internal set; }
     }
 }

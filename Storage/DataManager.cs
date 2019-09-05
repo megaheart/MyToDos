@@ -7,6 +7,7 @@ using Storage.Model;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.IO;
+using t = System.Threading.Tasks;
 
 namespace Storage
 {
@@ -25,80 +26,67 @@ namespace Storage
         public static string DataBaseFile = ResourcesFolder + "mega.db";
         public static string DailyWeatherFile = ResourcesFolder + "dailyweather.json";
         public static string CurrentWeatherFile = ResourcesFolder + "currentweather.json";
+        private SQL _sQL;
         public DataManager()
         {
             _sQL = new SQL(DataBaseFile);
         }
-        public async System.Threading.Tasks.Task Initialize()
+        public async t.Task Initialize()
         {
-            Tags = await _sQL.GetTagList();
-            Tasks = await _sQL.GetTaskList(null, false, Tags);
-            DailyWeathers = new ObservableCollection<DailyWeatherInformation>();
+            Tags = new SQLCollection<Tag>(await _sQL.GetTagListAsync());
+            var getTaskList = _sQL.GetTaskListAsync("True", Tags);
+            var getDailyWeathersData = GetDailyWeathersDataAsync();
+            Tags.SQLInsertsItem += InsertTag;
+            Tags.SQLRemovesItem += RemoveTag;
+            Tags.SQLUpdatesItem += EditTag;
+            Tasks = new SQLCollection<Task>(await getTaskList);
+            Tasks.SQLInsertsItem += InsertTask;
+            Tasks.SQLRemovesItem += MoveTaskToGarbage;
+            Tasks.SQLUpdatesItem += EditTask;
+            DailyWeathers = await getDailyWeathersData;
         }
-        private SQL _sQL;
-        
-        public ObservableCollection<Tag> Tags { get; private set; }
-        public void InsertTag(Tag tag)
+        public SQLCollection<Tag> Tags { get; private set; }
+        public void InsertTag(IIdentifiedObject tag)
         {
-            //SaveData
-            _sQL.Insert(tag);
-            //Update Model (UI)
-            Tags.Add(tag);
+            _sQL.InsertAsync(tag as Tag);
         }
-        public void RemoveTag(Tag tag)
+        public void RemoveTag(IIdentifiedObject tag)
         {
-            //SaveData
-            _sQL.Remove(SQL.Tag, tag.ID);
-            //Update Model (UI)
-            Tags.Remove(tag);
-        }
-        public void EditTag<T>(Tag tag, string property, T value)
-        {
-            //SaveData
-            _sQL.Update(SQL.Tag, tag.ID, property, value.ToString());
-            //Update Model (UI)
-            typeof(Tag).GetProperty(property).SetValue(tag, value);
-            throw new Exception("Building");
-        }
-        public ObservableCollection<Task> Tasks { get; private set; }
-        public void InsertTask(Task task)
-        {
-            //SaveData
-            _sQL.Insert(task);
-            //Update Model (UI)
-            Tasks.Add(task);
-        }
-        public void MoveTaskToGarbage(Task task)
-        {
-            //SaveData
-            _sQL.MoveToGarbage(SQL.Task, task.ID);
-            //Update Model (UI)
-            Tasks.Remove(task);
-            if (_garbageTasks != null) _garbageTasks.Add(task);
-        }
-        public void EditTask(Task task, string property, string value)
-        {
-            //SaveData
-            _sQL.Update(SQL.Task, task.ID, property, value);
-            //Update Model (UI)
-            typeof(Task).GetProperty(property).SetValue(task, value);
-            if(property == "Time")
+            Tag _tag = tag as Tag;
+            foreach(var i in Tasks)
             {
-
-                
+                i.Tags.Remove(_tag);
             }
-            throw new Exception("Building");
+            _sQL.RemoveAsync(SQL.Tag, tag.ID);
         }
-        public void EditTask(Task task, string property, DateTime value)
+        public void EditTag(string id, string property, string value)
         {
-            //SaveData
-            _sQL.Update(SQL.Tag, task.ID, property, value);
-            //Update Model (UI)
-            typeof(Task).GetProperty(property).SetValue(task, value);
-            throw new Exception("Building");
+            _sQL.UpdateAsync(SQL.Tag, id, property, value);
+        }
+        public SQLCollection<Task> Tasks { get; private set; }
+        public void InsertTask(IIdentifiedObject task)
+        {
+            _sQL.InsertAsync(task as Task);
+        }
+        public void MoveTaskToGarbage(IIdentifiedObject task)
+        {
+            _sQL.RemoveAsync(SQL.Task, task.ID);
+        }
+        public void EditTask(string id, string property, string value)
+        {
+            _sQL.UpdateAsync(SQL.Task, id, property, value);
         }
         public ObservableCollection<DailyWeatherInformation> DailyWeathers { get; private set; }
-        public async System.Threading.Tasks.Task UpdateDailyWeathers(string json)
+        public async t.Task<ObservableCollection<DailyWeatherInformation>> GetDailyWeathersDataAsync()
+        {
+            FileStream file = File.Open(DailyWeatherFile, FileMode.OpenOrCreate);
+            StreamReader reader = new StreamReader(file);
+            var json = await reader.ReadToEndAsync();
+            reader.Close();
+            file.Close();
+            return JsonConvert.DeserializeObject<ObservableCollection<DailyWeatherInformation>>(json);
+        }
+        public async t.Task UpdateDailyWeathersAsync(string json)
         {
             JObject jObject = JObject.Parse(json);
             JArray array = jObject.Value<JArray>("DailyForecasts");
@@ -115,66 +103,66 @@ namespace Storage
             file.Close();
         }
         //public ObservableCollection<WeatherInformation> Weathers12Hours { get; private set; }
-        private ObservableCollection<Task> _garbageTasks;
-        public async System.Threading.Tasks.Task<ObservableCollection<Task>> GetGarbageTasks()
+        public async t.Task<SQLGarbageCollection<Task>> GetGarbageTasksAsync()
         {
-            if(_garbageTasks == null)
-            {
-                _garbageTasks = await _sQL.GetTaskList(null, true, Tags);
-            }
-            return _garbageTasks;
+            var garbageTasks = new SQLGarbageCollection<Task>(await _sQL.GetGarbageTaskCollectionAsync());
+            garbageTasks.SQLClearsAllItems += GarbageTasksClearsAllItems;
+            garbageTasks.SQLRemovesItem += GarbageTasksRemovesItem;
+            garbageTasks.SQLRestoresItem += GarbageTasksRestoresItem;
+            return garbageTasks;
         }
-        public void DisposeGarbageTasks()
+
+        private async void GarbageTasksRestoresItem(IIdentifiedObject item)
         {
-            _garbageTasks = null;
-            GC.Collect();
+            await _sQL.RestoreFromGarbageAsync(SQL.Task, item.ID);
+            List<Task> tasks = await _sQL.GetTaskListAsync("ID=" + item.ID, Tags);
+            Tasks.RestoreItem(tasks[0]);
         }
-        public void RestoreTaskFromGarbage(Task task)
+
+        private void GarbageTasksRemovesItem(IIdentifiedObject item)
         {
-            //SaveData
-            _sQL.RestoreFromGarbage(SQL.Task, task.ID);
-            //Update Model (UI)
-            _garbageTasks.Remove(task);
-            Tasks.Add(task);
+            _sQL.RemoveFromGarbageAsync(SQL.Task, item.ID).ContinueWith(t=> { if (t.IsFaulted) throw t.Exception; });
         }
-        public void RemoveTaskFromGarbage(Task task)
+
+        private void GarbageTasksClearsAllItems()
         {
-            //SaveData
-            _sQL.RemoveFromGarbage(SQL.Task, task.ID);
-            //Update Model (UI)
-            _garbageTasks.Remove(task);
+            _sQL.RemoveAllFromGarbageAsync(SQL.Task).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; }); ;
         }
-        public async System.Threading.Tasks.Task<string> GetNoteText(INoteTaking o)
-            => await _sQL.GetStringProperty(SQL.Note, "ID=" + o.ID, "Content");
-        public void SetNoteText(INoteTaking o, string content)
+        public async t.Task<string> GetNoteTextAsync(INoteTaking o)
+        {
+            if (o.HasNote)
+                return await _sQL.GetStringPropertyAsync(SQL.Note, "ID='" + o.ID + "'", "Content");
+            return "";
+        }
+        public async t.Task SetNoteTextAsync(INoteTaking o, string content)
         {
             if (o.HasNote)
             {
                 if (content == "" || content == null)
-                    _sQL.Remove(SQL.Note, o.ID);
+                {
+                    await _sQL.RemoveAsync(SQL.Note, o.ID);
+                    (o as NoteTaking).HasNote = false;
+                }
                 else
-                    _sQL.Update(SQL.Note, o.ID, "Content", content);
+                    await _sQL.UpdateAsync(SQL.Note, o.ID, "Content", content);
             }
             else
             {
-                _sQL.InsertNote(o.ID, content);
+                await _sQL.InsertNoteAsync(o.ID, content);
+                (o as NoteTaking).HasNote = true;
             }
         }
-        public async System.Threading.Tasks.Task<string> GetExtentedNoteText(INoteTaking o, DateTime time)
-            => await _sQL.GetStringProperty(SQL.ExtendedNote, "ID=" + o.ID + " AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content");
-        public void SetExtentedNoteText(INoteTaking o, DateTime time, string content)
+        public async t.Task<NoteInfo[]> GetExistExtendedNoteInfosAsync()
+            => await _sQL.GetExistExtendedNoteInfosAsync();
+        public async t.Task<string> GetExtentedNoteTextAsync(INoteTaking o, DateTime time)
+            => await _sQL.GetStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content");
+        public async t.Task SetExtentedNoteTextAsync(INoteTaking o, DateTime time, string content)
         {
-            if (o.HasNote)
-            {
-                if (content == "" || content == null)
-                    _sQL.Remove(SQL.Note, o.ID);
-                else
-                    _sQL.SetStringProperty(SQL.ExtendedNote, "ID=" + o.ID + " AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content", content);
-            }
-            else
-            {
-                _sQL.InsertExtendedNote(o.ID, time, content);
-            }
+            await _sQL.SetStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content", content);
+        }
+        public async t.Task RemoveExtendedNoteAsync(INoteTaking o, DateTime time)
+        {
+            await _sQL.RemoveAsync(SQL.Note, o.ID, "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'");
         }
     }
 }

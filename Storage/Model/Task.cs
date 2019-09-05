@@ -14,12 +14,13 @@ namespace Storage.Model
         Unavailable,
         Expired
     }
-    public class Task : NotifiableObject, IRecyclable, INoteTaking, ISQLUpdatePropertyChanged
+    public class Task : NoteTaking, IRecyclable, ISQLUpdatePropertyChanged
     {
         public Task()
         {
             _tags = new ObservableCollection<Tag>();
             _time = new ObservableCollection<TimeInfo>();
+            //_id = "";
         }
         public Task(string title, string id, Repeater repeater, DateTime? activatedTime, DateTime? expiryTime, ObservableCollection<TimeInfo> time, ObservableCollection<Tag> tags, string webAddress)
         {
@@ -34,6 +35,15 @@ namespace Storage.Model
             else _tags = tags;
             _webAddress = webAddress;
         }
+        /// <summary>
+        /// !!! - Only use to create garbage task - !!!
+        /// </summary>
+        internal Task(string title, string id)
+        {
+            _id = id;
+            _title = title;
+        }
+        public event SQLUpdatePropertyChangedEventHandler SQLUpdateProperty;
         //public long LastChange { private set; get; }
         private ObservableCollection<TimeInfo> _time;
         public ObservableCollection<TimeInfo> Time
@@ -45,7 +55,7 @@ namespace Storage.Model
                     _time = value;
                     _time.CollectionChanged += TimeChanged;
                     OnPropertyChanged("Time");
-                    SQLUpdateProperty?.Invoke(ID, "Time", TimeInfosStorageConverter.ToString(_time));
+                    SQLUpdateProperty?.Invoke(_id, "Time", TimeInfosStorageConverter.ToString(_time));
                 }
             }
             get =>_time;
@@ -53,7 +63,7 @@ namespace Storage.Model
 
         private void TimeChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            SQLUpdateProperty?.Invoke(ID, "Time", TimeInfosStorageConverter.ToString(_time));
+            SQLUpdateProperty?.Invoke(_id, "Time", TimeInfosStorageConverter.ToString(_time));
         }
 
         protected Repeater _repeater;
@@ -66,7 +76,7 @@ namespace Storage.Model
                     _repeater = value;
                     _repeater.RepeaterInfoChanged += OnRepeaterInfoChanged;
                     OnPropertyChanged("Repeater");
-                    SQLUpdateProperty?.Invoke(ID, "Repeater", RepeaterStorageConverter.ToString(_repeater));
+                    SQLUpdateProperty?.Invoke(_id, "Repeater", RepeaterStorageConverter.ToString(_repeater));
                 }
             }
             get
@@ -77,7 +87,7 @@ namespace Storage.Model
         private void OnRepeaterInfoChanged()
         {
             OnPropertyChanged("Repeater");
-            SQLUpdateProperty?.Invoke(ID, "Repeater", RepeaterStorageConverter.ToString(_repeater));
+            SQLUpdateProperty?.Invoke(_id, "Repeater", RepeaterStorageConverter.ToString(_repeater));
         }
 
         protected string _title;
@@ -89,7 +99,7 @@ namespace Storage.Model
                 {
                     _title = value;
                     OnPropertyChanged("Title");
-                    SQLUpdateProperty?.Invoke(ID, "Title", _title);
+                    SQLUpdateProperty?.Invoke(_id, "Title", _title);
                 }
             }
             get
@@ -134,7 +144,7 @@ namespace Storage.Model
                             tags += "," + _tags[i].ID;
                         }
                     }
-                    SQLUpdateProperty?.Invoke(ID, "Tags", tags);
+                    SQLUpdateProperty?.Invoke(_id, "Tags", tags);
                 }
             }
         }
@@ -151,21 +161,7 @@ namespace Storage.Model
                     tags += "," + _tags[i].ID;
                 }
             }
-            SQLUpdateProperty?.Invoke(ID, "Tags", tags);
-        }
-
-        private string _id = "";
-        public string ID
-        {
-            set
-            {
-                if (_id != "") throw new InvalidOperationException("ID is only set once.");
-                _id = value;
-            }
-            get
-            {
-                return _id;
-            }
+            SQLUpdateProperty?.Invoke(_id, "Tags", tags);
         }
         private string _webAddress;
         public string WebAddress
@@ -175,7 +171,7 @@ namespace Storage.Model
                 if (_webAddress != value)
                 {
                     _webAddress = value;
-                    SQLUpdateProperty?.Invoke(ID, "WebAddress", _webAddress);
+                    SQLUpdateProperty?.Invoke(_id, "WebAddress", _webAddress);
                 }
             }
             get => _webAddress;
@@ -188,15 +184,12 @@ namespace Storage.Model
                 if (_activatedTime != value)
                 {
                     _activatedTime = value;
-                    SQLUpdateProperty?.Invoke(ID, "ActivatedTime", value.ToString("yyyy-MM-dd HH:mm"));
+                    SQLUpdateProperty?.Invoke(_id, "ActivatedTime", value.ToString("yyyy-MM-dd HH:mm"));
                 }
             }
             get => _activatedTime;
         }
         private DateTime _expiryTime;
-
-        public event SQLUpdatePropertyChangedEventHandler SQLUpdateProperty;
-
         public DateTime ExpiryTime
         {
             set
@@ -204,14 +197,11 @@ namespace Storage.Model
                 if (_expiryTime != value)
                 {
                     _expiryTime = value;
-                    SQLUpdateProperty?.Invoke(ID, "ExpiryTime", value.ToString("yyyy-MM-dd HH:mm"));
+                    SQLUpdateProperty?.Invoke(_id, "ExpiryTime", value.ToString("yyyy-MM-dd HH:mm"));
                 }
             }
             get => _expiryTime;
         }
-
-        public bool HasNote { internal set; get; }
-
         public TaskStatus GetStatusOn(DateTime date)
         {
             if (date >= _expiryTime) return TaskStatus.Expired;
@@ -225,7 +215,6 @@ namespace Storage.Model
         {
             Task task = new Task();
             //task._description = this._description;
-            task._id = this._id;
             task._repeater = this._repeater.Clone();
             task._tags = new ObservableCollection<Tag>(this._tags);
             task._title = this._title;

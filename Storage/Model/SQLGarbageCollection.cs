@@ -8,9 +8,30 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public class SQLGarbageCollection<T>:CollectionForIdentificationObject<T>, INotifyCollectionChanged, INotifyPropertyChanged 
-        where T:IIdentifiedObject,ISQLUpdatePropertyChanged
+    public class SQLGarbageCollection<T> : CollectionForIdentificationObject<T>, INotifyCollectionChanged, INotifyPropertyChanged
+        where T : IIdentifiedObject, ISQLUpdatePropertyChanged
     {
-        //throw Exception when change any ISQLUpdatePropertyChanged properties
+        public SQLGarbageCollection() : base() { }
+        public SQLGarbageCollection(IEnumerable<T> list) : base(list) { }
+        public event SQLCollectionChangedEventHandler SQLRestoresItem;
+        public event SQLCollectionChangedEventHandler SQLRemovesItem;
+        public event Action SQLClearsAllItems;
+        public void RestoreFromGarbage(T item)
+        {
+            SQLRestoresItem(item);
+            int index = IndexOfID(item.ID);
+            RemoveItem(index);
+        }
+        public void RemoveFromGarbage(T item)
+        {
+            SQLRemovesItem(item);
+            int index = IndexOfID(item.ID);
+            RemoveItem(index);
+        }
+        public void RemoveAllFromGarbage()
+        {
+            SQLClearsAllItems();
+            ClearItems();
+        }
     }
 }

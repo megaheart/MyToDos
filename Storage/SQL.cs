@@ -116,7 +116,13 @@ namespace Storage
         public async t.Task RemoveAsync(SQLType type, string id)
         {
             //if (type.IsRecyclable) throw new Exception("Can't remove a IRecyclable type, please use SQL.MoveToGarbage method");
-            string cmd = String.Format("DELETE FROM {0} WHERE ID = '{1}';", type.TableName, id);
+            string cmd = String.Format("DELETE FROM {0} WHERE ID='{1}';", type.TableName, id);
+            await ExecuteQueryAsync(cmd);
+        }
+        public async t.Task RemoveAsync(SQLType type, string id, string anotherCondition)
+        {
+            //if (type.IsRecyclable) throw new Exception("Can't remove a IRecyclable type, please use SQL.MoveToGarbage method");
+            string cmd = String.Format("DELETE FROM {0} WHERE ID='{1}' AND {2};", type.TableName, id, anotherCondition);
             await ExecuteQueryAsync(cmd);
         }
         public async t.Task RemoveAllFromGarbageAsync(SQLType type)
@@ -141,7 +147,13 @@ namespace Storage
         public async t.Task RestoreFromGarbageAsync(SQLType type, string id)
         {
             //if (!type.IsRecyclable) throw new Exception("SQL.RestoreFromGarbage doesn't support unrecyclable type");
-            string cmd = String.Format(@"INSERT INTO {0} SELECT * FROM {0}Garbage WHERE ID = '{1}';DELETE FROM {0}Garbage WHERE ID = '{1}';",
+            string cmd = String.Format(@"INSERT INTO {0} SELECT * FROM {0}Garbage WHERE ID = '{1}';DELETE FROM {0}Garbage WHERE ID = '{1}';
+                                        PRAGMA foreign_keys = 0;
+                                        CREATE TABLE _{0} AS SELECT * FROM {0} ORDER BY LENGTH(ID),ID;
+                                        DROP TABLE {0};
+                                        CREATE TABLE {0} AS SELECT * FROM _{0};
+                                        DROP TABLE _{0};
+                                        PRAGMA foreign_keys = 1;",
                 type.TableName, id);
             await ExecuteQueryAsync(cmd);
         }
@@ -193,34 +205,48 @@ namespace Storage
         ///
 
 
-        /// <summary>
-        /// Query a list of tasks which predicate(task) returns true :)
-        /// </summary>
-        /// <param name="predicate">
-        /// The boolean function to filter Tasks
-        /// </param>
-        /// <param name="isGarbage">
-        /// Return Tasks from garbage if set true
-        /// Return Tasks from main database if set false
-        /// Default value is false
-        /// </param>
-        /// <returns></returns>
-        public async t.Task<ObservableCollection<Task>>
-            GetTaskListAsync(Predicate<Task> predicate, bool isGarbage, ObservableCollection<Tag> tagList)
+        // <summary>
+        // Query a list of tasks which predicate(task) returns true :)
+        // </summary>
+        // <param name="predicate">
+        // The boolean function to filter Tasks
+        // </param>
+        // <returns></returns>
+        //public async t.Task<List<Task>>
+        //    GetTaskListAsync(Predicate<Task> predicate, List<Tag> tagList)
+        //{
+        //    List<Task> tasks = new List<Task>();
+        //    await _sQLite.OpenAsync();
+        //    SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
+        //    sQLiteCommand.CommandText = "SELECT * FROM Tasks;";
+        //    DbDataReader reader = await sQLiteCommand.ExecuteReaderAsync();
+        //    if (predicate == null) predicate = t => true;
+        //    var emptyArray = new Tag[0];
+        //    while (await reader.ReadAsync())
+        //    {
+        //        string title = reader[0].ToString();
+        //        string ID = reader[1].ToString();
+        //        Repeater repeater = RepeaterStorageConverter.Parse(reader[2].ToString());
+        //        DateTime activatedTime = reader.GetDateTime(3);
+        //        DateTime expiryTime = reader.GetDateTime(4);
+        //        ObservableCollection<TimeInfo> time = TimeInfosStorageConverter.Parse(reader[5].ToString());
+        //        Tag[] tags = emptyArray;
+        //        string s_tags = reader[6].ToString();
+        //        if (s_tags != "") tags = Array.ConvertAll(s_tags.Split(','), x => tagList.First(y => y.ID == x));
+        //        string webAddress = reader[7].ToString();
+        //        Task task = new Task(title, ID, repeater, activatedTime, expiryTime, time, new ObservableCollection<Tag>(tags), webAddress);
+        //        if (predicate(task)) tasks.Add(task);
+        //    }
+        //    _sQLite.Close();
+        //    return tasks;
+        //}
+        public async t.Task<List<Task>> GetTaskListAsync(string conditions, CollectionForIdentificationObject<Tag> tagList)
         {
-            ObservableCollection<Task> tasks = new ObservableCollection<Task>();
+            List<Task> tasks = new List<Task>();
             await _sQLite.OpenAsync();
             SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
-            if (isGarbage)
-            {
-                sQLiteCommand.CommandText = "SELECT * FROM TasksGarbage;";
-            }
-            else
-            {
-                sQLiteCommand.CommandText = "SELECT * FROM Tasks;";
-            }
-            DbDataReader reader = await sQLiteCommand.ExecuteReaderAsync();
-            if (predicate == null) predicate = t => true;
+            sQLiteCommand.CommandText = "SELECT * FROM Tasks WHERE " + conditions + ";";
+            var reader = await sQLiteCommand.ExecuteReaderAsync();
             var emptyArray = new Tag[0];
             while (await reader.ReadAsync())
             {
@@ -232,10 +258,28 @@ namespace Storage
                 ObservableCollection<TimeInfo> time = TimeInfosStorageConverter.Parse(reader[5].ToString());
                 Tag[] tags = emptyArray;
                 string s_tags = reader[6].ToString();
-                if (s_tags != "") tags = Array.ConvertAll(s_tags.Split(','), x => tagList.First(y => y.ID == x));
+                if (s_tags != "") tags = Array.ConvertAll(s_tags.Split(','), x => tagList[tagList.IndexOfID(x)]);
                 string webAddress = reader[7].ToString();
                 Task task = new Task(title, ID, repeater, activatedTime, expiryTime, time, new ObservableCollection<Tag>(tags), webAddress);
-                if (predicate(task)) tasks.Add(task);
+                task.HasNote = 
+                tasks.Add(task);
+            }
+            _sQLite.Close();
+            return tasks;
+        }
+        public async t.Task<List<Task>> GetGarbageTaskCollectionAsync()
+        {
+            List<Task> tasks = new List<Task>();
+            await _sQLite.OpenAsync();
+            SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
+            sQLiteCommand.CommandText = "SELECT Title,ID FROM TasksGarbage;";
+            DbDataReader reader = await sQLiteCommand.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                string title = reader[0].ToString();
+                string ID = reader[1].ToString();
+                Task task = new Task(title, ID);
+                tasks.Add(task);
             }
             _sQLite.Close();
             return tasks;
@@ -254,9 +298,9 @@ namespace Storage
         // use SQL.Remove to remove Tag
         ///
 
-        public async t.Task<ObservableCollection<Tag>> GetTagListAsync()
+        public async t.Task<List<Tag>> GetTagListAsync()
         {
-            ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
+            List<Tag> tags = new List<Tag>();
             await _sQLite.OpenAsync();
             SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
             sQLiteCommand.CommandText = String.Format(@"SELECT * FROM Tags;");
@@ -338,21 +382,6 @@ namespace Storage
         ///
         // use SQL.GetStringProperty to get Content of Note
         ///
-        public async t.Task<NoteInfo[]> GetExistNoteInfosAsync()
-        {
-            List<NoteInfo> noteInfos = new List<NoteInfo>();
-            await _sQLite.OpenAsync();
-            SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
-            sQLiteCommand.CommandText = String.Format(@"SELECT ID FROM Notes;");
-            DbDataReader reader = await sQLiteCommand.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                string id = reader[0].ToString();
-                noteInfos.Add(new NoteInfo() { ID = id });
-            }
-            _sQLite.Close();
-            return noteInfos.ToArray();
-        }
         #endregion
         #region Extended Note Query Method
         /// <summary>

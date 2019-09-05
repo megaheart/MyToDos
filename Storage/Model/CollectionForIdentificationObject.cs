@@ -89,9 +89,11 @@ namespace Storage.Model
             CollectionChanged?.Invoke(this,
                  new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
-        protected void InsertItem(int index, T item)
+        protected void InsertItem(T item)
         {
             //if (Contains(item)) throw new Exception("CollectionForIdentificationObject.cs InsertItem failed: item existed");
+            int index = _items.Count;
+            while (index > 0 && CompareID(_items[index - 1].ID, item.ID) > 0) --index;
             _items.Insert(index, item);
             OnPropertyChanged("Item[]");
             OnPropertyChanged("Count");

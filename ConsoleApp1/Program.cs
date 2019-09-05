@@ -16,7 +16,7 @@ namespace ConsoleApp1
         static ExceptionTest test = new ExceptionTest();
         static void Main(string[] args)
         {
-            test.DataManager_Initialize();
+            test.SQL_GetNote();
             Console.ReadLine();
         }
     }
@@ -25,10 +25,10 @@ namespace ConsoleApp1
         public void DataManager_Initialize()
         {
             SQL sQL = new SQL(DataManager.DataBaseFile);
-            ObservableCollection<Tag> Tags = sQL.GetTagList().Result;
+            List<Tag> Tags = sQL.GetTagListAsync().Result;
             var a = SQL_GetTaskList(null, false, Tags);
         }
-        public ObservableCollection<Task> SQL_GetTaskList(Predicate<Task> predicate, bool isGarbage, ObservableCollection<Tag> tagList)
+        public ObservableCollection<Task> SQL_GetTaskList(Predicate<Task> predicate, bool isGarbage, List<Tag> tagList)
         {
             SQLiteConnection _sQLite = new SQLiteConnection("Data Source = " + DataManager.DataBaseFile + "; Version = 3;");
             ObservableCollection<Task> tasks = new ObservableCollection<Task>();
@@ -163,7 +163,7 @@ namespace ConsoleApp1
             SQL sQL = new SQL(DataManager.DataBaseFile);
             foreach(var i in tasks)
             {
-                sQL.Insert(i);
+                sQL.InsertAsync(i);
             }
             
         }
@@ -183,9 +183,29 @@ namespace ConsoleApp1
             SQL sQL = new SQL(DataManager.DataBaseFile);
             foreach (var i in tags)
             {
-                sQL.Insert(i);
+                sQL.InsertAsync(i);
             }
 
         }
+        public void SQL_GetNote()
+        {
+            DataManager data = new DataManager();
+            string content;
+            string[] ids = new string[] { "1vzpgk5Cjg", "CZnuyEZXRO", "1I8CGu4xHl2", "xxxx" };
+            foreach(var i in ids)
+            {
+                data.GetNoteTextAsync(new NoteTaking() { ID = i }).ContinueWith(t =>
+                {
+
+                    
+                });
+            }
+        }
+    }
+    class NoteTaking : INoteTaking
+    {
+        public bool HasNote => throw new NotImplementedException();
+
+        public string ID { get; set; }
     }
 }

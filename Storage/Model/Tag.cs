@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public class Tag : NotifiableObject,IIdentifiedObject, ISQLUpdatePropertyChanged
+    public class Tag : IdentifiedObject, ISQLUpdatePropertyChanged
     {
         public bool IsDefault { get; private set; }
         public Tag()
@@ -41,19 +41,10 @@ namespace Storage.Model
                 return _title;
             }
         }
-        protected string _id = "";
-        public string ID
-        {
-            set
-            {
-                if (_id != "") throw new Exception("Can't set ID property of Tag object twice.");
-                _id = value;
-            }
-            get
-            {
-                return _id;
-            }
-        }
+        //internal void ResetID()
+        //{
+            
+        //}
         protected string _color;
 
         public event SQLUpdatePropertyChangedEventHandler SQLUpdateProperty;
