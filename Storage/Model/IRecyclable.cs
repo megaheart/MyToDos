@@ -9,7 +9,7 @@ namespace Storage.Model
     /// <summary>
     /// IRecyclable inteface can be restored from garbage
     /// </summary>
-    interface IRecyclable
+    interface IRecyclable:INoteTaking
     {
     }
 }

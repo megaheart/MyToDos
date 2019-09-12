@@ -128,20 +128,20 @@ namespace Storage
         {
             _sQL.RemoveAllFromGarbageAsync(SQL.Task).ContinueWith(t => { if (t.IsFaulted) throw t.Exception; }); ;
         }
-        public async t.Task<string> GetNoteTextAsync(INoteTaking o)
+        public async t.Task<string> GetNoteTextAsync(NoteTaking o)
         {
             if (o.HasNote)
                 return await _sQL.GetStringPropertyAsync(SQL.Note, "ID='" + o.ID + "'", "Content");
             return "";
         }
-        public async t.Task SetNoteTextAsync(INoteTaking o, string content)
+        public async t.Task SetNoteTextAsync(NoteTaking o, string content)
         {
             if (o.HasNote)
             {
                 if (content == "" || content == null)
                 {
                     await _sQL.RemoveAsync(SQL.Note, o.ID);
-                    (o as NoteTaking).HasNote = false;
+                    o.HasNote = false;
                 }
                 else
                     await _sQL.UpdateAsync(SQL.Note, o.ID, "Content", content);
@@ -149,18 +149,18 @@ namespace Storage
             else
             {
                 await _sQL.InsertNoteAsync(o.ID, content);
-                (o as NoteTaking).HasNote = true;
+                o.HasNote = true;
             }
         }
         public async t.Task<NoteInfo[]> GetExistExtendedNoteInfosAsync()
             => await _sQL.GetExistExtendedNoteInfosAsync();
-        public async t.Task<string> GetExtentedNoteTextAsync(INoteTaking o, DateTime time)
+        public async t.Task<string> GetExtentedNoteTextAsync(NoteTaking o, DateTime time)
             => await _sQL.GetStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content");
-        public async t.Task SetExtentedNoteTextAsync(INoteTaking o, DateTime time, string content)
+        public async t.Task SetExtentedNoteTextAsync(NoteTaking o, DateTime time, string content)
         {
             await _sQL.SetStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content", content);
         }
-        public async t.Task RemoveExtendedNoteAsync(INoteTaking o, DateTime time)
+        public async t.Task RemoveExtendedNoteAsync(NoteTaking o, DateTime time)
         {
             await _sQL.RemoveAsync(SQL.Note, o.ID, "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'");
         }

@@ -7,7 +7,7 @@
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         Title="MainWindow" MinHeight="650" MinWidth="970" Height="650" Width="970">
     <Window.Background>
-        <ImageBrush Stretch="UniformToFill" ImageSource="D:\Download\75671191_p0.png"></ImageBrush>
+        <ImageBrush Stretch="UniformToFill" ImageSource="Resources/default_background.jpg"></ImageBrush>
     </Window.Background>
     <Window.Style>
         <Style TargetType="Window">

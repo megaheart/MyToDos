@@ -125,12 +125,6 @@ namespace Storage
             string cmd = String.Format("DELETE FROM {0} WHERE ID='{1}' AND {2};", type.TableName, id, anotherCondition);
             await ExecuteQueryAsync(cmd);
         }
-        public async t.Task RemoveAllFromGarbageAsync(SQLType type)
-        {
-            //if (!type.IsRecyclable) throw new Exception("SQL.RemoveAllFromGarbageAsync doesn't support unrecyclable type");
-            string cmd = String.Format("DELETE FROM {0}Garbage;", type.TableName);
-            await ExecuteQueryAsync(cmd);
-        }
         public async t.Task MoveToGarbageAsync(SQLType type, string id)
         {
             //if (!type.IsRecyclable) throw new Exception("Can't move it to garbage, please use SQL.Remove method");
@@ -141,7 +135,18 @@ namespace Storage
         public async t.Task RemoveFromGarbageAsync(SQLType type, string id)
         {
             //if (!type.IsRecyclable) throw new Exception("SQL.RemoveFromGarbage doesn't support unrecyclable type");
-            string cmd = String.Format(@"DELETE FROM {0}Garbage WHERE ID = '{1}';", type.TableName, id);
+            string cmd = String.Format(@"DELETE FROM ExtendedNotes WHERE ID = '{1}';
+                                        DELETE FROM Notes WHERE ID = '{1}';
+                                        DELETE FROM {0}Garbage WHERE ID = '{1}';", type.TableName, id);
+            await ExecuteQueryAsync(cmd);
+        }
+        public async t.Task RemoveAllFromGarbageAsync(SQLType type)
+        {
+            //if (!type.IsRecyclable) throw new Exception("SQL.RemoveAllFromGarbageAsync doesn't support unrecyclable type");
+            string cmd = String.Format(@"
+                        DELETE FROM ExtendedNotes WHERE ID IN (SELECT {0}.ID FROM {0} INNER JOIN ExtendedNotes ON {0}.ID = ExtendedNotes.ID);
+                        DELETE FROM Notes WHERE ID IN (SELECT {0}.ID FROM {0} INNER JOIN Notes ON {0}.ID = Notes.ID);
+                        DELETE FROM {0}Garbage;", type.TableName);
             await ExecuteQueryAsync(cmd);
         }
         public async t.Task RestoreFromGarbageAsync(SQLType type, string id)
@@ -245,7 +250,7 @@ namespace Storage
             List<Task> tasks = new List<Task>();
             await _sQLite.OpenAsync();
             SQLiteCommand sQLiteCommand = _sQLite.CreateCommand();
-            sQLiteCommand.CommandText = "SELECT * FROM Tasks WHERE " + conditions + ";";
+            sQLiteCommand.CommandText = "SELECT *, EXISTS (SELECT ID FROM Notes WHERE Tasks.ID = Notes.ID) AS HasNote FROM Tasks WHERE " + conditions + ";";
             var reader = await sQLiteCommand.ExecuteReaderAsync();
             var emptyArray = new Tag[0];
             while (await reader.ReadAsync())
@@ -261,7 +266,7 @@ namespace Storage
                 if (s_tags != "") tags = Array.ConvertAll(s_tags.Split(','), x => tagList[tagList.IndexOfID(x)]);
                 string webAddress = reader[7].ToString();
                 Task task = new Task(title, ID, repeater, activatedTime, expiryTime, time, new ObservableCollection<Tag>(tags), webAddress);
-                task.HasNote = 
+                task.HasNote = reader.GetBoolean(8);
                 tasks.Add(task);
             }
             _sQLite.Close();

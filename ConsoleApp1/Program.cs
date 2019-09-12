@@ -189,17 +189,17 @@ namespace ConsoleApp1
         }
         public void SQL_GetNote()
         {
-            DataManager data = new DataManager();
-            string content;
-            string[] ids = new string[] { "1vzpgk5Cjg", "CZnuyEZXRO", "1I8CGu4xHl2", "xxxx" };
-            foreach(var i in ids)
-            {
-                data.GetNoteTextAsync(new NoteTaking() { ID = i }).ContinueWith(t =>
-                {
+            //DataManager data = new DataManager();
+            //string content;
+            //string[] ids = new string[] { "1vzpgk5Cjg", "CZnuyEZXRO", "1I8CGu4xHl2", "xxxx" };
+            //foreach(var i in ids)
+            //{
+            //    data.GetNoteTextAsync(new NoteTaking() { ID = i }).ContinueWith(t =>
+            //    {
 
                     
-                });
-            }
+            //    });
+            //}
         }
     }
     class NoteTaking : INoteTaking
