@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public delegate void SQLUpdatePropertyChangedEventHandler(string id, string property, string value);
-    public interface ISQLUpdatePropertyChanged : IIdentifiedObject
+    public delegate void SQLUpdatePropertyChangedEventHandler(IdentifiedObject item, string property, string value);
+    public interface INotifySQLUpdatePropertyChanged : IIdentifiedObject
     {
         event SQLUpdatePropertyChangedEventHandler SQLUpdateProperty;
     }

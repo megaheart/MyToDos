@@ -63,9 +63,11 @@
     <Compile Include="ConsoleLog.xaml.cs">
       <DependentUpon>ConsoleLog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\AppServices\Cleaner.cs" />
+    <Compile Include="ViewModel\AppServices\WeatherUpdate.cs" />
     <Compile Include="ViewModel\BackgroundServices.cs" />
     <Compile Include="ViewModel\AppServices\TaskNotification.cs" />
-    <Compile Include="ViewModel\IAppServices.cs" />
+    <Compile Include="ViewModel\AppServiceRunArgs.cs" />
     <Compile Include="Native\WindowResize.cs" />
     <Page Include="ConsoleLog.xaml">
       <SubType>Designer</SubType>

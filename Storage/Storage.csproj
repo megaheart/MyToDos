@@ -83,6 +83,7 @@
     <Compile Include="Model\Once.cs" />
     <Compile Include="Model\Repeater.cs" />
     <Compile Include="Model\SQLCollection.cs" />
+    <Compile Include="Model\SQLCollectionChangedArgs.cs" />
     <Compile Include="Model\SQLGarbageCollection.cs" />
     <Compile Include="Model\Tag.cs" />
     <Compile Include="Model\Task.cs" />

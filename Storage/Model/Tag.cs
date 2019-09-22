@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public class Tag : IdentifiedObject, ISQLUpdatePropertyChanged
+    public class Tag : IdentifiedObject, INotifySQLUpdatePropertyChanged
     {
         public bool IsDefault { get; private set; }
         public Tag()
@@ -33,7 +33,7 @@ namespace Storage.Model
                 {
                     _title = value;
                     OnPropertyChanged("Title");
-                    SQLUpdateProperty?.Invoke(ID, "Title", _title);
+                    SQLUpdateProperty?.Invoke(this, "Title", _title);
                 }
             }
             get
@@ -57,7 +57,7 @@ namespace Storage.Model
                 {
                     _color = value;
                     OnPropertyChanged("Color");
-                    SQLUpdateProperty?.Invoke(ID, "Color", _title);
+                    SQLUpdateProperty?.Invoke(this, "Color", _title);
                 }
             }
             get

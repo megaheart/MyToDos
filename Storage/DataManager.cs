@@ -46,38 +46,38 @@ namespace Storage
             DailyWeathers = await getDailyWeathersData;
         }
         public SQLCollection<Tag> Tags { get; private set; }
-        public void InsertTag(IIdentifiedObject tag)
+        public void InsertTag(SQLCollectionChangedArgs e)
         {
-            _sQL.InsertAsync(tag as Tag);
+            _sQL.InsertAsync(e.Item as Tag);
         }
-        public void RemoveTag(IIdentifiedObject tag)
+        public void RemoveTag(SQLCollectionChangedArgs e)
         {
-            Tag _tag = tag as Tag;
+            Tag _tag = e.Item as Tag;
             foreach(var i in Tasks)
             {
                 i.Tags.Remove(_tag);
             }
-            _sQL.RemoveAsync(SQL.Tag, tag.ID);
+            _sQL.RemoveAsync(SQL.Tag, _tag.ID);
         }
-        public void EditTag(string id, string property, string value)
+        public void EditTag(SQLCollectionChangedArgs e)
         {
-            _sQL.UpdateAsync(SQL.Tag, id, property, value);
+            _sQL.UpdateAsync(SQL.Tag, e.Item.ID, e.Property, e.NewValue);
         }
         public SQLCollection<Task> Tasks { get; private set; }
-        public void InsertTask(IIdentifiedObject task)
+        public void InsertTask(SQLCollectionChangedArgs e)
         {
-            _sQL.InsertAsync(task as Task);
+            _sQL.InsertAsync(e.Item as Task);
         }
-        public void MoveTaskToGarbage(IIdentifiedObject task)
+        public void MoveTaskToGarbage(SQLCollectionChangedArgs e)
         {
-            _sQL.RemoveAsync(SQL.Task, task.ID);
+            _sQL.RemoveAsync(SQL.Task, e.Item.ID);
         }
-        public void EditTask(string id, string property, string value)
+        public void EditTask(SQLCollectionChangedArgs e)
         {
-            _sQL.UpdateAsync(SQL.Task, id, property, value);
+            _sQL.UpdateAsync(SQL.Task, e.Item.ID, e.Property, e.NewValue);
         }
         public ObservableCollection<DailyWeatherInformation> DailyWeathers { get; private set; }
-        public async t.Task<ObservableCollection<DailyWeatherInformation>> GetDailyWeathersDataAsync()
+        private async t.Task<ObservableCollection<DailyWeatherInformation>> GetDailyWeathersDataAsync()
         {
             FileStream file = File.Open(DailyWeatherFile, FileMode.OpenOrCreate);
             StreamReader reader = new StreamReader(file);
@@ -112,16 +112,16 @@ namespace Storage
             return garbageTasks;
         }
 
-        private async void GarbageTasksRestoresItem(IIdentifiedObject item)
+        private async void GarbageTasksRestoresItem(SQLCollectionChangedArgs e)
         {
-            await _sQL.RestoreFromGarbageAsync(SQL.Task, item.ID);
-            List<Task> tasks = await _sQL.GetTaskListAsync("ID=" + item.ID, Tags);
+            await _sQL.RestoreFromGarbageAsync(SQL.Task, e.Item.ID);
+            List<Task> tasks = await _sQL.GetTaskListAsync("ID=" + e.Item.ID, Tags);
             Tasks.RestoreItem(tasks[0]);
         }
 
-        private void GarbageTasksRemovesItem(IIdentifiedObject item)
+        private void GarbageTasksRemovesItem(SQLCollectionChangedArgs e)
         {
-            _sQL.RemoveFromGarbageAsync(SQL.Task, item.ID).ContinueWith(t=> { if (t.IsFaulted) throw t.Exception; });
+            _sQL.RemoveFromGarbageAsync(SQL.Task, e.Item.ID).ContinueWith(t=> { if (t.IsFaulted) throw t.Exception; });
         }
 
         private void GarbageTasksClearsAllItems()

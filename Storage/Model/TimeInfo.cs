@@ -9,18 +9,18 @@ namespace Storage.Model
     public class TimeInfo : NotifiableObject
     {
         private static TimeSpan MaxValueOfDay = new TimeSpan(23, 59, 0);
-        public TimeInfo(TimeSpan? activeTimeOfDay, TimeSpan? limit)
+        public TimeInfo(TimeSpan? activeTimeOfDay, TimeSpan? duration)
         {
-            _activeTimeOfDay = _limit = null;
+            _activeTimeOfDay = _duration = null;
             if (activeTimeOfDay.HasValue)
             {
                 if (activeTimeOfDay.Value < TimeSpan.Zero || activeTimeOfDay.Value > MaxValueOfDay)
                     throw new Exception("activeTimeOfDay must be between 0h and 23h59'");
                 _activeTimeOfDay = activeTimeOfDay;//new TimeSpan(activeTimeOfDay.Value.Hours, activeTimeOfDay.Value.Minutes, 0);
             }
-            if (limit.HasValue)
+            if (duration.HasValue)
             {
-                _limit = limit;
+                _duration = duration;
             }
         }
         //public TimeInfoType Type { get; private set; }
@@ -42,18 +42,21 @@ namespace Storage.Model
             }
             get => _activeTimeOfDay;
         }
-        private TimeSpan? _limit;
-        public TimeSpan? Limit
+        private TimeSpan? _duration;
+        /// <summary>
+        /// The maximum time a Task can be done
+        /// </summary>
+        public TimeSpan? Duration
         {
             set
             {
-                if(_limit != value)
+                if(_duration != value)
                 {
-                    _limit = value;
-                    OnPropertyChanged("Limit");
+                    _duration = value;
+                    OnPropertyChanged("Duration");
                 }
             }
-            get => _limit;
+            get => _duration;
         }
     }
 }

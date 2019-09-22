@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Storage.Model
 {
     public class SQLGarbageCollection<T> : CollectionForIdentificationObject<T>, INotifyCollectionChanged, INotifyPropertyChanged
-        where T : IIdentifiedObject, ISQLUpdatePropertyChanged
+        where T : IIdentifiedObject, INotifySQLUpdatePropertyChanged
     {
         public SQLGarbageCollection() : base() { }
         public SQLGarbageCollection(IEnumerable<T> list) : base(list) { }
@@ -18,13 +18,13 @@ namespace Storage.Model
         public event Action SQLClearsAllItems;
         public void RestoreFromGarbage(T item)
         {
-            SQLRestoresItem(item);
+            SQLRestoresItem(new SQLCollectionChangedArgs(SQLCollectionChangedAction.Remove, item));
             int index = IndexOfID(item.ID);
             RemoveItem(index);
         }
         public void RemoveFromGarbage(T item)
         {
-            SQLRemovesItem(item);
+            SQLRemovesItem(new SQLCollectionChangedArgs(SQLCollectionChangedAction.Remove, item));
             int index = IndexOfID(item.ID);
             RemoveItem(index);
         }

@@ -14,7 +14,7 @@ namespace Storage.Model
         Unavailable,
         Expired
     }
-    public class Task : NoteTaking, IRecyclable, ISQLUpdatePropertyChanged
+    public class Task : NoteTaking, IRecyclable, INotifySQLUpdatePropertyChanged
     {
         public Task()
         {
@@ -55,7 +55,7 @@ namespace Storage.Model
                     _time = value;
                     _time.CollectionChanged += TimeChanged;
                     OnPropertyChanged("Time");
-                    SQLUpdateProperty?.Invoke(_id, "Time", TimeInfosStorageConverter.ToString(_time));
+                    SQLUpdateProperty?.Invoke(this, "Time", TimeInfosStorageConverter.ToString(_time));
                 }
             }
             get =>_time;
@@ -63,7 +63,7 @@ namespace Storage.Model
 
         private void TimeChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            SQLUpdateProperty?.Invoke(_id, "Time", TimeInfosStorageConverter.ToString(_time));
+            SQLUpdateProperty?.Invoke(this, "Time", TimeInfosStorageConverter.ToString(_time));
         }
 
         protected Repeater _repeater;
@@ -76,7 +76,7 @@ namespace Storage.Model
                     _repeater = value;
                     _repeater.RepeaterInfoChanged += OnRepeaterInfoChanged;
                     OnPropertyChanged("Repeater");
-                    SQLUpdateProperty?.Invoke(_id, "Repeater", RepeaterStorageConverter.ToString(_repeater));
+                    SQLUpdateProperty?.Invoke(this, "Repeater", RepeaterStorageConverter.ToString(_repeater));
                 }
             }
             get
@@ -87,9 +87,12 @@ namespace Storage.Model
         private void OnRepeaterInfoChanged()
         {
             OnPropertyChanged("Repeater");
-            SQLUpdateProperty?.Invoke(_id, "Repeater", RepeaterStorageConverter.ToString(_repeater));
+            SQLUpdateProperty?.Invoke(this, "Repeater", RepeaterStorageConverter.ToString(_repeater));
         }
-
+        public int Index
+        {
+            get => (int)_repeater.Type;
+        }
         protected string _title;
         public string Title
         {
@@ -99,7 +102,7 @@ namespace Storage.Model
                 {
                     _title = value;
                     OnPropertyChanged("Title");
-                    SQLUpdateProperty?.Invoke(_id, "Title", _title);
+                    SQLUpdateProperty?.Invoke(this, "Title", _title);
                 }
             }
             get
@@ -144,7 +147,7 @@ namespace Storage.Model
                             tags += "," + _tags[i].ID;
                         }
                     }
-                    SQLUpdateProperty?.Invoke(_id, "Tags", tags);
+                    SQLUpdateProperty?.Invoke(this, "Tags", tags);
                 }
             }
         }
@@ -161,7 +164,7 @@ namespace Storage.Model
                     tags += "," + _tags[i].ID;
                 }
             }
-            SQLUpdateProperty?.Invoke(_id, "Tags", tags);
+            SQLUpdateProperty?.Invoke(this, "Tags", tags);
         }
         private string _webAddress;
         public string WebAddress
@@ -171,7 +174,7 @@ namespace Storage.Model
                 if (_webAddress != value)
                 {
                     _webAddress = value;
-                    SQLUpdateProperty?.Invoke(_id, "WebAddress", _webAddress);
+                    SQLUpdateProperty?.Invoke(this, "WebAddress", _webAddress);
                 }
             }
             get => _webAddress;
@@ -184,7 +187,7 @@ namespace Storage.Model
                 if (_activatedTime != value)
                 {
                     _activatedTime = value;
-                    SQLUpdateProperty?.Invoke(_id, "ActivatedTime", value.ToString("yyyy-MM-dd HH:mm"));
+                    SQLUpdateProperty?.Invoke(this, "ActivatedTime", value.ToString("yyyy-MM-dd HH:mm"));
                 }
             }
             get => _activatedTime;
@@ -197,7 +200,7 @@ namespace Storage.Model
                 if (_expiryTime != value)
                 {
                     _expiryTime = value;
-                    SQLUpdateProperty?.Invoke(_id, "ExpiryTime", value.ToString("yyyy-MM-dd HH:mm"));
+                    SQLUpdateProperty?.Invoke(this, "ExpiryTime", value.ToString("yyyy-MM-dd HH:mm"));
                 }
             }
             get => _expiryTime;

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public delegate void SQLCollectionChangedEventHandler(IIdentifiedObject item);
-    public delegate void SQLCollectionUpdatesItemEventHandler(string id, string property, string value);
+    public delegate void SQLCollectionChangedEventHandler(SQLCollectionChangedArgs e);
 
 }
