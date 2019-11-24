@@ -158,11 +158,46 @@ namespace Storage
             => await _sQL.GetStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content");
         public async t.Task SetExtentedNoteTextAsync(NoteTaking o, DateTime time, string content)
         {
-            await _sQL.SetStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content", content);
+            await _sQL.ChangeStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content", content);
         }
         public async t.Task RemoveExtendedNoteAsync(NoteTaking o, DateTime time)
         {
             await _sQL.RemoveAsync(SQL.Note, o.ID, "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'");
+        }
+        public async t.Task SetValueAsync(string key, string value)
+        {
+            if (key.Length > 64) throw new Exception("key isn't able to include more than 64 characters.");
+            if (value.Length > 256) throw new Exception("value isn't able to include more than 256 characters.");
+            await _sQL.AddKeyAsync(key, value);
+        }
+        public async t.Task<string> GetValueAsync(string key)
+        {
+            return await _sQL.GetStringPropertyAsync(SQL.KeyValueData, "Key=" + key, "Key");
+        }
+        public async t.Task RemoveKeyValueAsync(string key)
+        {
+            await _sQL.RemoveAsync(SQL.KeyValueData, key);
+        }
+        public void AddUnfinishedTodayTask(string id)
+        {
+            _sQL.AddUnfinishedTodayTask(id);
+        }
+        public async t.Task<List<Tuple<string, bool>>> GetTodayTasksListAsync()
+        {
+            return await _sQL.GetTodayTasksListAsync();
+        }
+        public async t.Task<List<string>> GetUnfinishedTodayTasksAsync()
+        {
+            return await _sQL.GetUnfinishedTodayTasksAsync();
+        }
+        /// <summary>
+        /// use to set IsFinished true in TodayTasks table
+        /// </summary>
+        /// <param name="id">ID of finished task</param>
+        /// <returns></returns>
+        public void FinishTodayTasksAsync(string id)
+        {
+            _sQL.ChangeStringPropertyAsync(SQL.TodayTasks, "ID=" + id, "IsFinished", "1");
         }
     }
 }

@@ -10,8 +10,35 @@ namespace MyToDos.ViewModel.AppServices
     class TaskNotification
     {
         private static Tuple<Task,TimeInfo> Active;
-        internal static void Start(AppServiceRunArgs args)
+        private static List<Task> UnfinishedTasks;
+        internal static async System.Threading.Tasks.Task Start(AppServiceRunArgs args)
         {
+            UnfinishedTasks = new List<Task>();
+            DateTime dateNow = DateTime.Now.Date;
+            //Startup - Loading Data
+            if (args.LatestStartupDate == dateNow)
+            {
+                foreach (var i in await DataManager.Current.GetUnfinishedTodayTasksAsync())
+                {
+                    UnfinishedTasks.Add(DataManager.Current.Tasks[i]);
+                }
+            }
+            else
+            {
+                //Report finished tasks and unfinished tasks (statistics)
+
+                //Clear TodayTasks table
+                foreach (var i in DataManager.Current.Tasks)
+                {
+                    if(i.GetStatusOn(dateNow) == TaskStatus.Available)
+                    {
+                        DataManager.Current.AddUnfinishedTodayTask(i.ID);
+                        UnfinishedTasks.Add(i);
+                    }
+                }
+
+            }
+            //Execute
             Run(args);
             DataManager.Current.Tasks.SQLRemovesItem += CheckRemovedTask;
             DataManager.Current.Tasks.SQLUpdatesItem += CheckChangedTask;
@@ -25,13 +52,17 @@ namespace MyToDos.ViewModel.AppServices
                 Active = currentActive;
                 if(Active.Item1 == null)//Rest time starts
                 {
-                    
+                    //Notify();
                 }
                 else//Task starts - Notify
                 {
-                    
+                    //Notify();
                 }
             }
+        }
+        static void Notify()
+        {
+
         }
         //internal static void CheckInsertedTask(SQLCollectionChangedArgs e)
         //{
@@ -84,8 +115,7 @@ namespace MyToDos.ViewModel.AppServices
                     {
                         foreach (var info in changedTask.Time)
                         {
-                            if (info.ActiveTimeOfDay.HasValue && info.ActiveTimeOfDay.Value <= timeOfDay
-                                && (!info.Duration.HasValue || info.ActiveTimeOfDay.Value + info.Duration.Value > timeOfDay))
+                            if (info.ActiveTimeOfDay.HasValue && info.ActiveTimeOfDay.Value <= timeOfDay)
                             {
                                 if (lastest == null || lastest.ActiveTimeOfDay.Value < info.ActiveTimeOfDay.Value ||
                                     (lastest.ActiveTimeOfDay.Value == info.ActiveTimeOfDay.Value && output.Index < changedTask.Index))
@@ -132,8 +162,7 @@ namespace MyToDos.ViewModel.AppServices
                     {
                         foreach (var info in changedTask.Time)
                         {
-                            if (info.ActiveTimeOfDay.HasValue && info.ActiveTimeOfDay.Value <= timeOfDay
-                                && (!info.Duration.HasValue || info.ActiveTimeOfDay.Value + info.Duration.Value > timeOfDay))
+                            if (info.ActiveTimeOfDay.HasValue && info.ActiveTimeOfDay.Value <= timeOfDay)
                             {
                                 if (lastest == null || lastest.ActiveTimeOfDay.Value < info.ActiveTimeOfDay.Value ||
                                     (lastest.ActiveTimeOfDay.Value == info.ActiveTimeOfDay.Value && output.Index < changedTask.Index))
@@ -168,8 +197,7 @@ namespace MyToDos.ViewModel.AppServices
                 {
                     foreach (var info in tasks[i].Time)
                     {
-                        if (info.ActiveTimeOfDay.HasValue && info.ActiveTimeOfDay.Value <= timeOfDay
-                            && (!info.Duration.HasValue || info.ActiveTimeOfDay.Value + info.Duration.Value > timeOfDay))
+                        if (info.ActiveTimeOfDay.HasValue && info.ActiveTimeOfDay.Value <= timeOfDay)
                         {
                             if (lastest == null || lastest.ActiveTimeOfDay.Value < info.ActiveTimeOfDay.Value ||
                                 (lastest.ActiveTimeOfDay.Value == info.ActiveTimeOfDay.Value && output.Index < tasks[i].Index))

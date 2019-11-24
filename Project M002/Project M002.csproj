@@ -63,6 +63,7 @@
     <Compile Include="ConsoleLog.xaml.cs">
       <DependentUpon>ConsoleLog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Notification.cs" />
     <Compile Include="ViewModel\AppServices\Cleaner.cs" />
     <Compile Include="ViewModel\AppServices\WeatherUpdate.cs" />
     <Compile Include="ViewModel\BackgroundServices.cs" />

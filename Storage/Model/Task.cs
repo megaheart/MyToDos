@@ -186,8 +186,8 @@ namespace Storage.Model
             {
                 if (_activatedTime != value)
                 {
-                    _activatedTime = value;
-                    SQLUpdateProperty?.Invoke(this, "ActivatedTime", value.ToString("yyyy-MM-dd HH:mm"));
+                    _activatedTime = value;//.Date
+                    SQLUpdateProperty?.Invoke(this, "ActivatedTime", value.ToString("yyyy-MM-dd"));
                 }
             }
             get => _activatedTime;
@@ -199,16 +199,17 @@ namespace Storage.Model
             {
                 if (_expiryTime != value)
                 {
-                    _expiryTime = value;
-                    SQLUpdateProperty?.Invoke(this, "ExpiryTime", value.ToString("yyyy-MM-dd HH:mm"));
+                    _expiryTime = value;//.Date
+                    SQLUpdateProperty?.Invoke(this, "ExpiryTime", value.ToString("yyyy-MM-dd"));
                 }
             }
             get => _expiryTime;
         }
         public TaskStatus GetStatusOn(DateTime date)
         {
+            //date = date.Date;
             if (date >= _expiryTime) return TaskStatus.Expired;
-            if (date < _activatedTime && !_repeater.IsUsableOn(date)) return TaskStatus.Unavailable;
+            if (date < _activatedTime || !_repeater.IsUsableOn(date)) return TaskStatus.Unavailable;
             return TaskStatus.Available;
         }
         /// <returns>

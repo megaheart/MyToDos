@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-
+using Storage;
 namespace MyToDos.ViewModel
 {
     class BackgroundServices
@@ -22,13 +22,16 @@ namespace MyToDos.ViewModel
         private AppServiceRunArgs BackgroundServiceRunArgs;
         public BackgroundServices()
         {
-            BackgroundServiceRunArgs = new AppServiceRunArgs(this);
             timer = new DispatcherTimer();
             timer.Interval = new TimeSpan(0, 1, 0);
             timer.Tick += TimeLoop;
         }
         public async Task Initialize()
         {
+            DateTime lastestStartupDate;
+            DateTime.TryParseExact(await DataManager.Current.GetValueAsync("latestStartupDate"), "yyyy-MM-dd",
+                null, System.Globalization.DateTimeStyles.None, out lastestStartupDate);
+            BackgroundServiceRunArgs = new AppServiceRunArgs(this, lastestStartupDate);
             //Services start up
             WeatherUpdate.Start(BackgroundServiceRunArgs);
             TaskNotification.Start(BackgroundServiceRunArgs);

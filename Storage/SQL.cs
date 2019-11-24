@@ -49,7 +49,7 @@ namespace Storage
                 return _note;
             }
         }
-        private static SQLType _tag = new SQLType("Tags", true);
+        private static SQLType _tag = new SQLType("Tags");
         public static SQLType Tag
         {
             get
@@ -57,12 +57,28 @@ namespace Storage
                 return _tag;
             }
         }
-        private static SQLType _extendedNote = new SQLType("ExtendedNotes", true);
+        private static SQLType _extendedNote = new SQLType("ExtendedNotes");
         public static SQLType ExtendedNote
         {
             get
             {
                 return _extendedNote;
+            }
+        }
+        private static SQLType _keyValueData = new SQLType("KeyValueData");
+        public static SQLType KeyValueData
+        {
+            get
+            {
+                return _keyValueData;
+            }
+        }
+        private static SQLType _todayTasks = new SQLType("TodayTasks");
+        public static SQLType TodayTasks
+        {
+            get
+            {
+                return _todayTasks;
             }
         }
         #endregion
@@ -169,12 +185,15 @@ namespace Storage
             string queryCmd = "SELECT " + property + " FROM " + type.TableName + " WHERE " + condition + ';';
             sQLiteCommand.CommandText = queryCmd;
             DbDataReader reader = await sQLiteCommand.ExecuteReaderAsync();
-            await reader.ReadAsync();
-            string output = reader[0].ToString();
+            string output = "";//Default Value will be returned when no rows satisfies the condition
+            if (await reader.ReadAsync())
+            {
+                output = reader[0].ToString();
+            }
             _sQLite.Close();
             return output;
         }
-        public async t.Task SetStringPropertyAsync(SQLType type, string condition, string property, string newValue)
+        public async t.Task ChangeStringPropertyAsync(SQLType type, string condition, string property, string newValue)
         {
             string cmd = String.Format("UPDATE {0} SET {1} = '{2}' WHERE {3};", type.TableName, property, newValue, condition);
             await ExecuteQueryAsync(cmd);
@@ -420,6 +439,60 @@ namespace Storage
             }
             _sQLite.Close();
             return noteInfos.ToArray();
+        }
+        #endregion
+        #region KeyValueDate
+        public async t.Task AddKeyAsync(string key, string value)
+        {
+            string cmd = "INSERT Or REPLACE INTO KeyValueData(Key, Value) VALUES(" + key +"," + value + ");";
+            await ExecuteQueryAsync(cmd);
+        }
+        #endregion
+        #region TodayTasks
+        public async t.Task AddUnfinishedTodayTask(string id)
+        {
+            string cmd = "INSERT INTO TodayTasks(ID) VALUES(" + id + ");";
+            await ExecuteQueryAsync(cmd);
+        }
+        /// <summary>
+        /// Get all tasks in TodayTasks table
+        /// </summary>
+        /// <returns>
+        /// A List of Tuple< ID : string, IsFinished : bool>(s)
+        /// </returns>
+        public async t.Task<List<Tuple<string, bool>>> GetTodayTasksListAsync()
+        {
+            List<Tuple<string, bool>> output = new List<Tuple<string, bool>>();
+            DbCommand sqliteCmd = _sQLite.CreateCommand();
+            sqliteCmd.CommandText = "SELECT ID,IsFinished FROM TodayTasks;";
+            DbDataReader reader = await sqliteCmd.ExecuteReaderAsync();
+            while(await reader.ReadAsync())
+            {
+                output.Add(new Tuple<string, bool>(reader[0].ToString(), reader.GetBoolean(1)));
+            }
+            reader.Close();
+            _sQLite.Close();
+            return output;
+        }
+        /// <summary>
+        /// Get unfinished tasks in TodayTasks table
+        /// </summary>
+        /// <returns>
+        /// A List of ID : string(s)
+        /// </returns>
+        public async t.Task<List<string>> GetUnfinishedTodayTasksAsync()
+        {
+            List<string> output = new List<string>();
+            DbCommand sqliteCmd = _sQLite.CreateCommand();
+            sqliteCmd.CommandText = "SELECT ID FROM TodayTasks WHERE IsFinished = false;";
+            DbDataReader reader = await sqliteCmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                output.Add(reader[0].ToString());
+            }
+            reader.Close();
+            _sQLite.Close();
+            return output;
         }
         #endregion
     }

@@ -9,9 +9,11 @@ namespace MyToDos.ViewModel
     class AppServiceRunArgs
     {
         public BackgroundServices Sender { get; private set; }
-        public AppServiceRunArgs(BackgroundServices sender)
+        public DateTime LatestStartupDate { get; private set; }
+        public AppServiceRunArgs(BackgroundServices sender, DateTime latestStartupDate)
         {
             Sender = sender;
+            LatestStartupDate = latestStartupDate;
         }
         
     }
