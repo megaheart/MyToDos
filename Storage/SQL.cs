@@ -165,6 +165,11 @@ namespace Storage
                         DELETE FROM {0}Garbage;", type.TableName);
             await ExecuteQueryAsync(cmd);
         }
+        public async t.Task RemoveAll(SQLType type)
+        {
+            string cmd = "DELETE FROM " + type.TableName + ";";
+            await ExecuteQueryAsync(cmd);
+        }
         public async t.Task RestoreFromGarbageAsync(SQLType type, string id)
         {
             //if (!type.IsRecyclable) throw new Exception("SQL.RestoreFromGarbage doesn't support unrecyclable type");
@@ -489,6 +494,35 @@ namespace Storage
             while (await reader.ReadAsync())
             {
                 output.Add(reader[0].ToString());
+            }
+            reader.Close();
+            _sQLite.Close();
+            return output;
+        }
+        #endregion
+        #region InteractingTasksStatistics
+        public async t.Task ReportInteractingTasksStatAsync(DateTime date, int numberOfFinishedTasks, int numberOfTasks, string finishedTasks, string unfinishedTasks)
+        {
+            string cmd = @"INSERT INTO InteractingTasksStatistics(Date,NumberOfFinishedTasks,NumberOfTasks,FinishedTasks,UnfinishedTasks) 
+                VALUES(" + date.ToString("yyyy-MM-dd") + "," + numberOfFinishedTasks + "," + numberOfTasks + ",\"" + finishedTasks + "\",\"" + unfinishedTasks + "\");";
+            await ExecuteQueryAsync(cmd);
+        }
+        public async t.Task<List<InteractingTasksStat>> GetInteractingTasksStatAsync(DateTime startDate, DateTime endDate)
+        {
+            List<InteractingTasksStat> output = new List<InteractingTasksStat>((endDate - startDate).Days + 1);
+            DbCommand sqliteCmd = _sQLite.CreateCommand();
+            sqliteCmd.CommandText = @"SELECT Date,NumberOfFinishedTasks,NumberOfTasks FROM InteractingTasksStatistics 
+                WHERE " + startDate.ToString("yyyy-MM-dd") + "<=Date AND Date<=" + endDate.ToString("yyyy-MM-dd") + ";";
+            DbDataReader reader = await sqliteCmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                InteractingTasksStat stat = new InteractingTasksStat();
+                stat.OnDate = reader.GetDateTime(0);
+                stat.NumberOfFinishedTasks = reader.GetInt32(1);
+                stat.NumberOfTasks = reader.GetInt32(2);
+                //stat.FinishedTasks
+                //stat.UnfinishedTasks
+                output.Add(stat);
             }
             reader.Close();
             _sQLite.Close();

@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using Storage.Model;
 using Storage;
+using System.Collections.ObjectModel;
 
 namespace MyToDos.ViewModel.AppServices
 {
     class TaskNotification
     {
         private static Tuple<Task,TimeInfo> Active;
-        private static List<Task> UnfinishedTasks;
-        internal static async System.Threading.Tasks.Task Start(AppServiceRunArgs args)
+        public static ObservableCollection<Task> UnfinishedTasks;
+        internal static async void Start(AppServiceRunArgs args)
         {
-            UnfinishedTasks = new List<Task>();
+            UnfinishedTasks = new ObservableCollection<Task>();
             DateTime dateNow = DateTime.Now.Date;
             //Startup - Loading Data
             if (args.LatestStartupDate == dateNow)
@@ -26,8 +27,22 @@ namespace MyToDos.ViewModel.AppServices
             else
             {
                 //Report finished tasks and unfinished tasks (statistics)
-
-                //Clear TodayTasks table
+                List<Tuple<string, bool>> todayTasks = await DataManager.Current.GetTodayTasksListAsync();
+                int numberOfFinishedTasks = 0;
+                string unfinishedTasks = "";
+                string finishedTasks = "";
+                foreach(var i in todayTasks)
+                {
+                    if (i.Item2)
+                    {
+                        numberOfFinishedTasks++;
+                        finishedTasks += i.Item1;
+                    }
+                    else unfinishedTasks += i.Item2;
+                }
+                DataManager.Current.ReportInteractingTasksStatAsync(args.LatestStartupDate, numberOfFinishedTasks,
+                    todayTasks.Count, finishedTasks, unfinishedTasks);
+                await DataManager.Current.ClearTodayTasksAsync();//Clear TodayTasks table
                 foreach (var i in DataManager.Current.Tasks)
                 {
                     if(i.GetStatusOn(dateNow) == TaskStatus.Available)

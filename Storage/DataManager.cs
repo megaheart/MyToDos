@@ -152,43 +152,55 @@ namespace Storage
                 o.HasNote = true;
             }
         }
-        public async t.Task<NoteInfo[]> GetExistExtendedNoteInfosAsync()
-            => await _sQL.GetExistExtendedNoteInfosAsync();
-        public async t.Task<string> GetExtentedNoteTextAsync(NoteTaking o, DateTime time)
-            => await _sQL.GetStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content");
-        public async t.Task SetExtentedNoteTextAsync(NoteTaking o, DateTime time, string content)
+        public t.Task<NoteInfo[]> GetExistExtendedNoteInfosAsync()
+            => _sQL.GetExistExtendedNoteInfosAsync();
+        public t.Task<string> GetExtentedNoteTextAsync(NoteTaking o, DateTime time)
+            => _sQL.GetStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content");
+        public t.Task SetExtentedNoteTextAsync(NoteTaking o, DateTime time, string content)
         {
-            await _sQL.ChangeStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content", content);
+            return _sQL.ChangeStringPropertyAsync(SQL.ExtendedNote, "ID='" + o.ID + "' AND " + "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'", "Content", content);
         }
-        public async t.Task RemoveExtendedNoteAsync(NoteTaking o, DateTime time)
+        public t.Task RemoveExtendedNoteAsync(NoteTaking o, DateTime time)
         {
-            await _sQL.RemoveAsync(SQL.Note, o.ID, "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'");
+            return _sQL.RemoveAsync(SQL.Note, o.ID, "Time='" + time.ToString("yyyy-MM-dd HH:mm") + "'");
         }
-        public async t.Task SetValueAsync(string key, string value)
+        public t.Task SetValueAsync(string key, string value)
         {
             if (key.Length > 64) throw new Exception("key isn't able to include more than 64 characters.");
             if (value.Length > 256) throw new Exception("value isn't able to include more than 256 characters.");
-            await _sQL.AddKeyAsync(key, value);
+            return _sQL.AddKeyAsync(key, value);
         }
-        public async t.Task<string> GetValueAsync(string key)
+        public t.Task<string> GetValueAsync(string key)
         {
-            return await _sQL.GetStringPropertyAsync(SQL.KeyValueData, "Key=" + key, "Key");
+            return _sQL.GetStringPropertyAsync(SQL.KeyValueData, "Key=" + key, "Key");
         }
-        public async t.Task RemoveKeyValueAsync(string key)
+        public t.Task RemoveKeyValueAsync(string key)
         {
-            await _sQL.RemoveAsync(SQL.KeyValueData, key);
+            return _sQL.RemoveAsync(SQL.KeyValueData, key);
         }
         public void AddUnfinishedTodayTask(string id)
         {
             _sQL.AddUnfinishedTodayTask(id);
         }
-        public async t.Task<List<Tuple<string, bool>>> GetTodayTasksListAsync()
+        /// <summary>
+        /// Get all tasks in TodayTasks table
+        /// </summary>
+        /// <returns>
+        /// A List of Tuple< ID : string, IsFinished : bool>(s)
+        /// </returns>
+        public t.Task<List<Tuple<string, bool>>> GetTodayTasksListAsync()
         {
-            return await _sQL.GetTodayTasksListAsync();
+            return _sQL.GetTodayTasksListAsync();
         }
-        public async t.Task<List<string>> GetUnfinishedTodayTasksAsync()
+        /// <summary>
+        /// Get unfinished tasks in TodayTasks table
+        /// </summary>
+        /// <returns>
+        /// A List of ID : string(s)
+        /// </returns>
+        public t.Task<List<string>> GetUnfinishedTodayTasksAsync()
         {
-            return await _sQL.GetUnfinishedTodayTasksAsync();
+            return _sQL.GetUnfinishedTodayTasksAsync();
         }
         /// <summary>
         /// use to set IsFinished true in TodayTasks table
@@ -198,6 +210,18 @@ namespace Storage
         public void FinishTodayTasksAsync(string id)
         {
             _sQL.ChangeStringPropertyAsync(SQL.TodayTasks, "ID=" + id, "IsFinished", "1");
+        }
+        public t.Task ClearTodayTasksAsync()
+        {
+            return _sQL.RemoveAll(SQL.TodayTasks);
+        }
+        public void ReportInteractingTasksStatAsync(DateTime date, int numberOfFinishedTasks, int numberOfTasks, string finishedTasks, string unfinishedTasks)
+        {
+            _sQL.ReportInteractingTasksStatAsync(date, numberOfFinishedTasks, numberOfTasks, finishedTasks, unfinishedTasks);
+        }
+        public t.Task<List<InteractingTasksStat>> GetInteractingTasksStatAsync(DateTime startDate, DateTime endDate)
+        {
+            return _sQL.GetInteractingTasksStatAsync(startDate, endDate);
         }
     }
 }

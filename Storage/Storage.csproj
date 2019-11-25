@@ -73,6 +73,7 @@
     <Compile Include="Model\IIdentifiedObject.cs" />
     <Compile Include="Model\INoteTaking.cs" />
     <Compile Include="Model\Delegates.cs" />
+    <Compile Include="Model\InteractingTasksStat.cs" />
     <Compile Include="Model\ISQLUpdatePropertyChanged.cs" />
     <Compile Include="Model\IRecyclable.cs" />
     <Compile Include="Model\Monthly.cs" />
