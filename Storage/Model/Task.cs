@@ -207,7 +207,7 @@ namespace Storage.Model
         }
         public TaskStatus GetStatusOn(DateTime date)
         {
-            //date = date.Date;
+            date = date.Date;
             if (date >= _expiryTime) return TaskStatus.Expired;
             if (date < _activatedTime || !_repeater.IsUsableOn(date)) return TaskStatus.Unavailable;
             return TaskStatus.Available;
