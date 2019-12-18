@@ -454,9 +454,9 @@ namespace Storage
         }
         #endregion
         #region TodayTasks
-        public async t.Task AddUnfinishedTodayTask(string id)
+        public async t.Task AddUnfinishedTodayTask(string id, short index, string activeTimeOfDay)
         {
-            string cmd = "INSERT INTO TodayTasks(ID) VALUES(" + id + ");";
+            string cmd = "INSERT INTO TodayTasks(Index,ID,ActiveTimeOfDay) VALUES(" + index + "," + id + "," + activeTimeOfDay + ");";
             await ExecuteQueryAsync(cmd);
         }
         /// <summary>
@@ -482,22 +482,25 @@ namespace Storage
         /// <summary>
         /// Get unfinished tasks in TodayTasks table
         /// </summary>
+        /// <param name="report">
+        /// report(ID of unfinished tasks : string, SqlIndex : short, ActiveTimeOfDay : string)
+        /// </param>
         /// <returns>
         /// A List of ID : string(s)
         /// </returns>
-        public async t.Task<List<string>> GetUnfinishedTodayTasksAsync()
+        public async t.Task GetUnfinishedTodayTasksAsync(Action<string, short, int> report)
         {
-            List<string> output = new List<string>();
+            //List<string> output = new List<string>();
             DbCommand sqliteCmd = _sQLite.CreateCommand();
-            sqliteCmd.CommandText = "SELECT ID FROM TodayTasks WHERE IsFinished = false;";
+            sqliteCmd.CommandText = "SELECT ID,Index,ActiveTimeOfDay FROM TodayTasks WHERE IsFinished = false;";
             DbDataReader reader = await sqliteCmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                output.Add(reader[0].ToString());
+                report(reader[0].ToString(), reader.GetInt16(1), reader.GetInt32(2));
             }
             reader.Close();
             _sQLite.Close();
-            return output;
+            //return output;
         }
         #endregion
         #region InteractingTasksStatistics

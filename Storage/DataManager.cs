@@ -178,9 +178,9 @@ namespace Storage
         {
             return _sQL.RemoveAsync(SQL.KeyValueData, key);
         }
-        public void AddUnfinishedTodayTask(string id)
+        public void AddUnfinishedTodayTask(UnfinishedTask unfinishedTask)
         {
-            _sQL.AddUnfinishedTodayTask(id);
+            _sQL.AddUnfinishedTodayTask(unfinishedTask.Task.ID, unfinishedTask.SqlIndex, unfinishedTask.TimeInfo.ActiveTimeOfDay.Value.TotalMinutes.ToString());
         }
         /// <summary>
         /// Get all tasks in TodayTasks table
@@ -195,21 +195,21 @@ namespace Storage
         /// <summary>
         /// Get unfinished tasks in TodayTasks table
         /// </summary>
-        /// <returns>
-        /// A List of ID : string(s)
-        /// </returns>
-        public t.Task<List<string>> GetUnfinishedTodayTasksAsync()
+        /// <param name="report">
+        /// (ID of unfinished tasks : string, SqlIndex : short, timeInfo ActiveTimeOfDay Total Minutes : int)
+        /// </param>
+        public async t.Task GetUnfinishedTodayTasksAsync(Action<string, short, int> report)
         {
-            return _sQL.GetUnfinishedTodayTasksAsync();
+            await _sQL.GetUnfinishedTodayTasksAsync(report);
         }
         /// <summary>
         /// use to set IsFinished true in TodayTasks table
         /// </summary>
         /// <param name="id">ID of finished task</param>
         /// <returns></returns>
-        public void FinishTodayTasksAsync(string id)
+        public void FinishTodayTasksAsync(UnfinishedTask task)
         {
-            _sQL.ChangeStringPropertyAsync(SQL.TodayTasks, "ID=" + id, "IsFinished", "1");
+            _sQL.ChangeStringPropertyAsync(SQL.TodayTasks, "Index=" + task.SqlIndex, "IsFinished", "1");
         }
         public t.Task ClearTodayTasksAsync()
         {

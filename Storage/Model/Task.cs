@@ -14,6 +14,11 @@ namespace Storage.Model
         Unavailable,
         Expired
     }
+    public enum TaskType
+    {
+        Schedule,
+        NonSchedule
+    }
     public class Task : NoteTaking, IRecyclable, INotifySQLUpdatePropertyChanged
     {
         public Task()
@@ -92,6 +97,16 @@ namespace Storage.Model
         public int Index
         {
             get => (int)_repeater.Type;
+        }
+        public TaskType Type
+        {
+            get { 
+                if(_time.Count == 1 && _time[0].ActiveTimeOfDay == null)
+                {
+                    return TaskType.NonSchedule;
+                }
+                return TaskType.Schedule;
+            }
         }
         protected string _title;
         public string Title

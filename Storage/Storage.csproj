@@ -90,6 +90,7 @@
     <Compile Include="Model\Task.cs" />
     <Compile Include="Model\TimeInfo.cs" />
     <Compile Include="Model\ToDoComment.cs" />
+    <Compile Include="Model\UnfinishedTask.cs" />
     <Compile Include="Model\WeatherInformation.cs" />
     <Compile Include="Model\Weekly.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

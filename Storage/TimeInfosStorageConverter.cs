@@ -14,34 +14,39 @@ namespace Storage
         {
             ObservableCollection<TimeInfo> ouput = new ObservableCollection<TimeInfo>();
             string[] list = s.Split('|');
-            for(int i = 1; i < list.Length; i += 2)
+            for(int i = 0; i < list.Length; i ++)
             {
-                TimeSpan? activeTimeOfDay = null;
-                if (list[i - 1].Length != 0) activeTimeOfDay = TimeSpan.ParseExact(list[i - 1], "hhmm", null);
-                TimeSpan? limit = null;
-                if (list[i].Length != 0) limit = TimeSpan.ParseExact(list[i], "hhmm", null);
-                ouput.Add(new TimeInfo(activeTimeOfDay, limit));
+                ouput.Add(ParseToTimeInfo(list[i]));
             }
             return ouput;
         }
         public static string ToString(ObservableCollection<TimeInfo> timeInfos)
         {
-            if(timeInfos.Count > 0)
+            string output = "";
+            foreach(var i in timeInfos)
             {
-                string output;
-                if (timeInfos[0].ActiveTimeOfDay.HasValue) output = timeInfos[0].ActiveTimeOfDay.Value.ToString("hhmm");
-                else output = "";
-                if (timeInfos[0].Limit.HasValue) output += '|' + timeInfos[0].Limit.Value.ToString("hhmm");
-                else output += '|';
-                for (int i = 1; i < timeInfos.Count; i ++)
-                {
-                    if (timeInfos[i].ActiveTimeOfDay.HasValue) output += '|' + timeInfos[i].ActiveTimeOfDay.Value.ToString("hhmm");
-                    if (timeInfos[i].Limit.HasValue) output += '|' + timeInfos[i].Limit.Value.ToString("hhmm");
-                    else output += '|';
-                }
-                return output;
+                output += ToString(i) + "|";
             }
-            return "";
+            if (output.Length > 0) output = output.Remove(output.Length - 1, 1);
+            return output;
+        }
+        public static TimeInfo ParseToTimeInfo(string s)
+        {
+            var list = s.Split(',');
+            TimeSpan? activeTimeOfDay = null;
+            if (list[0].Length != 0) activeTimeOfDay = TimeSpan.FromMinutes(int.Parse(list[0]));
+            TimeSpan? limit = null;
+            if (list.Length > 1) limit = TimeSpan.FromMinutes(int.Parse(list[1]));
+            return new TimeInfo(activeTimeOfDay, limit);
+        }
+        public static string ToString(TimeInfo timeInfo/*, bool withoutDuration = false*/)
+        {
+            string output;
+            if (timeInfo.ActiveTimeOfDay.HasValue) output = timeInfo.ActiveTimeOfDay.Value.TotalMinutes.ToString();
+            else output = "";
+            //if (withoutDuration) return output;
+            if (timeInfo.Duration.HasValue) output += ',' + timeInfo.Duration.Value.TotalMinutes;
+            return output;
         }
     }
 }

@@ -58,5 +58,19 @@ namespace Storage.Model
             }
             get => _duration;
         }
+        public override bool Equals(object obj)
+        {
+            if (!(obj is TimeInfo)) return false;
+            TimeInfo timeInfo = obj as TimeInfo;
+            return this._activeTimeOfDay == timeInfo._activeTimeOfDay && this._duration == timeInfo._duration;
+        }
+        public static bool operator ==(TimeInfo info1, TimeInfo info2)
+        {
+            return info1._activeTimeOfDay == info2._activeTimeOfDay && info1._duration == info2._duration;
+        }
+        public static bool operator !=(TimeInfo info1, TimeInfo info2)
+        {
+            return info1._activeTimeOfDay != info2._activeTimeOfDay || info1._duration != info2._duration;
+        }
     }
 }

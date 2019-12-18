@@ -5,32 +5,55 @@ using System.Text;
 using Storage.Model;
 using Storage;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace MyToDos.ViewModel.AppServices
 {
     class TaskNotification
     {
         /// <summary>
-        /// 
+        /// CurrentIndex <  -1 => free time -> lastest active task index = -CurrentIndex - 2 (the indexs of tasks missed are from 0 to this index)
+        /// CurrentIndex >=  0 => work time -> current active task index = CurrentIndex
+        /// CurrentIndex == -1 => work hard ~  don't miss any tasks before
         /// </summary>
-        private static Tuple<Task,TimeInfo> Active;
-        public static ObservableCollection<Task> UnfinishedTasks;
-        public static bool IsFocusing = false;
+        private static int CurrentIndex;
+        public static ObservableCollection<UnfinishedTask> UnfinishedTasks;
+        #region UnfinishedTasks Interacting Methods
+        // Interacting and saving data 
+        public static void UnfinishedTasks_Add(UnfinishedTask task)
+        {
+            int index = 0;
+            while(index < UnfinishedTasks.Count && task > UnfinishedTasks[index])
+            {
+                index++;
+            }
+            DataManager.Current.AddUnfinishedTodayTask(task);
+            UnfinishedTasks.Insert(index, task);
+        }
+        #endregion
+        public static ObservableCollection<UnfinishedTask> UnfinishedAndDoneLaterTasks;
+        public static bool IsFocusing { set; get; } = false;
         internal static async void Start(AppServiceRunArgs args)
         {
-            UnfinishedTasks = new ObservableCollection<Task>();
+            CurrentIndex = -1;
+            UnfinishedTasks = new ObservableCollection<UnfinishedTask>();
+            UnfinishedAndDoneLaterTasks = new ObservableCollection<UnfinishedTask>();
             DateTime dateNow = DateTime.Now.Date;
             //Startup - Loading Data
             if (args.LatestStartupDate == dateNow)
             {
-                foreach (var i in await DataManager.Current.GetUnfinishedTodayTasksAsync())
-                {
-                    UnfinishedTasks.Add(DataManager.Current.Tasks[i]);
-                }
+                await DataManager.Current.GetUnfinishedTodayTasksAsync((id,index, activeTimeOfDayTotalMinutes) => {
+                    var activeTimeOfDay = TimeSpan.FromMinutes(activeTimeOfDayTotalMinutes);
+                    var task = DataManager.Current.Tasks[id];
+                    var timeInfo = task.Time.First(t => t.ActiveTimeOfDay == activeTimeOfDay);
+                    UnfinishedTasks_Add(new UnfinishedTask(task, timeInfo, index));
+                    if (index > UnfinishedTask.SqlIndexMax) UnfinishedTask.SqlIndexMax = index;
+                });
             }
             else
             {
                 //Report finished tasks and unfinished tasks (statistics)
+                // Continue working............................... (workmark)//////////=============-------------\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\{{{{{{{{}}}}}}}}}}
                 List<Tuple<string, bool>> todayTasks = await DataManager.Current.GetTodayTasksListAsync();
                 int numberOfFinishedTasks = 0;
                 string unfinishedTasks = "";
@@ -47,12 +70,17 @@ namespace MyToDos.ViewModel.AppServices
                 DataManager.Current.ReportInteractingTasksStatAsync(args.LatestStartupDate, numberOfFinishedTasks,
                     todayTasks.Count, finishedTasks, unfinishedTasks);
                 await DataManager.Current.ClearTodayTasksAsync();//Clear TodayTasks table
+                //Renew Unfinished Today Tasks
                 foreach (var i in DataManager.Current.Tasks)
                 {
-                    if(i.GetStatusOn(dateNow) == TaskStatus.Available)
+                    if(i.Type == TaskType.Schedule && i.GetStatusOn(dateNow) == TaskStatus.Available)
                     {
-                        DataManager.Current.AddUnfinishedTodayTask(i.ID);
-                        UnfinishedTasks.Add(i);
+                        foreach(var j in i.Time)
+                        {
+                            UnfinishedTask unfinishedTask = new UnfinishedTask(i, j);
+                            DataManager.Current.AddUnfinishedTodayTask(unfinishedTask);
+                            UnfinishedTasks_Add(unfinishedTask);
+                        }
                     }
                 }
 
@@ -66,49 +94,66 @@ namespace MyToDos.ViewModel.AppServices
         }
         internal static void Run(AppServiceRunArgs args)
         {
-            var currentActive = GetCurrentActiveTask();
-            if (currentActive.Item1 != Active.Item1)
+            if (IsFocusing) return;
+            var index = GetCurrentActiveTaskIndex();
+            if (index != GetLastestActiveTaskIndex())
             {
-                Active = currentActive;
-                if (Active.Item1 == null)//Rest time starts
-                {
-                    Notify(null, null);
-                }
-                else//Task starts - Notify
-                {
-                    Notify(Active.Item1, Active.Item2);
-                }
+                CurrentIndex = index;
+                Notify(UnfinishedTasks[index]);
             }
         }
         /// <summary>
         /// Be called when Notify(), parameters: Active New Task : Tasks, Active New Task's Time Info : TimeInfo
         /// Both Active New Task and Active New Task's Time Info can be null together
         /// </summary>
-        public static Action<Task, TimeInfo> Notifying;
-        static void Notify(Task activeTask, TimeInfo info)
+        public static Action<UnfinishedTask> Notifying;
+        static void Notify(UnfinishedTask task)
         {
             if (IsFocusing) return;
-            Notifying?.Invoke(activeTask, info);
+            Notifying?.Invoke(task);
         }
-        public static void Done(Task task)
+        public static void Done(UnfinishedTask task)
         {
-            Notifying?.Invoke(activeTask, info);
+            DataManager.Current.FinishTodayTasksAsync(task);
+            if (!UnfinishedTasks.Remove(task)) UnfinishedAndDoneLaterTasks.Remove(task);
+            CurrentIndex = -CurrentIndex - 1;
         }
-        public static void Snooze()
+        public static void Snooze(UnfinishedTask unfinishedTask, TimeSpan duration)
         {
-            Notifying?.Invoke(activeTask, info);
+            if (duration <= TimeSpan.Zero) throw new Exception("duration must be more than zero");
+            unfinishedTask.NotifiedTime += duration;
+            int index = UnfinishedTasks.IndexOf(unfinishedTask);
+            if (index == -1) throw new Exception("UnfinishedTasks doesn't contain it to snooze");
+            var oldIndex = index;
+            index++;
+            while (index < UnfinishedTasks.Count && unfinishedTask > UnfinishedTasks[index])
+            {
+                index++;
+            }
+            index--;
+            UnfinishedTasks.Move(oldIndex, index);
         }
-        public static void DoLater(Task task)
+        public static void DoLater(UnfinishedTask task)
         {
-            Notifying?.Invoke(activeTask, info);
+            if (UnfinishedTasks.Remove(task))
+            {
+                if (UnfinishedAndDoneLaterTasks.Contains(task))
+                    throw new Exception("UnfinishedAndDoneLaterTasks is containing it now"); ;
+                UnfinishedAndDoneLaterTasks.Add(task);
+            }
+            throw new Exception("UnfinishedTasks doesn't contain it to do later");
         }
-        public static void FocusOn(Task task)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="distance">
+        /// 
+        /// </param>
+        public static UnfinishedTask GetNextOrPreviousUnfinishedTask(int distance)
         {
-            Notifying?.Invoke(activeTask, info);
-        }
-        public static void DoNextTask()
-        {
-            Notifying?.Invoke(activeTask, info);
+            distance = GetLastestActiveTaskIndex() + distance;
+            if (distance < 0 || distance >= UnfinishedTasks.Count) return null;
+            return UnfinishedTasks[distance];
         }
         internal static void CheckInsertedTask(SQLCollectionChangedArgs e)
         {
@@ -271,58 +316,18 @@ namespace MyToDos.ViewModel.AppServices
                 }
             }
         }
-        private static Tuple<Task, TimeInfo> GetCurrentActiveTask()
+        private static int GetCurrentActiveTaskIndex()
         {
-            TimeSpan timeOfDay = DateTime.Now.TimeOfDay;
-            Task output = null;
-            TimeInfo lastest = null;
-            for (int i = 0; i < UnfinishedTasks.Count; i++)
-            {
-                //Find Active task
-                foreach (var info in UnfinishedTasks[i].Time)
-                {
-                    if (info.ActiveTimeOfDay.HasValue)
-                    {
-                        if (info.ActiveTimeOfDay.Value == timeOfDay) return new Tuple<Task, TimeInfo>(UnfinishedTasks[i], lastest);
-                        if(info.ActiveTimeOfDay.Value < timeOfDay)
-                        {
-                            if (lastest == null || lastest.ActiveTimeOfDay.Value < info.ActiveTimeOfDay.Value ||
-                                (lastest.ActiveTimeOfDay.Value == info.ActiveTimeOfDay.Value && output.Index < UnfinishedTasks[i].Index))
-                            {
-                                output = UnfinishedTasks[i];
-                                lastest = info;
-                            }
-                        }
-                    }
-                }
-            }
-            return new Tuple<Task, TimeInfo>(output, lastest);
+            var timeOfDayNow = DateTime.Now.TimeOfDay;
+            var index = GetLastestActiveTaskIndex();
+            //if (index == -1) return -1;
+            while (index < UnfinishedTasks.Count - 1 && UnfinishedTasks[index + 1].NotifiedTime >= timeOfDayNow) index++;
+            return index;
         }
-        private static Tuple<Task, TimeInfo> GetNearbyNextActiveTask()
+        private static int GetLastestActiveTaskIndex()
         {
-            TimeSpan timeOfDay = DateTime.Now.TimeOfDay;
-            Task output = null;
-            TimeInfo nearby = null;
-            for (int i = 0; i < UnfinishedTasks.Count; i++)
-            {
-                //Find Active task
-                foreach (var info in UnfinishedTasks[i].Time)
-                {
-                    if (info.ActiveTimeOfDay.HasValue)
-                    {
-                        if (info.ActiveTimeOfDay.Value > timeOfDay)
-                        {
-                            if (nearby == null || nearby.ActiveTimeOfDay.Value > info.ActiveTimeOfDay.Value || 
-                                (nearby.ActiveTimeOfDay.Value == info.ActiveTimeOfDay.Value && output.Index < UnfinishedTasks[i].Index))
-                            {
-                                output = UnfinishedTasks[i];
-                                nearby = info;
-                            }
-                        }
-                    }
-                }
-            }
-            return new Tuple<Task, TimeInfo>(output, nearby);
+            if (CurrentIndex < -1) return -CurrentIndex - 2;
+            return CurrentIndex;
         }
     }
 }
