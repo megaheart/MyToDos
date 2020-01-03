@@ -178,29 +178,15 @@ namespace Storage
         {
             return _sQL.RemoveAsync(SQL.KeyValueData, key);
         }
-        public void AddUnfinishedTodayTask(UnfinishedTask unfinishedTask)
-        {
-            _sQL.AddUnfinishedTodayTask(unfinishedTask.Task.ID, unfinishedTask.SqlIndex, unfinishedTask.TimeInfo.ActiveTimeOfDay.Value.TotalMinutes.ToString());
-        }
-        /// <summary>
-        /// Get all tasks in TodayTasks table
-        /// </summary>
-        /// <returns>
-        /// A List of Tuple< ID : string, IsFinished : bool>(s)
-        /// </returns>
-        public t.Task<List<Tuple<string, bool>>> GetTodayTasksListAsync()
-        {
-            return _sQL.GetTodayTasksListAsync();
-        }
         /// <summary>
         /// Get unfinished tasks in TodayTasks table
         /// </summary>
         /// <param name="report">
         /// (ID of unfinished tasks : string, SqlIndex : short, timeInfo ActiveTimeOfDay Total Minutes : int)
         /// </param>
-        public async t.Task GetUnfinishedTodayTasksAsync(Action<string, short, int> report)
+        public async t.Task GetFinishedTodayTasksAsync(Action<string, int> report)
         {
-            await _sQL.GetUnfinishedTodayTasksAsync(report);
+            await _sQL.GetFinishedTodayTasksAsync(report);
         }
         /// <summary>
         /// use to set IsFinished true in TodayTasks table
@@ -209,7 +195,7 @@ namespace Storage
         /// <returns></returns>
         public void FinishTodayTasksAsync(UnfinishedTask task)
         {
-            _sQL.ChangeStringPropertyAsync(SQL.TodayTasks, "Index=" + task.SqlIndex, "IsFinished", "1");
+            _sQL.AddFinishedTodayTaskAsync(task.Task.ID, task.TimeInfo.ActiveTimeOfDay.Value.TotalMinutes.ToString()).ConfigureAwait(false);
         }
         public t.Task ClearTodayTasksAsync()
         {
@@ -217,7 +203,7 @@ namespace Storage
         }
         public void ReportInteractingTasksStatAsync(DateTime date, int numberOfFinishedTasks, int numberOfTasks, string finishedTasks, string unfinishedTasks)
         {
-            _sQL.ReportInteractingTasksStatAsync(date, numberOfFinishedTasks, numberOfTasks, finishedTasks, unfinishedTasks);
+            _sQL.ReportInteractingTasksStatAsync(date, numberOfFinishedTasks, numberOfTasks, finishedTasks, unfinishedTasks).ConfigureAwait(false);
         }
         public t.Task<List<InteractingTasksStat>> GetInteractingTasksStatAsync(DateTime startDate, DateTime endDate)
         {

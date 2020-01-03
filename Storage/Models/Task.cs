@@ -55,7 +55,7 @@ namespace Storage.Model
         {
             set
             {
-                if(value != _time)
+                if (value != _time)
                 {
                     _time = value;
                     _time.CollectionChanged += TimeChanged;
@@ -101,7 +101,7 @@ namespace Storage.Model
         public TaskType Type
         {
             get { 
-                if(_time.Count == 1 && _time[0].ActiveTimeOfDay == null)
+                if(_time.Count == 0 || (_time.Count == 1 && _time[0].ActiveTimeOfDay == null)) 
                 {
                     return TaskType.NonSchedule;
                 }

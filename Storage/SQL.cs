@@ -141,6 +141,12 @@ namespace Storage
             string cmd = String.Format("DELETE FROM {0} WHERE ID='{1}' AND {2};", type.TableName, id, anotherCondition);
             await ExecuteQueryAsync(cmd);
         }
+        public async t.Task RemoveIfAsync(SQLType type, string condition)
+        {
+            //if (type.IsRecyclable) throw new Exception("Can't remove a IRecyclable type, please use SQL.MoveToGarbage method");
+            string cmd = String.Format("DELETE FROM {0} WHERE '{1}';", type.TableName, condition);
+            await ExecuteQueryAsync(cmd);
+        }
         public async t.Task MoveToGarbageAsync(SQLType type, string id)
         {
             //if (!type.IsRecyclable) throw new Exception("Can't move it to garbage, please use SQL.Remove method");
@@ -454,9 +460,9 @@ namespace Storage
         }
         #endregion
         #region TodayTasks
-        public async t.Task AddUnfinishedTodayTask(string id, short index, string activeTimeOfDay)
+        public async t.Task AddFinishedTodayTaskAsync(string id, string activeTimeOfDay)
         {
-            string cmd = "INSERT INTO TodayTasks(Index,ID,ActiveTimeOfDay) VALUES(" + index + "," + id + "," + activeTimeOfDay + ");";
+            string cmd = "INSERT INTO TodayTasks(ID,ActiveTimeOfDay) VALUES(" + id + "," + activeTimeOfDay + ");";
             await ExecuteQueryAsync(cmd);
         }
         /// <summary>
@@ -483,12 +489,9 @@ namespace Storage
         /// Get unfinished tasks in TodayTasks table
         /// </summary>
         /// <param name="report">
-        /// report(ID of unfinished tasks : string, SqlIndex : short, ActiveTimeOfDay : string)
+        /// report(ID of unfinished tasks : string, ActiveTimeOfDay : string)
         /// </param>
-        /// <returns>
-        /// A List of ID : string(s)
-        /// </returns>
-        public async t.Task GetUnfinishedTodayTasksAsync(Action<string, short, int> report)
+        public async t.Task GetFinishedTodayTasksAsync(Action<string, int> report)
         {
             //List<string> output = new List<string>();
             DbCommand sqliteCmd = _sQLite.CreateCommand();
@@ -496,7 +499,7 @@ namespace Storage
             DbDataReader reader = await sqliteCmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                report(reader[0].ToString(), reader.GetInt16(1), reader.GetInt32(2));
+                report(reader[0].ToString(), reader.GetInt32(2));
             }
             reader.Close();
             _sQLite.Close();

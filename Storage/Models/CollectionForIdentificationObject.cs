@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using Storage.QueryMethods;
 
 namespace Storage.Model
 {
-    public class CollectionForIdentificationObject<T> : IEnumerable<T>, INotifyCollectionChanged, INotifyPropertyChanged
+    public class CollectionForIdentificationObject<T> : IEnumerable<T>, INotifyCollectionChanged, INotifyPropertyChanged,IList<T>
             where T : IIdentifiedObject
     {
         protected List<T> _items;
@@ -20,6 +21,7 @@ namespace Storage.Model
         }
         public T this[int index]
         {
+            set => throw new NotImplementedException();
             get => _items[index];
         }
         public T this[string id]
@@ -32,6 +34,8 @@ namespace Storage.Model
             }
         }
         public int Count => _items.Count;
+
+        public bool IsReadOnly => false;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -63,23 +67,7 @@ namespace Storage.Model
         }
         public int IndexOfID(string id)
         {
-            int first = 0;
-            int last = _items.Count - 1;
-            if (CompareID(_items[first].ID, id) > 0 || CompareID(_items[last].ID, id) < 0) return -1;
-            if (_items[0].ID == id) return 0;
-            if (_items[last].ID == id) return last;
-            int middle, compare;
-            while (first != last - 1)
-            {
-                middle = (first + last) / 2;
-                compare = CompareID(_items[middle].ID, id);
-                if (compare > 0)
-                    last = middle;
-                else if (compare < 0)
-                    first = middle;
-                else return middle;
-            }
-            return -1;
+            return Extensions.BinarySearch(_items, x => x.ID, id, CompareID);
         }
         protected void ClearItems()
         {
@@ -111,5 +99,40 @@ namespace Storage.Model
         public void CopyTo(T[] array, int arrayIndex) => _items.CopyTo(array, arrayIndex);
         public IEnumerator<T> GetEnumerator() => _items.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
+
+        public int IndexOf(T item)
+        {
+            return Extensions.BinarySearch(_items, x => x.ID, item.ID, CompareID);
+        }
+
+        public void Insert(int index, T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Add(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Contains(T item)
+        {
+            return IndexOfID(item.ID) != -1;
+        }
+
+        public virtual bool Remove(T item)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
