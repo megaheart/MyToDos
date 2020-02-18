@@ -1,6 +1,7 @@
 ﻿using MyToDos.Native;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,13 +27,37 @@ namespace MyToDos
         {
             InitializeComponent();
             WindowResizer = new WindowResizer(this);
+            _pagesTree = new List<UserControl>(1);
         }
+        private List<UserControl> _pagesTree;
+        private void MoveTo(UserControl page)
+        {
+            _pagesTree.RemoveRange(1, _pagesTree.Count - 1);
+            _pagesTree[0] = page;
+
+        }
+        private void MoveToTasksPage(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void MoveToTimetablePage(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void MoveToNonSchedulesPage(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void MoveToSettingPage(object sender, RoutedEventArgs e)
+        {
+
+        }
+        WindowResizer WindowResizer;
+        // for each rectangle, assign the following method to its PreviewMouseDown event.
         private void MoveWindow(object sender, MouseButtonEventArgs e)
         {
             DragMove();
         }
-        WindowResizer WindowResizer;
-        // for each rectangle, assign the following method to its PreviewMouseDown event.
         private void Resize(object sender, MouseButtonEventArgs e)
         {
             WindowResizer.resizeWindow((System.Windows.Controls.Primitives.Thumb)sender);
@@ -55,6 +80,13 @@ namespace MyToDos
         private void CloseWindow(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+    }
+    public class NavigateWindow
+    {
+        public void Back()
+        {
+
         }
     }
 }

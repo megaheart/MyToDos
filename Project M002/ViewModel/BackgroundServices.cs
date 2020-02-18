@@ -33,10 +33,11 @@ namespace MyToDos.ViewModel
                 null, System.Globalization.DateTimeStyles.None, out lastestStartupDate);
             BackgroundServiceRunArgs = new AppServiceRunArgs(this, lastestStartupDate);
             //Services start up
+            Cleaner.Start(BackgroundServiceRunArgs);//Always Run First
             WeatherUpdate.Start(BackgroundServiceRunArgs);
             TaskNotification.Start(BackgroundServiceRunArgs);
 
-            Cleaner.Start(BackgroundServiceRunArgs);//Always Run Finally
+            
             //Timer starts up
             DateTime now = DateTime.Now;
             await Task.Delay((int)checked(60000 - now.Ticks / 10000 % 60000));

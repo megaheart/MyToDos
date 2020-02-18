@@ -15,7 +15,7 @@ namespace MyToDos.ViewModel.AppServices
         public static void Start(AppServiceRunArgs args)
         {
             Run(args);
-            args.Sender.ExecuteOncePerMinute += Run;
+            args.Sender.ExecuteOncePerDay += Run;
         }
         public static void Run(AppServiceRunArgs args)
         {

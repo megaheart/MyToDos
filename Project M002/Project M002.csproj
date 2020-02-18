@@ -70,7 +70,18 @@
     <Compile Include="ViewModel\AppServices\TaskNotification.cs" />
     <Compile Include="ViewModel\AppServiceRunArgs.cs" />
     <Compile Include="Native\WindowResize.cs" />
+    <Compile Include="View\CustomizedControls\NumbericTextBox.xaml.cs">
+      <DependentUpon>NumbericTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomizedControls\TimePicker.xaml.cs">
+      <DependentUpon>TimePicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\IWindowPage.cs" />
     <Page Include="ConsoleLog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DarkTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -86,6 +97,18 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="en-US.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomizedControls\NumbericTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomizedControls\TimePicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -97,7 +120,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="StartupChecking\" />
-    <Folder Include="View\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Storage\Storage.csproj">
@@ -107,6 +129,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\default_background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\App Icons\MainWindow\overtime.png" />
+    <Resource Include="Resources\App Icons\MainWindow\planner.png" />
+    <Resource Include="Resources\App Icons\MainWindow\setting.png" />
+    <Resource Include="Resources\App Icons\MainWindow\tasks.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icon package.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
