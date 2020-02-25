@@ -76,7 +76,6 @@ namespace MyToDos.View.CustomizedControls
         {
             int value = int.Parse(e.NewValue.ToString());
             NumbericTextBox n = d as NumbericTextBox;
-            if (n.Value > n.MaxValue || n.Value < n.MinValue) throw new Exception("Can't set value property out of min or max value");
             n.PreviousBtn2.Content = n.SafeAdd(value, -2).ToString();
             n.PreviousBtn1.Content = n.SafeAdd(value, -1).ToString();
             n.MainTextBox.Text = value.ToString();
@@ -88,6 +87,7 @@ namespace MyToDos.View.CustomizedControls
         {
             set
             {
+                if (value > MaxValue || value < MinValue) throw new Exception("Can't set value property out of min or max value");
                 if (value != Value)
                 {
                     SetValue(ValueProperty, value);

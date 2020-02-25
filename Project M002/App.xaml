@@ -21,6 +21,75 @@
             <SolidColorBrush x:Key="Green" Color="#2c902b"></SolidColorBrush>
             <SolidColorBrush x:Key="LightGreen" Color="#319d2f"></SolidColorBrush>
             <SolidColorBrush x:Key="DarkGreen" Color="#2b8929"></SolidColorBrush>
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+                <Setter Property="Cursor" Value="Hand"></Setter>
+                <Setter Property="Foreground" Value="{DynamicResource Color_Foreground}"></Setter>
+                <Setter Property="Padding" Value="8,7"></Setter>
+                <Setter Property="FontSize" Value="14"></Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ButtonBase">
+                            <Border CornerRadius="2" Padding="{TemplateBinding Padding}" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" x:Name="border" BorderThickness="0" Background="{DynamicResource Color_Button_Background}">
+                                <Border.RenderTransform>
+                                    <TranslateTransform x:Name="transform" Y="0"></TranslateTransform>
+                                </Border.RenderTransform>
+                                <Border.Effect>
+                                    <DropShadowEffect x:Name="shadow" Direction="270" BlurRadius="2" ShadowDepth="3" Opacity="0.3"/>
+                                </Border.Effect>
+                                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"></ContentPresenter>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource Color_Button_Hover_Background}"></Setter>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation To="3" Duration="0:0:0.2" Storyboard.TargetName="transform" Storyboard.TargetProperty="Y"></DoubleAnimation>
+                                                <DoubleAnimation To="0" Duration="0:0:0.2" Storyboard.TargetName="shadow" Storyboard.TargetProperty="BlurRadius"></DoubleAnimation>
+                                                <DoubleAnimation To="0" Duration="0:0:0.2" Storyboard.TargetName="shadow" Storyboard.TargetProperty="ShadowDepth"></DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation To="0" Duration="0:0:0.2" Storyboard.TargetName="transform" Storyboard.TargetProperty="Y"></DoubleAnimation>
+                                                <DoubleAnimation To="2" Duration="0:0:0.2" Storyboard.TargetName="shadow" Storyboard.TargetProperty="BlurRadius"></DoubleAnimation>
+                                                <DoubleAnimation To="3" Duration="0:0:0.2" Storyboard.TargetName="shadow" Storyboard.TargetProperty="ShadowDepth"></DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="FontSize" Value="14"></Setter>
+                <Setter Property="Padding" Value="8,5,0,5"></Setter>
+                <Setter Property="Cursor" Value="IBeam"></Setter>
+                <Setter Property="CaretBrush" Value="{DynamicResource Color_Foreground}"></Setter>
+                <Setter Property="Foreground" Value="{DynamicResource Color_Foreground}"></Setter>
+                <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Grid>
+                                <Border SnapsToDevicePixels="True" CornerRadius="2" BorderThickness="0" Background="{DynamicResource Color_TextBox_Background}">
+                                    <Border.Effect>
+                                        <DropShadowEffect Direction="270" BlurRadius="2" ShadowDepth="1"></DropShadowEffect>
+                                    </Border.Effect>
+                                </Border>
+                                <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

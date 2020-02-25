@@ -70,8 +70,14 @@
     <Compile Include="ViewModel\AppServices\TaskNotification.cs" />
     <Compile Include="ViewModel\AppServiceRunArgs.cs" />
     <Compile Include="Native\WindowResize.cs" />
+    <Compile Include="View\CustomizedControls\CustomTextbox.xaml.cs">
+      <DependentUpon>CustomTextbox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CustomizedControls\NumbericTextBox.xaml.cs">
       <DependentUpon>NumbericTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomizedControls\SpecialTextBox.xaml.cs">
+      <DependentUpon>SpecialTextBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CustomizedControls\TimePicker.xaml.cs">
       <DependentUpon>TimePicker.xaml</DependentUpon>
@@ -101,7 +107,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\CustomizedControls\CustomTextbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CustomizedControls\NumbericTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomizedControls\SpecialTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

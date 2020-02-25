@@ -4,9 +4,32 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MyToDos.View.CustomizedControls"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+             mc:Ignorable="d" Height="250" Width="300"
+             d:DesignHeight="250" d:DesignWidth="300">
+    <UserControl.Resources>
+        <local:NumberToText x:Key="NumberToTextConverter"></local:NumberToText>
+    </UserControl.Resources>
+    <Border Background="{DynamicResource Color_Background}" Padding="3,0" CornerRadius="2">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+            </Grid.RowDefinitions>
+            <local:NumbericTextBox x:Name="Hour" Grid.Column="2" Grid.RowSpan="2" ValueChanged="HourValue_Changed"></local:NumbericTextBox>
+            <local:NumbericTextBox x:Name="Minute" Grid.Column="3" Grid.RowSpan="2" MaxValue="59"></local:NumbericTextBox>
+            <local:SpecialTextBox x:Name="HourTxt" Text="0" MaxLength="2" TextboxPadding="0,6" Width="56" TextAlignment="Center" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" 
+                                  HorizontalAlignment="Center" ValidationRule="IsHour" TextChanged="HourTxt_Changed"></local:SpecialTextBox>
+            <TextBlock Foreground="{DynamicResource Color_Foreground}" Grid.Column="0" Grid.ColumnSpan="2" FontSize="20" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">:</TextBlock>
+            <local:SpecialTextBox x:Name="MinuteTxt" Text="0" MaxLength="2" TextboxPadding="0,6" Width="56" TextAlignment="Center" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" 
+                                  HorizontalAlignment="Center" ValidationRule="IsMinute" TextChanged="MinuteTxt_Changed"></local:SpecialTextBox>
+            <Button Width="70" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Click="OK" Content="{DynamicResource Lang_OK}"></Button>
+            <Button Width="70" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Click="Cancel" Content="{DynamicResource Lang_Cancel}"></Button>
+        </Grid>
+    </Border>
 </UserControl>
