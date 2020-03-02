@@ -1,3 +1,7 @@
 ﻿ ----- Material Icon:
  keyboard_arrow_up
  keyboard_arrow_down
+ keyboard_arrow_left
+ keyboard_arrow_right
+ fast_rewind
+ fast_forward

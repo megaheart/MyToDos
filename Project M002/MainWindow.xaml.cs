@@ -29,10 +29,7 @@ namespace MyToDos
             WindowResizer = new WindowResizer(this);
             _pagesTree = new List<UserControl>(1);
 
-            a.TimeOfDayChanged += (sender, e) =>
-            {
-                text.Text = a.TimeOfDay.ToString();
-            };
+            
         }
         private List<UserControl> _pagesTree;
         private void MoveTo(UserControl page)

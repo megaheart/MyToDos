@@ -70,6 +70,9 @@
     <Compile Include="ViewModel\AppServices\TaskNotification.cs" />
     <Compile Include="ViewModel\AppServiceRunArgs.cs" />
     <Compile Include="Native\WindowResize.cs" />
+    <Compile Include="View\CustomizedControls\Calendar.xaml.cs">
+      <DependentUpon>Calendar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CustomizedControls\CustomTextbox.xaml.cs">
       <DependentUpon>CustomTextbox.xaml</DependentUpon>
     </Compile>
@@ -104,6 +107,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="en-US.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomizedControls\Calendar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
