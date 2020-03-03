@@ -24,12 +24,6 @@ namespace MyToDos.View.CustomizedControls
         {
             InitializeComponent();
         }
-        public void TextFocus()
-        {
-            PlaceHolderTxt.Visibility = Visibility.Collapsed;
-            MainText.SelectionStart = MainText.Text.Length;
-            MainText.Focus();
-        }
         public string Text
         {
             get => MainText.Text;
@@ -93,14 +87,20 @@ namespace MyToDos.View.CustomizedControls
             }
             get => PlaceHolderTxt.Content.ToString();
         }
-        public Thickness TextPadding
+        public Thickness TextboxPadding
         {
             set
             {
-                PlaceHolderTxt.Padding = value;
                 MainText.Padding = value;
             }
-            get => PlaceHolderTxt.Padding;
+            get => MainText.Padding;
+        }
+        public TextAlignment TextAlignment
+        {
+            set
+            {
+                MainText.TextAlignment = value;
+            }
         }
         //public Thickness borderThickness
         //{

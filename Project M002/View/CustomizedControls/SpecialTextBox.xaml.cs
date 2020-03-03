@@ -28,12 +28,6 @@ namespace MyToDos.View.CustomizedControls
             InitializeComponent();
         }
 
-        public void TextFocus()
-        {
-            PlaceHolderTxt.Visibility = Visibility.Collapsed;
-            MainText.SelectionStart = MainText.Text.Length;
-            MainText.Focus();
-        }
         public string Text
         {
             get =>  (string)PlaceHolderTxt.Content;

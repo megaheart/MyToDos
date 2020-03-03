@@ -7,25 +7,23 @@
              mc:Ignorable="d" x:Name="ctrl" FontSize="14"
              d:DesignHeight="100" d:DesignWidth="500">
     <Grid>
-        <Grid>
-            <TextBox Name="MainText" FontSize="{Binding ElementName=ctrl,Path=FontSize}" LostFocus="MainText_LostFocus" PreviewTextInput="MainText_TextInput" DataObject.Pasting="MainText_Pasting"></TextBox>
-            <Button Name="PlaceHolderTxt" Padding="{Binding ElementName=MainText,Path=Padding}" FontSize="{Binding ElementName=ctrl,Path=FontSize}" Foreground="{DynamicResource Color_Foreground}" Content="Write here" TextBlock.TextAlignment="{Binding ElementName=MainText,Path=TextAlignment}" Click="Button_Click">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
-                        <Setter Property="Cursor" Value="IBeam"></Setter>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Border CornerRadius="2" Padding="{TemplateBinding Padding}" Background="{DynamicResource Color_TextBox_Background}">
-                                        <ContentPresenter Margin="2,0,2,0" TextBlock.Foreground="{DynamicResource Color_Foreground}"></ContentPresenter>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Style>
-            </Button>
-        </Grid>
+        <TextBox Name="MainText" FontSize="{Binding ElementName=ctrl,Path=FontSize}" LostFocus="MainText_LostFocus" PreviewTextInput="MainText_TextInput" DataObject.Pasting="MainText_Pasting"></TextBox>
+        <Button Name="PlaceHolderTxt" Padding="{Binding ElementName=MainText,Path=Padding}" FontSize="{Binding ElementName=ctrl,Path=FontSize}" Foreground="{DynamicResource Color_Foreground}" Content="Write here" TextBlock.TextAlignment="{Binding ElementName=MainText,Path=TextAlignment}" Click="Button_Click">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+                    <Setter Property="Cursor" Value="IBeam"></Setter>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border CornerRadius="2" Padding="{TemplateBinding Padding}" Background="{DynamicResource Color_TextBox_Background}">
+                                    <ContentPresenter Margin="2,0,2,0" TextBlock.Foreground="{DynamicResource Color_Foreground}"></ContentPresenter>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
     </Grid>
 </UserControl>

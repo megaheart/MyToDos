@@ -76,6 +76,9 @@
     <Compile Include="View\CustomizedControls\CustomTextbox.xaml.cs">
       <DependentUpon>CustomTextbox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\CustomizedControls\DateComboBox.xaml.cs">
+      <DependentUpon>DateComboBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CustomizedControls\NumbericTextBox.xaml.cs">
       <DependentUpon>NumbericTextBox.xaml</DependentUpon>
     </Compile>
@@ -115,6 +118,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CustomizedControls\CustomTextbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomizedControls\DateComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -8,4 +8,7 @@
     <sys:String x:Key="Lang_MainWindow_Setting">Setting</sys:String>
     <sys:String x:Key="Lang_OK">OK</sys:String>
     <sys:String x:Key="Lang_Cancel">Cancel</sys:String>
+    <sys:String x:Key="Lang_Year">Year</sys:String>
+    <sys:String x:Key="Lang_Month">Month</sys:String>
+    <sys:String x:Key="Lang_Day">Day</sys:String>
 </ResourceDictionary>
