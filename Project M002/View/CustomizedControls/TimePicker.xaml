@@ -6,9 +6,6 @@
              xmlns:local="clr-namespace:MyToDos.View.CustomizedControls"
              mc:Ignorable="d" Height="250" Width="300"
              d:DesignHeight="250" d:DesignWidth="300">
-    <UserControl.Resources>
-        <local:NumberToText x:Key="NumberToTextConverter"></local:NumberToText>
-    </UserControl.Resources>
     <Border Background="{DynamicResource Color_Background}" Padding="3,0" CornerRadius="2">
         <Grid>
             <Grid.ColumnDefinitions>
