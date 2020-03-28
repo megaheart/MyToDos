@@ -28,7 +28,7 @@ namespace MyToDos
             InitializeComponent();
             WindowResizer = new WindowResizer(this);
             _pagesTree = new List<UserControl>(1);
-
+            
             
         }
         private List<UserControl> _pagesTree;
@@ -40,11 +40,10 @@ namespace MyToDos
         }
         private void MoveToTasksPage(object sender, RoutedEventArgs e)
         {
-
+            
         }
         private void MoveToTimetablePage(object sender, RoutedEventArgs e)
         {
-
         }
         private void MoveToNonSchedulesPage(object sender, RoutedEventArgs e)
         {

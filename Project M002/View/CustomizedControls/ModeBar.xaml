@@ -4,15 +4,58 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MyToDos.View.CustomizedControls"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d" MinHeight="50" VerticalAlignment="Center" HorizontalAlignment="Center"
+             d:DesignHeight="50" d:DesignWidth="400">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="ThemeColor" Color="#3f7dd9"></SolidColorBrush>
+    </UserControl.Resources>
     <Grid>
-        <Button>
-            <StackPanel>
-                <ContentControl>
-                </ContentControl>
-                <TextBlock></TextBlock>
-            </StackPanel>
-        </Button>
+        <Line x:Name="MainLine" StrokeThickness="6" Stroke="Gray"></Line>
+        <Line x:Name="SelectionLine" StrokeThickness="8" Stroke="{StaticResource ThemeColor}"></Line>
+        <ListBox VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0" Background="Transparent" BorderThickness="0" Name="ButtonContainer" SelectionChanged="ModeButton_Selected" SelectionMode="Single">
+            <ListBox.Template>
+                <ControlTemplate TargetType="ListBox">
+                    <StackPanel Orientation="Horizontal" Initialized="Container_Intialized" IsItemsHost="True"></StackPanel>
+                </ControlTemplate>
+            </ListBox.Template>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="30">
+                        <ContentControl Content="{Binding Icon}" FontFamily="Material Icons" FontSize="30" Height="30" Width="30"></ContentControl>
+                        <TextBlock FontSize="16" VerticalAlignment="Center" Margin="5,0,10,0" Visibility="{Binding ContentVisibility}" Text="{Binding Content,NotifyOnTargetUpdated=True}" Binding.TargetUpdated="TextBlock_TargetUpdated"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.Resources>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Foreground" Value="{StaticResource Color_Foreground_Dark2}"></Setter>
+                    <Setter Property="Cursor" Value="Hand"></Setter>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border Height="50" MinWidth="50" Background="Transparent">
+                                    <ContentPresenter></ContentPresenter>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource Color_Foreground}"></Setter>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource ThemeColor}"></Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.Resources>
+            <!--<ListBox.ItemsSource>
+                <UIList xmlns="clr-namespace:MyToDos">
+                    <local:ModeOption Content="Hello" MaterialIconCode="fast_forward"></local:ModeOption>
+                    <local:ModeOption ImageIconUrl="D:\Design And Edit Picture\Project MyToDos\Raw\MainWindow\tasks.png"></local:ModeOption>
+                    <local:ModeOption Content="Hello" MaterialIconCode="keyboard_arrow_right"></local:ModeOption>
+                </UIList>
+            </ListBox.ItemsSource>-->
+        </ListBox>
     </Grid>
 </UserControl>

@@ -34,7 +34,8 @@ namespace MyToDos
         //}
         public static void DoEvent()
         {
-            App.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate{ }));
+            App.Current.Dispatcher.Invoke(NullVoid, DispatcherPriority.Background);
         }
+        public static void NullVoid() { }
     }
 }
