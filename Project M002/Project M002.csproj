@@ -83,6 +83,9 @@
     <Compile Include="View\CustomizedControls\DatePicker.xaml.cs">
       <DependentUpon>DatePicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\CustomizedControls\DateTimePicker.xaml.cs">
+      <DependentUpon>DateTimePicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CustomizedControls\ModeBar.xaml.cs">
       <DependentUpon>ModeBar.xaml</DependentUpon>
     </Compile>
@@ -133,6 +136,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CustomizedControls\DatePicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomizedControls\DateTimePicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

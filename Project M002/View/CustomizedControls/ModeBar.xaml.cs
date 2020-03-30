@@ -39,7 +39,7 @@ namespace MyToDos.View.CustomizedControls
             _modeOptions = new ObservableCollection<object>();
             ButtonContainer.ItemsSource = _modeOptions;
             _modeOptions.CollectionChanged += ModeOptions_CollectionChanged;
-            Height = 50;
+            //Height = 50;
             //ReloadMainLine();
             //Container = Bu
             Loaded += (sender, e) =>
@@ -101,7 +101,8 @@ namespace MyToDos.View.CustomizedControls
         private static void ModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var bar = d as ModeBar;
-            bar.RaiseEvent(new RoutedEventArgs(ModeChangedEvent));
+            if((int)e.OldValue != -1)
+                bar.RaiseEvent(new ModeChangedEventArgs((int) e.NewValue, ModeChangedEvent));
         }
         /// <summary>
         /// Get or set mode
@@ -131,8 +132,9 @@ namespace MyToDos.View.CustomizedControls
                 var listBoxItem = ButtonContainer.ItemContainerGenerator.ContainerFromIndex(ButtonContainer.SelectedIndex) as ListBoxItem;
                 ReloadSelectionLine(listBoxItem);
             }
-            if (_modeOptions.Count > 0 && ButtonContainer.SelectedIndex == -1) ButtonContainer.SelectedIndex = 0;
-            else SetValue(ModeProperty, ButtonContainer.SelectedIndex);
+            //if (_modeOptions.Count > 0 && ButtonContainer.SelectedIndex == -1) ButtonContainer.SelectedIndex = 0;
+            //else 
+            SetValue(ModeProperty, ButtonContainer.SelectedIndex);
         }
         private void ModeButton_Selected(object sender, SelectionChangedEventArgs e)
         {
@@ -242,6 +244,8 @@ namespace MyToDos.View.CustomizedControls
         {
             Dispatcher.Invoke(App.NullVoid, System.Windows.Threading.DispatcherPriority.Loaded);
             Resize();
+            var listBoxItem = ButtonContainer.ItemContainerGenerator.ContainerFromIndex(ButtonContainer.SelectedIndex) as ListBoxItem;
+            ReloadSelectionLine(listBoxItem);
         }
     }
     public delegate void ModeChangedEventHandler(object sender, ModeChangedEventArgs e);
@@ -255,8 +259,9 @@ namespace MyToDos.View.CustomizedControls
     }
     public class ModeOption:NotifiableObject
     {
+        public ModeOption() { }
         //public RadioButton Button { get; set; }
-        public object Icon { get; private set; }
+        public object Icon { get; private set; } = "";
         //private string _materialIconCode = "";
         public string MaterialIconCode
         {

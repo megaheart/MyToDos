@@ -30,18 +30,14 @@ namespace MyToDos.View.CustomizedControls
         {
             //TimeSpan timeOfDay = (TimeSpan)e.NewValue;
             TimePicker timePicker = d as TimePicker;
-
+            var time = (TimeSpan)e.NewValue;
+            timePicker.Hour.Value = time.Hours;
+            timePicker.Minute.Value = time.Minutes;
             timePicker.RaiseEvent(new RoutedEventArgs(TimeOfDayChangedEvent));
         }
         public TimeSpan TimeOfDay
         {
-            set
-            {
-                if(value != TimeOfDay)
-                {
-                    SetValue(TimeOfDayProperty, value);
-                }
-            }
+            set => SetValue(TimeOfDayProperty, value);
             get => (TimeSpan) GetValue(TimeOfDayProperty);
         }
         public static readonly RoutedEvent TimeOfDayChangedEvent = EventManager.RegisterRoutedEvent("TimeOfDayChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TimePicker));

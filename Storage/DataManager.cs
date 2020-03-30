@@ -170,9 +170,16 @@ namespace Storage
             if (value.Length > 256) throw new Exception("value isn't able to include more than 256 characters.");
             return _sQL.AddKeyAsync(key, value);
         }
+        /// <summary>
+        /// Get small datas whose type is string
+        /// </summary>
+        /// <param name="key">Key of datas</param>
+        /// <returns>
+        /// if key doesn't exist, return "" (empty string)
+        /// </returns>
         public t.Task<string> GetValueAsync(string key)
         {
-            return _sQL.GetStringPropertyAsync(SQL.KeyValueData, "Key=" + key, "Key");
+            return _sQL.GetStringPropertyAsync(SQL.KeyValueData, "Key='" + key + "'", "Value");
         }
         public t.Task RemoveKeyValueAsync(string key)
         {

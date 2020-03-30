@@ -36,7 +36,11 @@ namespace MyToDos.View.CustomizedControls
                 MonthBox.Value = value.Month;
                 DayBox.Value = value.Day;
             }
-            get => new DateTime(DayBox.Value, MonthBox.Value, YearBox.Value);
+            get
+            {
+                //MessageBox.Show(string.Format("{0}/{1}/{2}", DayBox.Value, MonthBox.Value, YearBox.Value));
+                return new DateTime(YearBox.Value, MonthBox.Value, DayBox.Value);
+            }
         }
         public void YearBoxValueChanged(object sender, RoutedEventArgs e)
         {

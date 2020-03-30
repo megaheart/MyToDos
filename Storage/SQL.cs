@@ -455,14 +455,14 @@ namespace Storage
         #region KeyValueDate
         public async t.Task AddKeyAsync(string key, string value)
         {
-            string cmd = "INSERT Or REPLACE INTO KeyValueData(Key, Value) VALUES(" + key +"," + value + ");";
+            string cmd = "INSERT Or REPLACE INTO KeyValueData(Key, Value) VALUES('" + key +"','" + value + "');";
             await ExecuteQueryAsync(cmd);
         }
         #endregion
         #region TodayTasks
         public async t.Task AddFinishedTodayTaskAsync(string id, string activeTimeOfDay)
         {
-            string cmd = "INSERT INTO TodayTasks(ID,ActiveTimeOfDay) VALUES(" + id + "," + activeTimeOfDay + ");";
+            string cmd = "INSERT INTO TodayTasks(ID,ActiveTimeOfDay) VALUES('" + id + "','" + activeTimeOfDay + "');";
             await ExecuteQueryAsync(cmd);
         }
         /// <summary>

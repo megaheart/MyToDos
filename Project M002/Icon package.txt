@@ -5,3 +5,4 @@
  keyboard_arrow_right
  fast_rewind
  fast_forward
+ date_range
