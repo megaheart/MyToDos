@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>MyToDos</RootNamespace>
     <AssemblyName>MyToDos</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -71,23 +71,24 @@
     <Compile Include="ViewModel\AppServices\TaskNotification.cs" />
     <Compile Include="ViewModel\AppServiceRunArgs.cs" />
     <Compile Include="Native\WindowResize.cs" />
+    <Compile Include="View\Converters\Dividing.cs" />
+    <Compile Include="View\Converters\DockToColumns.cs" />
+    <Compile Include="View\Converters\DockToRows.cs" />
     <Compile Include="View\CustomizedControls\Calendar.xaml.cs">
       <DependentUpon>Calendar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\CustomizedControls\CustomTabControl.cs" />
     <Compile Include="View\CustomizedControls\CustomTextbox.xaml.cs">
       <DependentUpon>CustomTextbox.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CustomizedControls\DateComboBox.xaml.cs">
       <DependentUpon>DateComboBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\CustomizedControls\DatePicker.xaml.cs">
-      <DependentUpon>DatePicker.xaml</DependentUpon>
+    <Compile Include="View\CustomizedControls\DateAdjuster.xaml.cs">
+      <DependentUpon>DateAdjuster.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CustomizedControls\DateTimePicker.xaml.cs">
       <DependentUpon>DateTimePicker.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\CustomizedControls\ModeBar.xaml.cs">
-      <DependentUpon>ModeBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CustomizedControls\NumbericTextBox.xaml.cs">
       <DependentUpon>NumbericTextBox.xaml</DependentUpon>
@@ -95,8 +96,8 @@
     <Compile Include="View\CustomizedControls\SpecialTextBox.xaml.cs">
       <DependentUpon>SpecialTextBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\CustomizedControls\TimePicker.xaml.cs">
-      <DependentUpon>TimePicker.xaml</DependentUpon>
+    <Compile Include="View\CustomizedControls\TimeAdjuster.xaml.cs">
+      <DependentUpon>TimeAdjuster.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\IWindowPage.cs" />
     <Page Include="ConsoleLog.xaml">
@@ -135,15 +136,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\CustomizedControls\DatePicker.xaml">
+    <Page Include="View\CustomizedControls\DateAdjuster.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CustomizedControls\DateTimePicker.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\CustomizedControls\ModeBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -155,7 +152,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\CustomizedControls\TimePicker.xaml">
+    <Page Include="View\CustomizedControls\TimeAdjuster.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

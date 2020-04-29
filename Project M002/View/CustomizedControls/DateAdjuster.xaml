@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="MyToDos.View.CustomizedControls.DateAdjuster"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MyToDos.View.CustomizedControls"
+             mc:Ignorable="d" MinWidth="404" MinHeight="300"
+             d:DesignHeight="300" d:DesignWidth="442">
+    <local:CustomizedTabControl HeaderPadding="20" x:Name="ModeControl" TabStripPlacement="Left" HeaderPosition="Center" SelectionChanged="ModeControl_SelectionChanged">
+        <TabItem>
+            <TabItem.Header>
+                <TextBlock FontFamily="Material Icons" FontSize="30">date_range</TextBlock>
+            </TabItem.Header>
+            <local:Calendar x:Name="Calendar" Margin="5,0,15,0">
+            </local:Calendar>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <TextBlock Margin="10" FontFamily="Material Icons" FontSize="30">view_day</TextBlock>
+            </TabItem.Header>
+            <local:DateComboBox x:Name="ComboBox" Width="320" Margin="5,10,15,0">
+            </local:DateComboBox>
+        </TabItem>
+    </local:CustomizedTabControl>
+</UserControl>

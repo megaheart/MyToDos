@@ -19,7 +19,7 @@ namespace MyToDos.View.CustomizedControls
     {
         private static readonly string[] nameOfEnglishMonth = new string[] {"January", "February", "March", "April", "May", "June", "July",
             "August", "September", "October", "November", "December" };
-        private static readonly string[] shortNameOfEnglishMonth = new string[] {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+        private static readonly string[] shortNameOfEnglishMonth = new string[] {"Jan", "Feb", "Mar", "Apr", "May-short", "Jun", "Jul",
             "Aug", "Sep", "Oct", "Nov", "Dec" };
         private CalendarDayButton[] dayButtonList;
         private CalendarMonthButton[] monthButtonList;
@@ -154,19 +154,26 @@ namespace MyToDos.View.CustomizedControls
             {
                 monthButtonList[i] = GridOfMonths.Children[i] as CalendarMonthButton;
                 monthButtonList[i].Click += CalendarMonthButtonClick;
-                monthButtonList[i].Content = shortNameOfEnglishMonth[i];
+                monthButtonList[i].SetResourceReference(Button.ContentProperty, "Lang_" + shortNameOfEnglishMonth[i]);
                 monthButtonList[i].Month = i + 1;
             }
 
             //Initialize Interface
             DateTime today = DateTime.Today;
             CalendarMoveToMonth(today.Month, today.Year);
+            App.LanguageChanged += App_LanguageChanged;
         }
+
+        private void App_LanguageChanged()
+        {
+            YearOverViewButton.Content = FindResource("Lang_" + nameOfEnglishMonth[currentMonthInGridOfDates - 1]).ToString() + ", " + currentYearInGridOfDates;
+        }
+
         private void CalendarMoveToMonth(int month, int year)
         {
             currentMonthInGridOfDates = month;
             currentYearInGridOfDates = year;
-            YearOverViewButton.Content = nameOfEnglishMonth[month - 1] + ", " + year;
+            YearOverViewButton.Content = FindResource("Lang_" + nameOfEnglishMonth[month - 1]).ToString() + ", " + year;
             DateTime firstDateOfMonth = new DateTime(year, month, 1);
             int startOfMonthIndex = (int)firstDateOfMonth.DayOfWeek;
             for (int i = 0; i < startOfMonthIndex; i++)
@@ -236,6 +243,7 @@ namespace MyToDos.View.CustomizedControls
             if (currentYearInGridOfMonths + 5 > MaxValue.Year)//Lock GoToFurtherNextMonthOrYear Button
                 GoToFurtherNextYearButton.IsEnabled = false;
             else GoToFurtherNextYearButton.IsEnabled = true;
+            var dateNow = DateTime.Now;
             for (int i = 0; i < 12; i++)
             {
                 if (currentYearInGridOfMonths == MinValue.Year && monthButtonList[i].Month < MinValue.Month)//Lock Month Button whose time is less then minValue
@@ -244,6 +252,12 @@ namespace MyToDos.View.CustomizedControls
                 if (currentYearInGridOfMonths == MaxValue.Year && monthButtonList[i].Month > MaxValue.Month)//Lock Month Button whose time is more then maxValue
                     monthButtonList[i].IsEnabled = false;
                 else monthButtonList[i].IsEnabled = true;
+            }
+            if (year == dateNow.Year) monthButtonList[dateNow.Month - 1].IsToday = true;
+            else
+            {
+                monthButtonList[(dateNow.Month - 2 + 12)%12].IsToday = false;
+                monthButtonList[dateNow.Month - 1].IsToday = false;
             }
         }
         private void OverViewYear(object sender, RoutedEventArgs e)
@@ -259,7 +273,7 @@ namespace MyToDos.View.CustomizedControls
                 currentYearInGridOfMonths = currentYearInGridOfDates;
                 GridOfMonths.Visibility = Visibility.Collapsed;
                 GridOfDates.Visibility = Visibility.Visible;
-                YearOverViewButton.Content = nameOfEnglishMonth[currentMonthInGridOfDates - 1] + ", " + currentYearInGridOfDates;
+                YearOverViewButton.Content = FindResource("Lang_" + nameOfEnglishMonth[currentMonthInGridOfDates - 1]).ToString() + ", " + currentYearInGridOfDates;
             }
         }
         private void CalendarMonthButtonClick(object sender, RoutedEventArgs e)

@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:MyToDos.View.CustomizedControls"
              mc:Ignorable="d" MouseWheel="UserControl_MouseWheel" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel>
-        <StackPanel.Resources>
+    <UniformGrid Columns="1">
+        <UniformGrid.Resources>
             <Style TargetType="Button">
                 <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
                 <Setter Property="Cursor" Value="Hand"></Setter>
@@ -15,7 +15,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="b" Height="36" BorderThickness="0" BorderBrush="#FFB9B9B9" Background="{DynamicResource Color_Button_Background}">
+                            <Border x:Name="b" MinHeight="36" BorderThickness="0" BorderBrush="#FFB9B9B9" Background="{DynamicResource Color_Button_Background}">
                                 <TextBlock FontSize="{TemplateBinding FontSize}" VerticalAlignment="Center" HorizontalAlignment="Center">
                                   <ContentPresenter></ContentPresenter>
                                 </TextBlock>
@@ -32,13 +32,15 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-        </StackPanel.Resources>
+        </UniformGrid.Resources>
         <Button Name="DecreaseContinuity" FontFamily="Material Icons" BorderThickness="0,0,0,1" PreviewMouseDown="DecreaseContinuity_PreviewMouseDown" PreviewMouseUp="DecreaseContinuity_PreviewMouseUp">keyboard_arrow_up</Button>
         <Button Name="PreviousBtn2" Click="DecreaseTwo">22</Button>
         <Button Name="PreviousBtn1" Click="DecreaseOne">23</Button>
-        <TextBlock Name="MainTextBox" TextAlignment="Center" Padding="8" Foreground="White" Background="{StaticResource Blue}">0</TextBlock>
+        <Border MinHeight="36" Background="{StaticResource Blue}">
+            <TextBlock Name="MainTextBox" TextAlignment="Center" VerticalAlignment="Center" Foreground="White">0</TextBlock>
+        </Border>
         <Button Name="NextBtn1" Click="IncreaseOne">1</Button>
         <Button Name="NextBtn2" Click="IncreaseTwo">2</Button>
         <Button Name="IncreaseContinuity" FontFamily="Material Icons" BorderThickness="0,1,0,0" PreviewMouseDown="IncreaseContinuity_PreviewMouseDown" PreviewMouseUp="IncreaseContinuity_PreviewMouseUp">keyboard_arrow_down</Button>
-    </StackPanel>
+    </UniformGrid>
 </UserControl>

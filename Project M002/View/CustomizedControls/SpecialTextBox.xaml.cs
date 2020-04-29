@@ -18,7 +18,7 @@ namespace MyToDos.View.CustomizedControls
     /// <summary>
     /// A Special text box with special behaviors
     /// I don't know how to describe more it so you must read 
-    /// Views/CustomizedControl/TimePicker.xaml and Views/CustomizedControl/TimePicker.xaml.cs to know more
+    /// Views/CustomizedControl/TimeAdjuster.xaml and Views/CustomizedControl/TimeAdjuster.xaml.cs to know more
     /// That is example about how to use this control
     /// </summary>
     public partial class SpecialTextBox : UserControl
@@ -27,7 +27,13 @@ namespace MyToDos.View.CustomizedControls
         {
             InitializeComponent();
         }
+        public static readonly DependencyProperty CheckWhileTypingProperty = DependencyProperty.Register("CheckWhileTyping", typeof(bool), typeof(SpecialTextBox), new UIPropertyMetadata(true));
 
+        public bool CheckWhileTyping
+        {
+            set => SetValue(CheckWhileTypingProperty, value);
+            get => (bool)GetValue(CheckWhileTypingProperty);
+        }
         public string Text
         {
             get =>  (string)PlaceHolderTxt.Content;
@@ -75,6 +81,8 @@ namespace MyToDos.View.CustomizedControls
         }
         /// <summary>
         /// default Validation Rule is "do not save text if user type nothing"
+        /// return true to accept input value
+        /// return false to decline input value
         /// </summary>
         public event Func<string, string, bool> ValidationRule; //bool ValidationRule(string newText, string key)
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -86,21 +94,59 @@ namespace MyToDos.View.CustomizedControls
         {
             if (!string.IsNullOrWhiteSpace(MainText.Text))
             {
-                PlaceHolderTxt.Content = MainText.Text;
-                MainText.Text = "";
-                RaiseEvent(new RoutedEventArgs(TextChangedEvent));
+                if (!CheckWhileTyping)
+                {
+                    if (ValidationRule == null || ValidationRule(MainText.Text, null))
+                    {
+                        PlaceHolderTxt.Content = MainText.Text;
+                        RaiseEvent(new RoutedEventArgs(TextChangedEvent));
+                    }
+                }
+                else
+                {
+                    PlaceHolderTxt.Content = MainText.Text;
+                    RaiseEvent(new RoutedEventArgs(TextChangedEvent));
+                }
             }
+            MainText.Text = "";
             PlaceHolderTxt.Visibility = Visibility.Visible;
         }
 
         private void MainText_TextInput(object sender, TextCompositionEventArgs e)
         {
-            if(e.Text == "\r")
+            if (!CheckWhileTyping)
             {
-                PlaceHolderTxt.Content = MainText.Text;
-                MainText.Text = "";
-                PlaceHolderTxt.Visibility = Visibility.Visible;
-                RaiseEvent(new RoutedEventArgs(TextChangedEvent));
+                if (e.Text == "\r")
+                {
+                    if(!string.IsNullOrWhiteSpace(MainText.Text) && (ValidationRule == null || ValidationRule(MainText.Text, null)))
+                    {
+                        PlaceHolderTxt.Content = MainText.Text;
+                        MainText.Text = "";
+                        PlaceHolderTxt.Visibility = Visibility.Visible;
+                        RaiseEvent(new RoutedEventArgs(TextChangedEvent));
+                    }
+                    else
+                    {
+                        MainText.Text = "";
+                        PlaceHolderTxt.Visibility = Visibility.Visible;
+                    }
+                }
+                return;
+            }
+            if (e.Text == "\r")
+            {
+                if (!string.IsNullOrWhiteSpace(MainText.Text))
+                {
+                    PlaceHolderTxt.Content = MainText.Text;
+                    MainText.Text = "";
+                    PlaceHolderTxt.Visibility = Visibility.Visible;
+                    RaiseEvent(new RoutedEventArgs(TextChangedEvent));
+                }
+                else
+                {
+                    MainText.Text = "";
+                    PlaceHolderTxt.Visibility = Visibility.Visible;
+                }
                 return;
             }
             e.Handled = !((MainText.MaxLength != 0 && MainText.Text.Length == MainText.MaxLength) || ValidationRule == null || ValidationRule(MainText.Text.Insert(MainText.CaretIndex, e.Text), e.Text));
@@ -108,6 +154,7 @@ namespace MyToDos.View.CustomizedControls
 
         private void MainText_Pasting(object sender, DataObjectPastingEventArgs e)
         {
+            if (!CheckWhileTyping) return;
             if (e.DataObject.GetDataPresent(typeof(string)))
             {
                 if (!ValidationRule(e.DataObject.GetData(typeof(string)) as string, ""))

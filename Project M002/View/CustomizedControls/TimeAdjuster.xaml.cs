@@ -17,36 +17,36 @@ using System.Windows.Shapes;
 namespace MyToDos.View.CustomizedControls
 {
     /// <summary>
-    /// Interaction logic for TimePicker.xaml
+    /// Interaction logic for TimeAdjuster.xaml
     /// </summary>
-    public partial class TimePicker : UserControl
+    public partial class TimeAdjuster : UserControl
     {
-        public TimePicker()
+        public TimeAdjuster()
         {
             InitializeComponent();
         }
-        public static readonly DependencyProperty TimeOfDayProperty = DependencyProperty.Register("TimeOfDay", typeof(TimeSpan), typeof(TimePicker), new UIPropertyMetadata(new TimeSpan(), TimeOfDayPropertyChanged));
+        public static readonly DependencyProperty TimeOfDayProperty = DependencyProperty.Register("TimeOfDay", typeof(TimeSpan), typeof(TimeAdjuster), new UIPropertyMetadata(new TimeSpan(), TimeOfDayPropertyChanged));
         private static void TimeOfDayPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             //TimeSpan timeOfDay = (TimeSpan)e.NewValue;
-            TimePicker timePicker = d as TimePicker;
+            TimeAdjuster TimeAdjuster = d as TimeAdjuster;
             var time = (TimeSpan)e.NewValue;
-            timePicker.Hour.Value = time.Hours;
-            timePicker.Minute.Value = time.Minutes;
-            timePicker.RaiseEvent(new RoutedEventArgs(TimeOfDayChangedEvent));
+            TimeAdjuster.Hour.Value = time.Hours;
+            TimeAdjuster.Minute.Value = time.Minutes;
+            TimeAdjuster.RaiseEvent(new RoutedEventArgs(TimeOfDayChangedEvent));
         }
         public TimeSpan TimeOfDay
         {
             set => SetValue(TimeOfDayProperty, value);
             get => (TimeSpan) GetValue(TimeOfDayProperty);
         }
-        public static readonly RoutedEvent TimeOfDayChangedEvent = EventManager.RegisterRoutedEvent("TimeOfDayChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TimePicker));
+        public static readonly RoutedEvent TimeOfDayChangedEvent = EventManager.RegisterRoutedEvent("TimeOfDayChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TimeAdjuster));
         public event RoutedEventHandler TimeOfDayChanged
         {
             add { AddHandler(TimeOfDayChangedEvent, value); }
             remove { RemoveHandler(TimeOfDayChangedEvent, value); }
         }
-        public static readonly RoutedEvent OKOrCancelPressedEvent = EventManager.RegisterRoutedEvent("OKOrCancelPressed", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TimePicker));
+        public static readonly RoutedEvent OKOrCancelPressedEvent = EventManager.RegisterRoutedEvent("OKOrCancelPressed", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TimeAdjuster));
         public event RoutedEventHandler OKOrCancelPressed
         {
             add { AddHandler(OKOrCancelPressedEvent, value); }

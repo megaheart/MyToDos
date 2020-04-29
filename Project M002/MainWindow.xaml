@@ -46,7 +46,7 @@
         <ContentControl x:Name="Main" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,20,0,0">
             <Grid MinHeight="400" MinWidth="400" VerticalAlignment="Center" HorizontalAlignment="Center" Background="{DynamicResource Color_Background}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="200">
-                    
+                    <ctrl:DateTimePicker></ctrl:DateTimePicker>
                 </StackPanel>
             </Grid>
         </ContentControl>
@@ -60,45 +60,11 @@
                         <Setter.Value>
                             <ControlTemplate TargetType="ButtonBase">
                                 <Border CornerRadius="2" Width="50" Height="30" x:Name="border" BorderThickness="0" Background="{TemplateBinding Background}">
-                                    <Border.RenderTransform>
-                                        <TranslateTransform x:Name="transform" Y="0"></TranslateTransform>
-                                    </Border.RenderTransform>
                                     <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"></ContentPresenter>
                                 </Border>
                                 <ControlTemplate.Triggers>
-                                    <MultiTrigger>
-                                        <MultiTrigger.Conditions>
-                                            <Condition Property="IsMouseOver" Value="True"></Condition>
-                                            <Condition Property="IsPressed" Value="False"></Condition>
-                                        </MultiTrigger.Conditions>
-                                        <MultiTrigger.EnterActions>
-                                            <RemoveStoryboard BeginStoryboardName="storyboard1"></RemoveStoryboard>
-                                            <BeginStoryboard Name="storyboard2">
-                                                <Storyboard>
-                                                    <DoubleAnimation To="-3" Duration="0:0:0.2" Storyboard.TargetName="transform" Storyboard.TargetProperty="Y"></DoubleAnimation>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </MultiTrigger.EnterActions>
-                                        <MultiTrigger.ExitActions>
-                                            <BeginStoryboard>
-                                                <Storyboard Name="storyboard3">
-                                                    <DoubleAnimation To="0" Duration="0:0:0.2" Storyboard.TargetName="transform" Storyboard.TargetProperty="Y"></DoubleAnimation>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </MultiTrigger.ExitActions>
-                                    </MultiTrigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Trigger.EnterActions>
-                                            <BeginStoryboard x:Name="storyboard1">
-                                                <Storyboard>
-                                                    <DoubleAnimation To="0" Duration="0:0:0" Storyboard.TargetName="transform" Storyboard.TargetProperty="Y"></DoubleAnimation>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-
-                                        </Trigger.EnterActions>
-                                        <Trigger.ExitActions>
-                                            <RemoveStoryboard BeginStoryboardName="storyboard2"></RemoveStoryboard>
-                                        </Trigger.ExitActions>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Color_Button_Hover_Background}"></Setter>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -173,33 +139,16 @@
                             <ControlTemplate TargetType="RadioButton">
                                 <Border CornerRadius="2" Height="36" Padding="0,0,12,0" x:Name="border" BorderThickness="0" Background="{TemplateBinding Background}">
                                     <Border.RenderTransform>
-                                        <TranslateTransform x:Name="transform" Y="0"></TranslateTransform>
+                                        <ScaleTransform x:Name="scale"
+                                                        CenterX="{Binding ElementName=border,Path=ActualWidth, Converter={StaticResource DividingConverter},ConverterParameter=2}"
+                                                        CenterY="{Binding ElementName=border,Path=ActualHeight, Converter={StaticResource DividingConverter},ConverterParameter=2}"></ScaleTransform>
                                     </Border.RenderTransform>
                                     <ContentPresenter></ContentPresenter>
                                 </Border>
                                 <ControlTemplate.Triggers>
-                                    <MultiTrigger>
-                                        <MultiTrigger.Conditions>
-                                            <Condition Property="IsMouseOver" Value="True"></Condition>
-                                            <Condition Property="IsChecked" Value="False"></Condition>
-                                            <Condition Property="IsPressed" Value="False"></Condition>
-                                        </MultiTrigger.Conditions>
-                                        <MultiTrigger.EnterActions>
-                                            <RemoveStoryboard BeginStoryboardName="storyboard1"></RemoveStoryboard>
-                                            <BeginStoryboard Name="storyboard2">
-                                                <Storyboard>
-                                                    <DoubleAnimation To="-3" Duration="0:0:0.2" Storyboard.TargetName="transform" Storyboard.TargetProperty="Y"></DoubleAnimation>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </MultiTrigger.EnterActions>
-                                        <MultiTrigger.ExitActions>
-                                            <BeginStoryboard>
-                                                <Storyboard Name="storyboard3">
-                                                    <DoubleAnimation To="0" Duration="0:0:0.2" Storyboard.TargetName="transform" Storyboard.TargetProperty="Y"></DoubleAnimation>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </MultiTrigger.ExitActions>
-                                    </MultiTrigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Color_Button_Hover_Background}"></Setter>
+                                    </Trigger>
                                     <MultiTrigger>
                                         <MultiTrigger.Conditions>
                                             <Condition Property="IsPressed" Value="True"></Condition>
@@ -208,13 +157,19 @@
                                         <MultiTrigger.EnterActions>
                                             <BeginStoryboard x:Name="storyboard1">
                                                 <Storyboard>
-                                                    <DoubleAnimation To="0" Duration="0:0:0" Storyboard.TargetName="transform" Storyboard.TargetProperty="Y"></DoubleAnimation>
+                                                    <DoubleAnimation Duration="0:0:0.2" Storyboard.TargetName="scale" Storyboard.TargetProperty="ScaleX" To="0.94"></DoubleAnimation>
+                                                    <DoubleAnimation Duration="0:0:0.2" Storyboard.TargetName="scale" Storyboard.TargetProperty="ScaleY" To="0.94"></DoubleAnimation>
                                                 </Storyboard>
                                             </BeginStoryboard>
                                             
                                         </MultiTrigger.EnterActions>
                                         <MultiTrigger.ExitActions>
-                                            <RemoveStoryboard BeginStoryboardName="storyboard2"></RemoveStoryboard>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Duration="0:0:0.2" Storyboard.TargetName="scale" Storyboard.TargetProperty="ScaleX" To="1"></DoubleAnimation>
+                                                    <DoubleAnimation Duration="0:0:0.2" Storyboard.TargetName="scale" Storyboard.TargetProperty="ScaleY" To="1"></DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
                                         </MultiTrigger.ExitActions>
                                     </MultiTrigger>
                                     <Trigger Property="IsChecked" Value="True">

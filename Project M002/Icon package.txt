@@ -6,3 +6,8 @@
  fast_rewind
  fast_forward
  date_range
+ view_day
+ alarm
+ event
+ close
+ save

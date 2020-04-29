@@ -7,7 +7,7 @@
     <SolidColorBrush x:Key="Color_Button_Press_Background" Color="#FF212121"></SolidColorBrush>
     <SolidColorBrush x:Key="Color_TextBox_Background" Color="#FF313131"></SolidColorBrush>
     <SolidColorBrush x:Key="Color_Foreground" Color="#FFFFFFFF"></SolidColorBrush>
-    <SolidColorBrush x:Key="Color_Foreground_Dark" Color="#FFE2E2E2"></SolidColorBrush>
+    <SolidColorBrush x:Key="Color_Foreground_Dark" Color="#FFe6e6e6"></SolidColorBrush>
     <SolidColorBrush x:Key="Color_Foreground_Dark2" Color="#FFCCCCCC"></SolidColorBrush>
     <SolidColorBrush x:Key="Color_Text_Disabled" Color="#FF464646"></SolidColorBrush>
     <SolidColorBrush x:Key="Color_Calendar_Button_Border" Color="#FF4C4C4C"></SolidColorBrush>

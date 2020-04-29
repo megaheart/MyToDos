@@ -4,9 +4,86 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MyToDos.View.CustomizedControls"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d" Padding="1"
+             d:DesignHeight="450" d:DesignWidth="400">
+    <UserControl.Template>
+        <ControlTemplate TargetType="UserControl">
+            <ContentPresenter DataContext="{TemplateBinding BorderThickness}"></ContentPresenter>
+        </ControlTemplate>
+    </UserControl.Template>
     <Grid>
-            
+        <Border Name="MainBox" CornerRadius="2" BorderBrush="Gray" BorderThickness="{Binding}" Background="{DynamicResource Color_Button_Background}" Padding="3,0" VerticalAlignment="Center">
+            <Grid Height="50">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Padding="0" Style="{StaticResource ButtonStyleV2}" Click="OpenPopupBox">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="10,0,10,0" FontFamily="Material Icons" x:Name="Icon" FontSize="26" VerticalAlignment="Center">event</TextBlock>
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"></ColumnDefinition>
+                                <ColumnDefinition Width="auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"></RowDefinition>
+                                <RowDefinition Height="auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <TextBlock Name="TitleTxt" FontSize="14" Foreground="{DynamicResource Color_Foreground}">Pick DateTime </TextBlock>
+                            <TextBlock Name="DateTimeTxt" FontStyle="Italic" Grid.Column="1" VerticalAlignment="Center" FontSize="14" Margin="5,0,5,0" Foreground="{DynamicResource Color_Foreground}"></TextBlock>
+                            <TextBlock Name="DateTimeNumber" Visibility="Collapsed" Grid.Row="1" Grid.ColumnSpan="2" FontSize="12" Foreground="{DynamicResource Color_Foreground_Dark2}"></TextBlock>
+                        </Grid>
+                    </StackPanel>
+                </Button>
+                <Button Grid.Column="1" Style="{StaticResource ButtonStyleV2}" Click="RemoveSelectedDateTime" Visibility="Collapsed">
+                    <TextBlock FontFamily="Material Icons" FontSize="20" Margin="5,0" Foreground="{DynamicResource Color_Foreground}">close</TextBlock>
+                </Button>
+            </Grid>
+        </Border>
+        <Popup x:Name="PopupBox" IsOpen="False" PlacementTarget="{Binding ElementName=MainBox}" Placement="RelativePoint" MinWidth="394">
+            <Border CornerRadius="2" BorderBrush="{DynamicResource Color_Foreground}" BorderThickness="1" Background="{DynamicResource Color_Button_Background}" Padding="0,3" VerticalAlignment="Center">
+                <StackPanel>
+                    <local:CustomizedTabControl x:Name="DateTimeTabControl" SelectedIndex="1" HeaderPosition="Stretch" SelectionChanged="CustomizedTabControl_SelectionChanged">
+                        <TabItem Padding="10">
+                            <TabItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontFamily="Material Icons" FontSize="25">alarm</TextBlock>
+                                    <TextBlock x:Name="TimeTitle" FontSize="16" VerticalAlignment="Center" Margin="5,0,0,0" Width="40">00:00</TextBlock>
+                                </StackPanel>
+                            </TabItem.Header>
+                            <local:TimeAdjuster x:Name="TimeAdjusterControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="300"></local:TimeAdjuster>
+                        </TabItem>
+                        <TabItem Padding="10">
+                            <TabItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontFamily="Material Icons" FontSize="25">event</TextBlock>
+                                    <TextBlock x:Name="DateTitle" FontSize="16" VerticalAlignment="Center" Margin="5,0,0,0" Width="85">00/00/0000</TextBlock>
+                                </StackPanel>
+                            </TabItem.Header>
+                            <local:DateAdjuster x:Name="DateAdjusterControl"></local:DateAdjuster>
+                        </TabItem>
+                    </local:CustomizedTabControl>
+                    <Grid Height="46">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Style="{StaticResource ButtonStyleV2}" Click="Save">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock FontFamily="Material Icons" FontSize="20" Margin="4,0,5,0">save</TextBlock>
+                                <TextBlock VerticalAlignment="Center" Text="{DynamicResource Lang_Save}"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="1" Style="{StaticResource ButtonStyleV2}" Click="Cancel">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock FontFamily="Material Icons" FontSize="20" Margin="4,0,5,0">close</TextBlock>
+                                <TextBlock VerticalAlignment="Center" Text="{DynamicResource Lang_Cancel}"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Popup>
     </Grid>
 </UserControl>
