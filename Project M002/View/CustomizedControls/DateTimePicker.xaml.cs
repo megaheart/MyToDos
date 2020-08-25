@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -33,10 +35,12 @@ namespace MyToDos.View.CustomizedControls
                 var time = SelectedDateTime.Value.Date - System.DateTime.Now.Date;
                 if (time > TimeSpan.Zero)//Future
                 {
-                    if (time.Days == 1) DateTimeTxt.Text = string.Format(FindResource("Lang_Tomorrow").ToString() + FindResource("Lang_DateTimePicker_003").ToString(),
+                    if (time.Days == 1) 
+                        DateTimeTxt.Text = string.Format(FindResource("Lang_Tomorrow").ToString() + FindResource("Lang_DateTimePicker_003").ToString(),
                         null, SelectedDateTime.Value.TimeOfDay.ToString("hh\\:mm"));
-                    DateTimeTxt.Text = string.Format(FindResource("Lang_DateTimePicker_001").ToString() + FindResource("Lang_DateTimePicker_003").ToString(),
-                        time.Days, SelectedDateTime.Value.TimeOfDay.ToString("hh\\:mm"));
+                    else
+                        DateTimeTxt.Text = string.Format(FindResource("Lang_DateTimePicker_001").ToString() + FindResource("Lang_DateTimePicker_003").ToString(),
+                            time.Days, SelectedDateTime.Value.TimeOfDay.ToString("hh\\:mm"));
                 }
                 else if (time == TimeSpan.Zero)//Today
                 {
@@ -45,10 +49,12 @@ namespace MyToDos.View.CustomizedControls
                 }
                 else//Past
                 {
-                    if (time.Days == -1) DateTimeTxt.Text = string.Format(FindResource("Lang_Yesterday").ToString() + FindResource("Lang_DateTimePicker_003").ToString(),
+                    if (time.Days == -1) 
+                        DateTimeTxt.Text = string.Format(FindResource("Lang_Yesterday").ToString() + FindResource("Lang_DateTimePicker_003").ToString(),
                         null, SelectedDateTime.Value.TimeOfDay.ToString("hh\\:mm"));
-                    DateTimeTxt.Text = string.Format(FindResource("Lang_DateTimePicker_002").ToString() + FindResource("Lang_DateTimePicker_003").ToString(),
-                        -time.Days, SelectedDateTime.Value.TimeOfDay.ToString("hh\\:mm"));
+                    else
+                        DateTimeTxt.Text = string.Format(FindResource("Lang_DateTimePicker_002").ToString() + FindResource("Lang_DateTimePicker_003").ToString(),
+                            -time.Days, SelectedDateTime.Value.TimeOfDay.ToString("hh\\:mm"));
                 }
                 DateTimeNumber.Text = SelectedDateTime.Value.ToString("HH:mm dd/MM/yyyy");
 
@@ -56,14 +62,6 @@ namespace MyToDos.View.CustomizedControls
             else
             {
                 TitleTxt.Text = FindResource("Lang_Pick").ToString() + Title;
-            }
-            if (DateTimeTabControl.SelectedIndex == 1)
-            {
-                DateTitle.Text = FindResource("Lang_Date").ToString();
-            }
-            else
-            {
-                TimeTitle.Text = FindResource("Lang_Time").ToString();
             }
         }
 
@@ -93,7 +91,7 @@ namespace MyToDos.View.CustomizedControls
             }
             else
             {
-                ctrl.TitleTxt.Text = ctrl.FindResource("Lang_Pick").ToString() + title;
+                ctrl.TitleTxt.Text = ctrl.FindResource("Lang_Pick").ToString() + " " + title;
             }
         }
         public string Title
@@ -107,20 +105,24 @@ namespace MyToDos.View.CustomizedControls
             DateTimePicker ctrl = d as DateTimePicker;
             DateTime? newDatetime = (DateTime?)e.NewValue;
             DateTime? oldDatetime = (DateTime?)e.OldValue;
+            //Renew UI
             if (newDatetime.HasValue)
             {
                 if(!oldDatetime.HasValue)
                 {
                     ctrl.TitleTxt.Text = ctrl.Title + ":";
                     ctrl.DateTimeNumber.Visibility = Visibility.Visible;
+                    ctrl.RemoveDateTimeBtn.Visibility = Visibility.Visible;
                 }
                 var time = newDatetime.Value.Date - System.DateTime.Now.Date;
                 if(time > TimeSpan.Zero)//Future
                 {
-                    if (time.Days == 1) ctrl.DateTimeTxt.Text = string.Format(ctrl.FindResource("Lang_Tomorrow").ToString() + ctrl.FindResource("Lang_DateTimePicker_003").ToString(),
+                    if (time.Days == 1)
+                        ctrl.DateTimeTxt.Text = string.Format(ctrl.FindResource("Lang_Tomorrow").ToString() + ctrl.FindResource("Lang_DateTimePicker_003").ToString(),
                         null, newDatetime.Value.TimeOfDay.ToString("hh\\:mm"));
-                    ctrl.DateTimeTxt.Text = string.Format(ctrl.FindResource("Lang_DateTimePicker_001").ToString() + ctrl.FindResource("Lang_DateTimePicker_003").ToString(),
-                        time.Days, newDatetime.Value.TimeOfDay.ToString("hh\\:mm"));
+                    else
+                        ctrl.DateTimeTxt.Text = string.Format(ctrl.FindResource("Lang_DateTimePicker_001").ToString() + ctrl.FindResource("Lang_DateTimePicker_003").ToString(),
+                            time.Days, newDatetime.Value.TimeOfDay.ToString("hh\\:mm"));
                 }
                 else if(time == TimeSpan.Zero)//Today
                 {
@@ -129,18 +131,22 @@ namespace MyToDos.View.CustomizedControls
                 }
                 else//Past
                 {
-                    if (time.Days == -1) ctrl.DateTimeTxt.Text = string.Format(ctrl.FindResource("Lang_Yesterday").ToString() + ctrl.FindResource("Lang_DateTimePicker_003").ToString(),
+                    if (time.Days == -1)
+                        ctrl.DateTimeTxt.Text = string.Format(ctrl.FindResource("Lang_Yesterday").ToString() + ctrl.FindResource("Lang_DateTimePicker_003").ToString(),
                         null, newDatetime.Value.TimeOfDay.ToString("hh\\:mm"));
-                    ctrl.DateTimeTxt.Text = string.Format(ctrl.FindResource("Lang_DateTimePicker_002").ToString() + ctrl.FindResource("Lang_DateTimePicker_003").ToString(),
-                        -time.Days, newDatetime.Value.TimeOfDay.ToString("hh\\:mm"));
+                    else
+                        ctrl.DateTimeTxt.Text = string.Format(ctrl.FindResource("Lang_DateTimePicker_002").ToString() + ctrl.FindResource("Lang_DateTimePicker_003").ToString(),
+                            -time.Days, newDatetime.Value.TimeOfDay.ToString("hh\\:mm"));
                 }
                 ctrl.DateTimeNumber.Text = newDatetime.Value.ToString("HH:mm dd/MM/yyyy");
 
             }
             else
             {
-                ctrl.TitleTxt.Text = ctrl.FindResource("Lang_Pick").ToString() + ctrl.Title;
+                ctrl.TitleTxt.Text = ctrl.FindResource("Lang_Pick").ToString() + " " + ctrl.Title;
+                ctrl.DateTimeTxt.Text = "";
                 ctrl.DateTimeNumber.Visibility = Visibility.Collapsed;
+                ctrl.RemoveDateTimeBtn.Visibility = Visibility.Collapsed;
             }
             ctrl.RaiseEvent(new RoutedEventArgs(SelectedDateTimeChangedEvent));
         }
@@ -165,6 +171,7 @@ namespace MyToDos.View.CustomizedControls
         
         private void OpenPopupBox(object sender, RoutedEventArgs e)
         {
+            DateAdjusterControl.SynchronizeMode();
             if (SelectedDateTime.HasValue)
             {
                 DateAdjusterControl.SelectedDate = SelectedDateTime;
@@ -176,17 +183,15 @@ namespace MyToDos.View.CustomizedControls
                 DateAdjusterControl.SelectedDate = now;
                 TimeAdjusterControl.TimeOfDay = TimeSpan.Zero;
             }
-            DateTimeTabControl.SelectedIndex = 1;
             PopupBox.IsOpen = true;
         }
         private void RemoveSelectedDateTime(object sender, RoutedEventArgs e)
         {
-            Button removeBtn = sender as Button;
-            removeBtn.Visibility = Visibility.Collapsed;
             SelectedDateTime = null;
         }
         private void Save(object sender, RoutedEventArgs e)
         {
+            DateAdjusterControl.RefreshSelectedDate();
             SelectedDateTime = DateAdjusterControl.SelectedDate.Value.Add(TimeAdjusterControl.TimeOfDay);
             PopupBox.IsOpen = false;
         }
@@ -194,19 +199,48 @@ namespace MyToDos.View.CustomizedControls
         {
             PopupBox.IsOpen = false;
         }
-
-        private void CustomizedTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        static readonly TimeSpan animationDuration = TimeSpan.FromMilliseconds(200);
+        private void ToggleDateTimeEditor(object sender, RoutedEventArgs e)
         {
-            CustomizedTabControl tabControl = sender as CustomizedTabControl;
-            if(tabControl.SelectedIndex == 1)
+            ToggleButton btn = sender as ToggleButton;
+            if (btn.IsChecked.GetValueOrDefault())
             {
-                DateTitle.Text = FindResource("Lang_Date").ToString();
-                TimeTitle.Text = TimeAdjusterControl.TimeOfDay.ToString("hh\\:mm");
+                //Task.Delay(200).ContinueWith(t =>
+                //{
+                //    btn.Dispatcher.Invoke(() =>
+                //    {
+                        DateTimeTitleIcon.Text = "event";
+                        DateAdjusterControl.RefreshSelectedDate();
+                        DateTimeTitle.Text = DateAdjusterControl.SelectedDate.HasValue ? DateAdjusterControl.SelectedDate.Value.ToString("dd/MM/yyyy") : "??/??/????";
+                //    });
+                //});
+                DateAdjusterControl.Visibility = Visibility.Collapsed;
+                TimeAdjusterControl.Visibility = Visibility.Visible;
+                Storyboard storyboard = new Storyboard();
+                DoubleAnimation doubleAnimation = new DoubleAnimation(0, 1, animationDuration);
+                Storyboard.SetTarget(doubleAnimation, TimeAdjusterControl);
+                Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath(Control.OpacityProperty));
+                storyboard.Children.Add(doubleAnimation);
+                storyboard.Begin();
             }
             else
             {
-                DateTitle.Text = DateAdjusterControl.SelectedDate.Value.ToString("dd/MM/yyyy");
-                TimeTitle.Text = FindResource("Lang_Time").ToString();
+                //Task.Delay(200).ContinueWith(t => 
+                //{
+                //    btn.Dispatcher.Invoke(() =>
+                //    {
+                        DateTimeTitleIcon.Text = "alarm";
+                        DateTimeTitle.Text = TimeAdjusterControl.TimeOfDay.ToString("hh\\:mm"); ;
+                //    });
+                //});
+                TimeAdjusterControl.Visibility = Visibility.Collapsed;
+                DateAdjusterControl.Visibility = Visibility.Visible;
+                Storyboard storyboard = new Storyboard();
+                DoubleAnimation doubleAnimation = new DoubleAnimation(0, 1, animationDuration);
+                Storyboard.SetTarget(doubleAnimation, DateAdjusterControl);
+                Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath(Control.OpacityProperty));
+                storyboard.Children.Add(doubleAnimation);
+                storyboard.Begin();
             }
         }
     }

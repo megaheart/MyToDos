@@ -42,13 +42,20 @@ namespace MyToDos.View.CustomizedControls
                 return new DateTime(YearBox.Value, MonthBox.Value, DayBox.Value);
             }
         }
+        public static readonly RoutedEvent SelectedDateChangedEvent = EventManager.RegisterRoutedEvent("SelectedDateChangedEvent", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(DateComboBox));
+        public event RoutedEventHandler SelectedDateChanged
+        {
+            add { AddHandler(SelectedDateChangedEvent, value); }
+            remove { RemoveHandler(SelectedDateChangedEvent, value); }
+        }
         public void YearBoxValueChanged(object sender, RoutedEventArgs e)
         {
-            if(MonthBox.Value == 2)
+            if (MonthBox.Value == 2)
             {
                 if (YearBox.Value % 4 == 0) DayBox.MaxValue = 29;
                 else DayBox.MaxValue = 28;
             }
+            RaiseEvent(new RoutedEventArgs(SelectedDateChangedEvent));
         }
         public void MonthBoxValueChanged(object sender, RoutedEventArgs e)
         {
@@ -74,6 +81,11 @@ namespace MyToDos.View.CustomizedControls
                     else DayBox.MaxValue = 28;
                     break;
             }
+            RaiseEvent(new RoutedEventArgs(SelectedDateChangedEvent));
+        }
+        public void DayBoxValueChanged(object sender, RoutedEventArgs e)
+        {
+            RaiseEvent(new RoutedEventArgs(SelectedDateChangedEvent));
         }
     }
 }

@@ -28,7 +28,7 @@ namespace MyToDos.View.CustomizedControls
         private int currentYearInGridOfDates;
         private int currentYearInGridOfMonths;
         private int currentMonthInGridOfDates;
-        public static DependencyProperty SelectedDateProperty = DependencyProperty.Register("SelectedDate", typeof(DateTime?), typeof(Calendar), new PropertyMetadata(null, SelectedDatePropertyChanged, null));
+        public static readonly DependencyProperty SelectedDateProperty = DependencyProperty.Register("SelectedDate", typeof(DateTime?), typeof(Calendar), new PropertyMetadata(null, SelectedDatePropertyChanged, null));
         public DateTime? SelectedDate
         {
             set
@@ -67,8 +67,15 @@ namespace MyToDos.View.CustomizedControls
                     calendar.SelectedDayButton = null;
                 }
             }
+            calendar.RaiseEvent(new RoutedEventArgs(SelectedDateChangedEvent));
         }
-        public static DependencyProperty MinValueProperty = DependencyProperty.Register("MinValue", typeof(DateTime), typeof(Calendar), new PropertyMetadata(DateTime.MinValue, MinValuePropertyChanged, null));
+        public static readonly RoutedEvent SelectedDateChangedEvent = EventManager.RegisterRoutedEvent("SelectedDateChangedEvent", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Calendar));
+        public event RoutedEventHandler SelectedDateChanged
+        {
+            add { AddHandler(SelectedDateChangedEvent, value); }
+            remove {RemoveHandler(SelectedDateChangedEvent, value); }
+        }
+        public static readonly DependencyProperty MinValueProperty = DependencyProperty.Register("MinValue", typeof(DateTime), typeof(Calendar), new PropertyMetadata(DateTime.MinValue, MinValuePropertyChanged, null));
         /// <summary>
         /// Default Value: DateTime.MinValue
         /// </summary>
@@ -104,7 +111,7 @@ namespace MyToDos.View.CustomizedControls
                 }
             }
         }
-        public static DependencyProperty MaxValueProperty = DependencyProperty.Register("MaxValue", typeof(DateTime), typeof(Calendar), new PropertyMetadata(DateTime.MaxValue, MaxValuePropertyChanged, null));
+        public static readonly DependencyProperty MaxValueProperty = DependencyProperty.Register("MaxValue", typeof(DateTime), typeof(Calendar), new PropertyMetadata(DateTime.MaxValue, MaxValuePropertyChanged, null));
         /// <summary>
         /// Default Value: DateTime.MaxValue
         /// </summary>

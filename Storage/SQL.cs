@@ -223,9 +223,9 @@ namespace Storage
                     tags += "," + task.Tags[i].ID;
                 }
             }
-            string cmd = String.Format(@"INSERT INTO tasks(Title, ID, Repeater, ActivatedTime, ExpiryTime, Time, Tags, WebAddress) VALUES 
+            string cmd = String.Format(@"INSERT INTO tasks(Title, ID, Repeat, ActivatedTime, ExpiryTime, Time, Tags, WebAddress) VALUES 
                                         ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}');",
-                task.Title, task.ID, RepeaterStorageConverter.ToString(task.Repeater), task.ActivatedTime.ToString("yyyy-MM-dd HH:mm"),
+                task.Title, task.ID, RepeatStorageConverter.ToString(task.Repeat), task.ActivatedTime.ToString("yyyy-MM-dd HH:mm"),
                 task.ExpiryTime.ToString("yyyy-MM-dd HH:mm"), TimeInfosStorageConverter.ToString(task.Time), tags, task.WebAddress);
             await ExecuteQueryAsync(cmd);
         }
@@ -261,7 +261,7 @@ namespace Storage
         //    {
         //        string title = reader[0].ToString();
         //        string ID = reader[1].ToString();
-        //        Repeater repeater = RepeaterStorageConverter.Parse(reader[2].ToString());
+        //        Repeat Repeat = RepeatStorageConverter.Parse(reader[2].ToString());
         //        DateTime activatedTime = reader.GetDateTime(3);
         //        DateTime expiryTime = reader.GetDateTime(4);
         //        ObservableCollection<TimeInfo> time = TimeInfosStorageConverter.Parse(reader[5].ToString());
@@ -269,7 +269,7 @@ namespace Storage
         //        string s_tags = reader[6].ToString();
         //        if (s_tags != "") tags = Array.ConvertAll(s_tags.Split(','), x => tagList.First(y => y.ID == x));
         //        string webAddress = reader[7].ToString();
-        //        Task task = new Task(title, ID, repeater, activatedTime, expiryTime, time, new ObservableCollection<Tag>(tags), webAddress);
+        //        Task task = new Task(title, ID, Repeat, activatedTime, expiryTime, time, new ObservableCollection<Tag>(tags), webAddress);
         //        if (predicate(task)) tasks.Add(task);
         //    }
         //    _sQLite.Close();
@@ -287,7 +287,7 @@ namespace Storage
             {
                 string title = reader[0].ToString();
                 string ID = reader[1].ToString();
-                Repeater repeater = RepeaterStorageConverter.Parse(reader[2].ToString());
+                Repeat Repeat = RepeatStorageConverter.Parse(reader[2].ToString());
                 DateTime activatedTime = reader.GetDateTime(3);
                 DateTime expiryTime = reader.GetDateTime(4);
                 ObservableCollection<TimeInfo> time = TimeInfosStorageConverter.Parse(reader[5].ToString());
@@ -295,7 +295,7 @@ namespace Storage
                 string s_tags = reader[6].ToString();
                 if (s_tags != "") tags = Array.ConvertAll(s_tags.Split(','), x => tagList[tagList.IndexOfID(x)]);
                 string webAddress = reader[7].ToString();
-                Task task = new Task(title, ID, repeater, activatedTime, expiryTime, time, new ObservableCollection<Tag>(tags), webAddress);
+                Task task = new Task(title, ID, Repeat, activatedTime, expiryTime, time, new ObservableCollection<Tag>(tags), webAddress);
                 task.HasNote = reader.GetBoolean(8);
                 tasks.Add(task);
             }

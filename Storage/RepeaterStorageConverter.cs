@@ -6,28 +6,28 @@ using Storage.Model;
 
 namespace Storage
 {
-    public static class RepeaterStorageConverter
+    public static class RepeatStorageConverter
     {
-        public static string ToString(Repeater repeater)
+        public static string ToString(Repeat Repeat)
         {
-            string output = ((int)repeater.Type).ToString();
-            if(repeater.Type != RepeaterType.Daily && repeater.Type != RepeaterType.NonRepeater)
+            string output = ((int)Repeat.Type).ToString();
+            if(Repeat.Type != RepeatType.Daily && Repeat.Type != RepeatType.NonRepeat)
             {
-                foreach(var i in repeater.Dates)
+                foreach(var i in Repeat.Dates)
                 {
                     output += "|" + i;
                 }
             }
             return output;
         }
-        public static Repeater Parse(string storageStr)
+        public static Repeat Parse(string storageStr)
         {
             int[] type_dates = Array.ConvertAll(storageStr.Split('|'), int.Parse);
             int[] dates;
             switch (type_dates[0])
             {
                 case 0:
-                    return new NonRepeater();
+                    return new NonRepeat();
                 case 1:
                     return new Daily();
                 case 2:
@@ -45,7 +45,7 @@ namespace Storage
                 default:
                     dates = new int[type_dates.Length - 1];
                     Array.Copy(type_dates, 1, dates, 0, type_dates.Length - 1);
-                    return new CustomRepeater(dates);
+                    return new CustomRepeat(dates);
             }
         }
     }

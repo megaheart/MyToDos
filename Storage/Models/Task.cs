@@ -27,11 +27,11 @@ namespace Storage.Model
             _time = new ObservableCollection<TimeInfo>();
             //_id = "";
         }
-        public Task(string title, string id, Repeater repeater, DateTime? activatedTime, DateTime? expiryTime, ObservableCollection<TimeInfo> time, ObservableCollection<Tag> tags, string webAddress)
+        public Task(string title, string id, Repeat Repeat, DateTime? activatedTime, DateTime? expiryTime, ObservableCollection<TimeInfo> time, ObservableCollection<Tag> tags, string webAddress)
         {
             _id = id;
             _title = title;
-            _repeater = repeater;
+            _Repeat = Repeat;
             _activatedTime = activatedTime.HasValue ? activatedTime.Value : DateTime.MinValue;
             _expiryTime = expiryTime.HasValue ? expiryTime.Value : DateTime.MaxValue;
             if (time == null) _time = new ObservableCollection<TimeInfo>();
@@ -71,32 +71,32 @@ namespace Storage.Model
             SQLUpdateProperty?.Invoke(this, "Time", TimeInfosStorageConverter.ToString(_time));
         }
 
-        protected Repeater _repeater;
-        public Repeater Repeater
+        protected Repeat _Repeat;
+        public Repeat Repeat
         {
             set
             {
-                if (_repeater != value)
+                if (_Repeat != value)
                 {
-                    _repeater = value;
-                    _repeater.RepeaterInfoChanged += OnRepeaterInfoChanged;
-                    OnPropertyChanged("Repeater");
-                    SQLUpdateProperty?.Invoke(this, "Repeater", RepeaterStorageConverter.ToString(_repeater));
+                    _Repeat = value;
+                    _Repeat.RepeatInfoChanged += OnRepeatInfoChanged;
+                    OnPropertyChanged("Repeat");
+                    SQLUpdateProperty?.Invoke(this, "Repeat", RepeatStorageConverter.ToString(_Repeat));
                 }
             }
             get
             {
-                return _repeater;
+                return _Repeat;
             }
         }
-        private void OnRepeaterInfoChanged()
+        private void OnRepeatInfoChanged()
         {
-            OnPropertyChanged("Repeater");
-            SQLUpdateProperty?.Invoke(this, "Repeater", RepeaterStorageConverter.ToString(_repeater));
+            OnPropertyChanged("Repeat");
+            SQLUpdateProperty?.Invoke(this, "Repeat", RepeatStorageConverter.ToString(_Repeat));
         }
         public int Index
         {
-            get => (int)_repeater.Type;
+            get => (int)_Repeat.Type;
         }
         public TaskType Type
         {
@@ -224,7 +224,7 @@ namespace Storage.Model
         {
             date = date.Date;
             if (date >= _expiryTime) return TaskStatus.Expired;
-            if (date < _activatedTime || !_repeater.IsUsableOn(date)) return TaskStatus.Unavailable;
+            if (date < _activatedTime || !_Repeat.IsUsableOn(date)) return TaskStatus.Unavailable;
             return TaskStatus.Available;
         }
         /// <returns>
@@ -234,7 +234,7 @@ namespace Storage.Model
         {
             Task task = new Task();
             //task._description = this._description;
-            task._repeater = this._repeater.Clone();
+            task._Repeat = this._Repeat.Clone();
             task._tags = new ObservableCollection<Tag>(this._tags);
             task._title = this._title;
             task._webAddress = this._webAddress;

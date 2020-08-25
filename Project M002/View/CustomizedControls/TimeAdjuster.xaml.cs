@@ -35,10 +35,16 @@ namespace MyToDos.View.CustomizedControls
             TimeAdjuster.Minute.Value = time.Minutes;
             TimeAdjuster.RaiseEvent(new RoutedEventArgs(TimeOfDayChangedEvent));
         }
+        //private bool isUserChanged = false;
+        public void RefreshTimeOfDay()
+        {
+            SetValue(TimeOfDayProperty, new TimeSpan(Hour.Value, Minute.Value, 0));
+            //isUserChanged = false;
+        }
         public TimeSpan TimeOfDay
         {
             set => SetValue(TimeOfDayProperty, value);
-            get => (TimeSpan) GetValue(TimeOfDayProperty);
+            get => new TimeSpan(Hour.Value, Minute.Value, 0);//(TimeSpan) GetValue(TimeOfDayProperty);
         }
         public static readonly RoutedEvent TimeOfDayChangedEvent = EventManager.RegisterRoutedEvent("TimeOfDayChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TimeAdjuster));
         public event RoutedEventHandler TimeOfDayChanged
@@ -65,7 +71,9 @@ namespace MyToDos.View.CustomizedControls
         private bool IsHour(string newText, string key)
         {
             int value;
-            return int.TryParse(newText, out value) && value > -1 && value < 24;
+            bool result = int.TryParse(newText, out value) && value > -1 && value < 24;
+
+            return result;
         }
 
         private bool IsMinute(string newText, string key)

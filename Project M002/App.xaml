@@ -115,7 +115,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            <Style TargetType="Button" x:Key="ButtonStyleV2">
+            <Style TargetType="ButtonBase" x:Key="ButtonStyleV2">
                 <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
                 <Setter Property="Cursor" Value="Hand"></Setter>
                 <Setter Property="Foreground" Value="{DynamicResource Color_Foreground}"></Setter>
@@ -123,7 +123,7 @@
                 <Setter Property="FontSize" Value="14"></Setter>
                 <Setter Property="Template">
                     <Setter.Value>
-                        <ControlTemplate TargetType="Button">
+                        <ControlTemplate TargetType="ButtonBase">
                             <Border  x:Name="border" Padding="{TemplateBinding Padding}" Background="{DynamicResource Color_Button_Background}">
                                 <Border.RenderTransform>
                                     <ScaleTransform x:Name="scale" 
@@ -284,11 +284,10 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            <Style TargetType="{x:Type Popup}">
+            <Style TargetType="{x:Type Popup}" x:Key="BasicPopup">
                 <Setter Property="AllowsTransparency" Value="True"></Setter>
-
                 <Setter Property="Placement" Value="Bottom"></Setter>
-                <!--<Setter Property="StaysOpen" Value="False"></Setter>-->
+                <Setter Property="StaysOpen" Value="False"></Setter>
                 <Setter Property="PopupAnimation" Value="Fade"></Setter>
             </Style>
         </ResourceDictionary>

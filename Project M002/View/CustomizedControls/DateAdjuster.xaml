@@ -4,21 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MyToDos.View.CustomizedControls"
-             mc:Ignorable="d" MinWidth="404" MinHeight="300"
-             d:DesignHeight="300" d:DesignWidth="442">
-    <local:CustomizedTabControl HeaderPadding="20" x:Name="ModeControl" TabStripPlacement="Left" HeaderPosition="Center" SelectionChanged="ModeControl_SelectionChanged">
+             mc:Ignorable="d" MinWidth="360" MinHeight="340"
+             d:DesignHeight="300" d:DesignWidth="402">
+    <local:CustomizedTabControl HeaderPadding="20" x:Name="ModeControl" TabStripPlacement="Top" HeaderPosition="End" SelectionChanged="ModeControl_SelectionChanged">
         <TabItem>
             <TabItem.Header>
-                <TextBlock FontFamily="Material Icons" FontSize="30">date_range</TextBlock>
+                <TextBlock FontFamily="Material Icons" FontSize="25">date_range</TextBlock>
             </TabItem.Header>
-            <local:Calendar x:Name="Calendar" Margin="5,0,15,0">
+            <local:Calendar x:Name="Calendar" Margin="5,9,5,0" HorizontalAlignment="Center">
             </local:Calendar>
         </TabItem>
         <TabItem>
             <TabItem.Header>
-                <TextBlock Margin="10" FontFamily="Material Icons" FontSize="30">view_day</TextBlock>
+                <TextBlock Margin="10" FontFamily="Material Icons" FontSize="25">view_day</TextBlock>
             </TabItem.Header>
-            <local:DateComboBox x:Name="ComboBox" Width="320" Margin="5,10,15,0">
+            <local:DateComboBox x:Name="ComboBox" Margin="5,10,5,0" Height="281">
             </local:DateComboBox>
         </TabItem>
     </local:CustomizedTabControl>

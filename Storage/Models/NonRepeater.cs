@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public class NonRepeater : Repeater
+    public class NonRepeat : Repeat
     {
-        public NonRepeater()
+        public NonRepeat()
         {
             _dates = null;
-            Type = RepeaterType.NonRepeater;
-            Mode = RepeaterMode.Once;
+            Type = RepeatType.NonRepeat;
+            Mode = RepeatMode.Once;
         }
         internal override bool IsUsableOn(DateTime date)
         {
             return date.Date == DateTime.Now.Date;
         }
-        public override Repeater Clone()
+        public override Repeat Clone()
         {
-            NonRepeater repeater = this;
-            return repeater;
+            NonRepeat Repeat = this;
+            return Repeat;
         }
     }
 }

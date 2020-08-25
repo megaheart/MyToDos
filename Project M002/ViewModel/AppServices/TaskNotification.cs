@@ -343,7 +343,7 @@ namespace MyToDos.ViewModel.AppServices
                 }
 
             }
-            else if (e.Property == "Repeater")
+            else if (e.Property == "Repeat")
             {
                 DateTime now = DateTime.Now;
                 if (changedTask.Type == TaskType.Schedule && changedTask.GetStatusOn(now) == TaskStatus.Available)

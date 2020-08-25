@@ -49,7 +49,7 @@ namespace ConsoleApp1
             {
                 string title = reader[0].ToString();
                 string ID = reader[1].ToString();
-                Repeater repeater = RepeaterStorageConverter.Parse(reader[2].ToString());
+                Repeat Repeat = RepeatStorageConverter.Parse(reader[2].ToString());
                 DateTime activatedTime = reader.GetDateTime(3);
                 DateTime expiryTime = reader.GetDateTime(4);
                 ObservableCollection<TimeInfo> time = TimeInfosStorageConverter.Parse(reader[5].ToString());
@@ -57,7 +57,7 @@ namespace ConsoleApp1
                 string s_tags = reader[6].ToString();
                 if (s_tags != "") tags = Array.ConvertAll(s_tags.Split(','), x => tagList.First(y => y.ID == x));
                 string webAddress = reader[7].ToString();
-                Task task = new Task(title, ID, repeater, activatedTime, expiryTime, time, new ObservableCollection<Tag>(tags), webAddress);
+                Task task = new Task(title, ID, Repeat, activatedTime, expiryTime, time, new ObservableCollection<Tag>(tags), webAddress);
                 if (predicate(task)) tasks.Add(task);
             }
             _sQLite.Close();
@@ -66,12 +66,12 @@ namespace ConsoleApp1
         public void SQL_InsertTasks()
         {
             Random random = new Random();
-            Repeater daily = new Daily();
-            Repeater nonRepeater = new NonRepeater();
-            Func<Repeater> monthly = () => new Monthly(new int[] { random.Next(1, 32) });
-            Func<Repeater> customRepeater = () => new CustomRepeater(random.Next(1, 8));
-            Func<Repeater> weekly = () => new Weekly(new int[] { random.Next(0, 7) });
-            Func<Repeater> once = () => new Once(new int[] { random.Next(1, 29), random.Next(1, 13), 2020 });
+            Repeat daily = new Daily();
+            Repeat nonRepeat = new NonRepeat();
+            Func<Repeat> monthly = () => new Monthly(new int[] { random.Next(1, 32) });
+            Func<Repeat> customRepeat = () => new CustomRepeat(random.Next(1, 8));
+            Func<Repeat> weekly = () => new Weekly(new int[] { random.Next(0, 7) });
+            Func<Repeat> once = () => new Once(new int[] { random.Next(1, 29), random.Next(1, 13), 2020 });
             Func<DateTime> startTime = () => DateTime.Now.Date.Add(new TimeSpan(random.Next(3, 100), random.Next(0, 24), random.Next(0, 60), 0));
             Func<DateTime> endTime = () => DateTime.Now.Date.Add(new TimeSpan(random.Next(100, 109), random.Next(0, 24), random.Next(0, 60), 0));
             Func<string> id = () =>
@@ -90,7 +90,7 @@ namespace ConsoleApp1
             };
             ObservableCollection<Task> tasks = new ObservableCollection<Task>()
             {
-                new Task("aaaa",id(),nonRepeater, startTime(), endTime(),
+                new Task("aaaa",id(),nonRepeat, startTime(), endTime(),
                     new ObservableCollection<TimeInfo>()
                     {
                         new TimeInfo(new TimeSpan(12,59,0),new TimeSpan(1,0,0))
@@ -114,7 +114,7 @@ namespace ConsoleApp1
                     },
                     @"https://www.youtube.com"
                 ),
-                new Task("CCCC AAA bbb xxx",id(), customRepeater(), startTime(),endTime(),
+                new Task("CCCC AAA bbb xxx",id(), customRepeat(), startTime(),endTime(),
                     new ObservableCollection<TimeInfo>()
                     {
                     },

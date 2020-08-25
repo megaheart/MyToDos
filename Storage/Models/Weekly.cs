@@ -6,30 +6,30 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public class Weekly : Repeater
+    public class Weekly : Repeat
     {
         /// <param name="dates">Sun,Mon,Tue,...,Sat -> 0,1,2,...,6</param>
         public Weekly(int[] dates)
         {
             _dates = dates;
-            Type = RepeaterType.Weekly;
-            Mode = RepeaterMode.MultiTimes;
+            Type = RepeatType.Weekly;
+            Mode = RepeatMode.MultiTimes;
         }
         public Weekly(DayOfWeek[] dates)
         {
             _dates = Array.ConvertAll(dates, IntFromDayOfWeek);
-            Type = RepeaterType.Weekly;
-            Mode = RepeaterMode.MultiTimes;
+            Type = RepeatType.Weekly;
+            Mode = RepeatMode.MultiTimes;
         }
         internal void SetDates(int[] dates)
         {
             _dates = dates;
-            OnRepeaterInfoChanged();
+            OnRepeatInfoChanged();
         }
         internal void SetDates(DayOfWeek[] dates)
         {
             _dates = Array.ConvertAll(dates, IntFromDayOfWeek);
-            OnRepeaterInfoChanged();
+            OnRepeatInfoChanged();
         }
         static int IntFromDayOfWeek(DayOfWeek day) => (int)day;
         internal override bool IsUsableOn(DateTime date)
@@ -37,14 +37,14 @@ namespace Storage.Model
             return _dates.Contains((int)date.DayOfWeek);
         }
         private Weekly() { }
-        public override Repeater Clone()
+        public override Repeat Clone()
         {
-            Weekly repeater = new Weekly();
-            repeater._dates = new int[_dates.Length];
-            Array.Copy(this._dates, repeater._dates, _dates.Length);
-            repeater._type = this._type;
-            repeater._mode = this._mode;
-            return repeater;
+            Weekly Repeat = new Weekly();
+            Repeat._dates = new int[_dates.Length];
+            Array.Copy(this._dates, Repeat._dates, _dates.Length);
+            Repeat._type = this._type;
+            Repeat._mode = this._mode;
+            return Repeat;
         }
     }
 }

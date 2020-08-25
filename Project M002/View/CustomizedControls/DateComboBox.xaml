@@ -19,7 +19,7 @@
         <TextBlock Grid.Column="0" FontWeight="DemiBold" Text="{DynamicResource Lang_Day}" HorizontalAlignment="Center" Margin="0,5"></TextBlock>
         <TextBlock Grid.Column="1" FontWeight="DemiBold" Text="{DynamicResource Lang_Month}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
         <TextBlock Grid.Column="2" FontWeight="DemiBold" Text="{DynamicResource Lang_Year}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-        <local:NumbericTextBox x:Name="DayBox" Grid.Column="0" Grid.Row="1" MinValue="1"></local:NumbericTextBox>
+        <local:NumbericTextBox x:Name="DayBox" Grid.Column="0" Grid.Row="1" MinValue="1" ValueChanged="DayBoxValueChanged"></local:NumbericTextBox>
         <local:NumbericTextBox x:Name="MonthBox" Grid.Column="1" Grid.Row="1" MinValue="1" MaxValue="12" ValueChanged="MonthBoxValueChanged"></local:NumbericTextBox>
         <local:NumbericTextBox x:Name="YearBox" Grid.Column="2" Grid.Row="1" ValueChanged="YearBoxValueChanged"></local:NumbericTextBox>
     </Grid>

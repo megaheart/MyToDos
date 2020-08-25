@@ -6,38 +6,38 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public class Once : Repeater
+    public class Once : Repeat
     {
         public Once(DateTime date)
         {
-            Type = RepeaterType.Once;
-            Mode = RepeaterMode.MultiTimes;
+            Type = RepeatType.Once;
+            Mode = RepeatMode.MultiTimes;
             _dates = new int[] { date.Day, date.Month, date.Year };
         }
         public Once(int[] date)
         {
-            Type = RepeaterType.Once;
-            Mode = RepeaterMode.MultiTimes;
+            Type = RepeatType.Once;
+            Mode = RepeatMode.MultiTimes;
             _dates = date;
         }
         internal void SetDate(DateTime date)
         {
             _dates = new int[] { date.Day, date.Month, date.Year };
-            OnRepeaterInfoChanged();
+            OnRepeatInfoChanged();
         }
         internal override bool IsUsableOn(DateTime date)
         {
             return date.Year == _dates[2] && date.Month == _dates[1] && date.Day == _dates[0];
         }
         private Once() { }
-        public override Repeater Clone()
+        public override Repeat Clone()
         {
-            Once repeater = new Once();
-            repeater._dates = new int[3];
-            Array.Copy(this._dates, repeater._dates, _dates.Length);
-            repeater._type = this._type;
-            repeater._mode = this._mode;
-            return repeater;
+            Once Repeat = new Once();
+            Repeat._dates = new int[3];
+            Array.Copy(this._dates, Repeat._dates, _dates.Length);
+            Repeat._type = this._type;
+            Repeat._mode = this._mode;
+            return Repeat;
         }
     }
 }

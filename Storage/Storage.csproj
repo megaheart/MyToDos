@@ -83,7 +83,7 @@
     <Compile Include="Models\NoteTaking.cs" />
     <Compile Include="Models\NotifialeObject.cs" />
     <Compile Include="Models\Once.cs" />
-    <Compile Include="Models\Repeater.cs" />
+    <Compile Include="Models\Repeat.cs" />
     <Compile Include="Models\SQLCollection.cs" />
     <Compile Include="Models\SQLCollectionChangedArgs.cs" />
     <Compile Include="Models\SQLGarbageCollection.cs" />

@@ -28,7 +28,7 @@ namespace MyToDos
             InitializeComponent();
             WindowResizer = new WindowResizer(this);
             _pagesTree = new List<UserControl>(1);
-            
+
             
         }
         private List<UserControl> _pagesTree;

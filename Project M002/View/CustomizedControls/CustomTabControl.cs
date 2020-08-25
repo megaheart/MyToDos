@@ -144,11 +144,19 @@ namespace MyToDos.View.CustomizedControls
             set => SetValue(ThemeColorProperty, value);
             get => (Brush)GetValue(ThemeColorProperty);
         }
+        //public static readonly DependencyProperty CanAnimateProperty = DependencyProperty.Register("CanAnimate", typeof(bool), typeof(CustomizedTabControl), new UIPropertyMetadata(false));
+
+        //public bool CanAnimate
+        //{
+        //    set => SetValue(CanAnimateProperty, value);
+        //    get => (bool)GetValue(CanAnimateProperty);
+        //}
         public CustomizedTabControl() : base()
         {
             SelectionChanged += CustomizedTabControl_SelectionChanged;
             Loaded += CustomizedTabControl_Loaded;
             SizeChanged += CustomizedTabControl_SizeChanged;
+            
         }
 
         private void CustomizedTabControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -226,9 +234,14 @@ namespace MyToDos.View.CustomizedControls
             }
             if (SelectionLine != null) ReloadSelectionLine();
             HeaderPanel.SizeChanged += CustomizedTabControl_SizeChanged;
-
+            HeaderPanel.PreviewMouseLeftButtonDown += (sender1, e1) =>
+            {
+                DidUILoad = true;
+                HeaderPanel_PreviewMouseLeftButtonDown?.Invoke();
+            };
         }
-
+        public event Action HeaderPanel_PreviewMouseLeftButtonDown;
+        private bool DidUILoad = false;
         private void CustomizedTabControl_TabStripPlacementChanged(object sender, EventArgs e)
         {
             if (HeaderPanel == null) return;
@@ -266,6 +279,11 @@ namespace MyToDos.View.CustomizedControls
                 var positionOfSelectedItem = selectedItem.TranslatePoint(new Point(0, 0), this);
                 var positionOfSelectionLine = SelectionLine.TranslatePoint(new Point(0, 0), this);
                 var vector = positionOfSelectedItem - positionOfSelectionLine;
+                if (!DidUILoad)
+                {
+                    ReloadSelectionLine();
+                    return;
+                }
                 Storyboard storyboard = new Storyboard();
                 //switch (TabStripPlacement)
                 //{

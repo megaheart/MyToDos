@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics;
 
 namespace MyToDos.View.CustomizedControls
 {
@@ -24,9 +25,21 @@ namespace MyToDos.View.CustomizedControls
         public DateAdjuster()
         {
             InitializeComponent();
-            
+            Calendar.SelectedDateChanged += (sender, e) =>
+            {
+                IsValueChanged = true;
+            };
+            ComboBox.SelectedDateChanged += (sender, e) =>
+            {
+                IsValueChanged = true;
+            };
+            ModeControl.HeaderPanel_PreviewMouseLeftButtonDown += () =>
+            {
+                DidUILoad = true;
+            };
         }
-
+        private bool DidUILoad = false;
+        private bool IsValueChanged = false;
         //private static Action modeChanged;
         private static int mode = -1;
         /// <summary>
@@ -34,15 +47,18 @@ namespace MyToDos.View.CustomizedControls
         /// </summary>
         public void SynchronizeMode()
         {
+            //return;
             if (mode == -1)
             {
-                DataManager.Current.GetValueAsync("modeOfDateAdjuster").ContinueWith(t =>
+                Task<string> getValue = DataManager.Current.GetValueAsync("modeOfDateAdjuster");
+                getValue.ConfigureAwait(false);
+                getValue.ContinueWith(t =>
                 {
                     mode = int.Parse(t.Result);
-                    ModeControl.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+                    ModeControl.Dispatcher.Invoke(() =>
                     {
                         ModeControl.SelectedIndex = mode;
-                    }));
+                    });
                 });
             }
             else ModeControl.SelectedIndex = mode;
@@ -65,10 +81,30 @@ namespace MyToDos.View.CustomizedControls
             }
             DateAdjuster.RaiseEvent(new RoutedEventArgs(SelectedDateChangedEvent));
         }
+        public void RefreshSelectedDate()
+        {
+            if (mode != ModeControl.SelectedIndex) throw new Exception("ModeControl.Mode of DateAdjuster is not synchronized");
+            if (mode == 0)
+            {
+                SelectedDate = Calendar.SelectedDate;
+            }
+            else SelectedDate = ComboBox.SelectedDate;
+            IsValueChanged = false;
+        }
+        /// <summary>
+        /// Please use DateAdjuster.RefreshSelectedDate() function before to get correct value, 
+        /// sorry about this inconvenience
+        /// </summary>
         public DateTime? SelectedDate
         {
-            set => SetValue(SelectedDateProperty, value);
-            get => (DateTime?)GetValue(SelectedDateProperty);
+            set {
+                SetValue(SelectedDateProperty, value);
+            }
+            get {
+
+                if (IsValueChanged) throw new Exception("Please use DateAdjuster.RefreshSelectedDate() function before to get correct value, sorry about this inconvenience.");
+                return (DateTime?)GetValue(SelectedDateProperty); 
+            }
         }
         public static readonly RoutedEvent SelectedDateChangedEvent = EventManager.RegisterRoutedEvent("SelectedDateChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(DateAdjuster));
         public event RoutedEventHandler SelectedDateChanged
@@ -99,12 +135,8 @@ namespace MyToDos.View.CustomizedControls
 
         private void ModeControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (mode != ModeControl.SelectedIndex)
-            {
-                mode = ModeControl.SelectedIndex;
-                DataManager.Current.SetValueAsync("modeOfDateAdjuster", mode.ToString());
-            }
-            if (mode == 0)
+            if (mode == -1) return;
+            if (ModeControl.SelectedIndex == 0)
             {
                 Calendar.SelectedDate = ComboBox.SelectedDate;
             }
@@ -118,6 +150,11 @@ namespace MyToDos.View.CustomizedControls
                 {
                     ComboBox.SelectedDate = DateTime.Now;
                 }
+            }
+            if (DidUILoad & mode != ModeControl.SelectedIndex)
+            {
+                mode = ModeControl.SelectedIndex;
+                DataManager.Current.SetValueAsync("modeOfDateAdjuster", mode.ToString()).ConfigureAwait(false);
             }
         }
     }

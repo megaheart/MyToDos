@@ -6,39 +6,39 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public enum RepeaterMode
+    public enum RepeatMode
     {
         Once,
         MultiTimes
     }
-    public enum RepeaterType
+    public enum RepeatType
     {
-        NonRepeater = 0,
+        NonRepeat = 0,
         Daily = 1,
         Weekly = 2,
         Monthly = 3,
         Once = 4,
         Custom = 5
     }
-    public abstract class Repeater
+    public abstract class Repeat
     {
-        public event Action RepeaterInfoChanged;
+        public event Action RepeatInfoChanged;
         protected int[] _dates;
         internal int[] Dates { get => _dates; }
-        protected RepeaterType _type;
-        public RepeaterType Type
+        protected RepeatType _type;
+        public RepeatType Type
         {
             get => _type;
             internal set {
                 if (value != _type)
                 {
                     _type = value;
-                    RepeaterInfoChanged?.Invoke();
+                    RepeatInfoChanged?.Invoke();
                 }
             }
         }
-        protected RepeaterMode _mode;
-        public RepeaterMode Mode
+        protected RepeatMode _mode;
+        public RepeatMode Mode
         {
             get => _mode;
             internal set
@@ -46,13 +46,13 @@ namespace Storage.Model
                 if (value != _mode)
                 {
                     _mode = value;
-                    RepeaterInfoChanged?.Invoke();
+                    RepeatInfoChanged?.Invoke();
                 }
             }
         }
-        protected void OnRepeaterInfoChanged() => RepeaterInfoChanged?.Invoke();
+        protected void OnRepeatInfoChanged() => RepeatInfoChanged?.Invoke();
         internal abstract bool IsUsableOn(DateTime date);
-        public abstract Repeater Clone();
+        public abstract Repeat Clone();
         
     }
 }

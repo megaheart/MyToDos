@@ -4,12 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MyToDos" 
-        xmlns:ctrl="clr-namespace:MyToDos.View.CustomizedControls"
-        SnapsToDevicePixels="True"
-        mc:Ignorable="d" WindowStartupLocation="CenterScreen" x:Name="MainWnd"
+        xmlns:ctrl="clr-namespace:MyToDos.View.TasksPage.ControlsInAddingTaskControl"
+        SnapsToDevicePixels="True" Topmost="False"
+        mc:Ignorable="d" WindowStartupLocation="Manual" x:Name="MainWnd"
         Title="MainWindow" MinHeight="650" MinWidth="970" Height="650" Width="970">
     <Window.Background>
         <ImageBrush Stretch="UniformToFill" ImageSource="Resources/default_background.jpg"></ImageBrush>
+        <!--<SolidColorBrush Color="#FF4D4E56"></SolidColorBrush>-->
     </Window.Background>
     <Window.Style>
         <Style TargetType="Window">
@@ -45,8 +46,8 @@
         </Grid.RowDefinitions>
         <ContentControl x:Name="Main" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,20,0,0">
             <Grid MinHeight="400" MinWidth="400" VerticalAlignment="Center" HorizontalAlignment="Center" Background="{DynamicResource Color_Background}">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="200">
-                    <ctrl:DateTimePicker></ctrl:DateTimePicker>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="400" Margin="20">
+                    <ctrl:EditingRepeatControl BorderThickness="1"></ctrl:EditingRepeatControl>
                 </StackPanel>
             </Grid>
         </ContentControl>
@@ -59,7 +60,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ButtonBase">
-                                <Border CornerRadius="2" Width="50" Height="30" x:Name="border" BorderThickness="0" Background="{TemplateBinding Background}">
+                                <Border CornerRadius="2" Width="46" Height="28" x:Name="border" BorderThickness="0" Background="{TemplateBinding Background}">
                                     <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"></ContentPresenter>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -73,10 +74,10 @@
                 </Style>
             </StackPanel.Resources>
             <Button Click="MinimizeWindow" Style="{StaticResource WindowControlStyle}">
-                <Canvas Width="14" Height="14">
-                    <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{DynamicResource Color_Foreground}" StrokeThickness="1.07903099">
+                <Canvas Width="12" Height="10">
+                    <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{DynamicResource Color_Foreground}" StrokeThickness="1">
                         <Path.Data>
-                            <PathGeometry Figures="M 0 14 H 14 V 12.5 H 0 Z" FillRule="NonZero"/>
+                            <PathGeometry Figures="M 0 10 H 12 V 8.6 H 0 Z" FillRule="NonZero"/>
                         </Path.Data>
                     </Path>
                 </Canvas>
@@ -86,23 +87,18 @@
                     <Style TargetType="Button" BasedOn="{StaticResource WindowControlStyle}">
                         <Setter Property="Content">
                             <Setter.Value>
-                                <Canvas Width="14" Height="14">
-                                    <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{DynamicResource Color_Foreground}">
-                                        <Path.Data>
-                                            <PathGeometry Figures="M0 0v0.6V14h14V0H0z M1.3 1.3h11.5v11.5H1.3V1.3z" FillRule="NonZero"/>
-                                        </Path.Data>
-                                    </Path>
-                                </Canvas>
+                                <Rectangle Height="12" Width="12" Stroke="#FFFDFDFD" StrokeThickness="1.2"/>
+
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=MainWnd, Path=WindowState, Mode=OneWay}" Value="Maximized">
                                 <Setter Property="Content">
                                     <Setter.Value>
-                                        <Canvas Width="14" Height="14">
-                                            <Path Fill="{DynamicResource Color_Foreground}" StrokeThickness="0.53846157">
+                                        <Canvas Width="14" Height="12">
+                                            <Path Fill="{DynamicResource Color_Foreground}">
                                                 <Path.Data>
-                                                    <PathGeometry Figures="M 3.2307692 0 A 0.53851538 0.53851539 0 0 0 2.6923077 0.53846154 V 2.6923076 H 0.53846154 A 0.53851538 0.53851539 0 0 0 0 3.2307692 V 13.461538 A 0.53851538 0.53851539 0 0 0 0.53846154 14 H 10.769231 a 0.53851538 0.53851539 0 0 0 0.538461 -0.538462 v -2.153846 h 2.153846 A 0.53851538 0.53851539 0 0 0 14 10.76923 V 0.53846154 A 0.53851538 0.53851539 0 0 0 13.461538 0 Z M 3.7692308 1.0769231 H 12.923077 V 10.230769 H 11.307692 V 3.2307692 A 0.53851538 0.53851539 0 0 0 10.769231 2.6923076 H 3.7692308 Z M 1.0769231 3.7692307 H 10.230769 V 12.923077 H 1.0769231 Z" FillRule="NonZero"/>
+                                                    <PathGeometry Figures="M 2.7692308 0 A 0.46158462 0.46158462 0 0 0 2.3076923 0.4615385 V 2.3076923 H 0.46153846 A 0.46158462 0.46158462 0 0 0 0 2.7692308 V 11.538462 A 0.46158462 0.46158462 0 0 0 0.46153846 12 H 9.2307692 A 0.46158462 0.46158462 0 0 0 9.6923077 11.538462 V 9.6923077 H 11.538462 A 0.46158462 0.46158462 0 0 0 12 9.2307692 V 0.4615385 A 0.46158462 0.46158462 0 0 0 11.538462 0 Z M 3.2307692 0.9230769 H 11.076923 V 8.7692308 H 9.6923077 v -6 A 0.46158462 0.46158462 0 0 0 9.2307692 2.3076923 h -6 z M 0.92307692 3.2307692 H 8.7692308 V 11.076923 H 0.92307692 Z" FillRule="NonZero"/>
                                                 </Path.Data>
                                             </Path>
                                         </Canvas>
@@ -114,14 +110,14 @@
                 </Button.Style>
             </Button>
             <Button Click="CloseWindow" Style="{StaticResource WindowControlStyle}">
-                <Canvas Width="12" Height="12">
+                <Canvas Width="10" Height="10">
                     <Canvas>
                         <Canvas.RenderTransform>
                             <MatrixTransform Matrix="1 0 0 1 0 0"/>
                         </Canvas.RenderTransform>
-                        <Line xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" X1="0" Y1="0" X2="12" Y2="12" StrokeThickness="1.5" Stroke="{DynamicResource Color_Foreground}" StrokeMiterLimit="10"/>
+                        <Line xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" X1="0" Y1="0" X2="10" Y2="10" StrokeThickness="1.5" Stroke="{DynamicResource Color_Foreground}" StrokeMiterLimit="10"/>
                     </Canvas>
-                    <Line xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" X1="0" Y1="12" X2="12" Y2="0" StrokeThickness="1.5" Stroke="{DynamicResource Color_Foreground}" StrokeMiterLimit="10"/>
+                    <Line xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" X1="0" Y1="10" X2="10" Y2="0" StrokeThickness="1.5" Stroke="{DynamicResource Color_Foreground}" StrokeMiterLimit="10"/>
                 </Canvas>
             </Button>
         </StackPanel>

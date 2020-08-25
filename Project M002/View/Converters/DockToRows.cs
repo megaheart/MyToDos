@@ -17,7 +17,6 @@ namespace MyToDos.View.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             Dock dock = (Dock)value;
-            Console.WriteLine("binding");
             if (dock == Dock.Top || dock == Dock.Bottom) return 1;
             return 0;
         }

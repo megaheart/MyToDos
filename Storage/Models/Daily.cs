@@ -2,19 +2,19 @@
 
 namespace Storage.Model
 {
-    public class Daily : Repeater
+    public class Daily : Repeat
     {
         public Daily()
         {
             _dates = null;
-            Type = RepeaterType.Daily;
-            Mode = RepeaterMode.MultiTimes;
+            Type = RepeatType.Daily;
+            Mode = RepeatMode.MultiTimes;
         }
         internal override bool IsUsableOn(DateTime date)
         {
             return true;
         }
-        public override Repeater Clone()
+        public override Repeat Clone()
         {
             return this;
         }

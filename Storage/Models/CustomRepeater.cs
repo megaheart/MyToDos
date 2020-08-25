@@ -6,30 +6,30 @@ using System.Threading.Tasks;
 
 namespace Storage.Model
 {
-    public class CustomRepeater : Repeater
+    public class CustomRepeat : Repeat
     {
-        public CustomRepeater(int repeatEveryNDays)
+        public CustomRepeat(int repeatEveryNDays)
         {
             int days = (int) checked(DateTime.Now.Ticks / 864000000000);
             _dates = new int[] { days, repeatEveryNDays };
-            Type = RepeaterType.Custom;
-            Mode = RepeaterMode.MultiTimes;
+            Type = RepeatType.Custom;
+            Mode = RepeatMode.MultiTimes;
         }
-        public CustomRepeater(int[] dates)
+        public CustomRepeat(int[] dates)
         {
             _dates = dates;
-            Type = RepeaterType.Custom;
-            Mode = RepeaterMode.MultiTimes;
+            Type = RepeatType.Custom;
+            Mode = RepeatMode.MultiTimes;
         }
-        private CustomRepeater(){}
-        public override Repeater Clone()
+        private CustomRepeat(){}
+        public override Repeat Clone()
         {
-            CustomRepeater repeater = new CustomRepeater();
-            repeater._dates = new int[2];
-            Array.Copy(this._dates, repeater._dates, _dates.Length);
-            repeater._type = this._type;
-            repeater._mode = this._mode;
-            return repeater;
+            CustomRepeat Repeat = new CustomRepeat();
+            Repeat._dates = new int[2];
+            Array.Copy(this._dates, Repeat._dates, _dates.Length);
+            Repeat._type = this._type;
+            Repeat._mode = this._mode;
+            return Repeat;
         }
         internal override bool IsUsableOn(DateTime date)
         {
