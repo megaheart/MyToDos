@@ -11,3 +11,6 @@
  event
  close
  save
+ fiber_manual_record
+ settings
+ view_week

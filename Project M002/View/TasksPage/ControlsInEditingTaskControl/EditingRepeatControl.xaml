@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="MyToDos.View.TasksPage.ControlsInEditingTaskControl.EditingRepeatControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MyToDos.View.TasksPage.ControlsInEditingTaskControl"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:m="clr-namespace:MyToDos.View.CustomizedModels"
+             mc:Ignorable="d" Name="control"
+             d:DesignHeight="450" d:DesignWidth="300">
+    <StackPanel>
+        <ComboBox SelectedIndex="0" Style="{StaticResource ComboBoxWithoutTextBoxStyle}" ItemTemplate="{StaticResource DataTemplateForMaterialIconSelection}">
+            <m:MaterialIconSelection MaterialIconCode="date_range" 
+                                                Content="{DynamicResource Lang_Daily}"/>
+            <m:MaterialIconSelection MaterialIconCode="view_week" 
+                                                Content="{DynamicResource Lang_Weekly}"/>
+            <m:MaterialIconSelection MaterialIconCode="event" 
+                                                Content="{DynamicResource Lang_Monthly}"/>
+            <m:MaterialIconSelection MaterialIconCode="fiber_manual_record" 
+                                                Content="{DynamicResource Lang_Once}"/>
+            <m:MaterialIconSelection MaterialIconCode="settings" 
+                                                Content="{DynamicResource Lang_Custom}"/>
+        </ComboBox>
+
+    </StackPanel>
+</UserControl>

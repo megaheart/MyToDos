@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,18 +11,19 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Storage.Model;
 
-namespace MyToDos.View.TasksPage.ControlsInAddingTaskControl
+namespace MyToDos.View.TasksPage.ControlsInEditingTaskControl
 {
     /// <summary>
     /// Interaction logic for EditingRepeatControl.xaml
     /// </summary>
-    public partial class EditingRepeatControl : UserControl
+    public partial class EditingRepeatControl : UserControl, IControlsInEditingTaskControl
     {
         public EditingRepeatControl()
         {
@@ -36,7 +40,12 @@ namespace MyToDos.View.TasksPage.ControlsInAddingTaskControl
         private static void RepeatPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             EditingRepeatControl ctrl = d as EditingRepeatControl;
-            
+            if(ctrl.SetRepeatPropertyWithSave)
+            {
+                ctrl.RaiseEvent(new RoutedEventArgs(RepeatChangedEvent));
+                return;
+            }
+
             ctrl.RaiseEvent(new RoutedEventArgs(RepeatChangedEvent));
         }
         public Repeat Repeat
@@ -50,24 +59,14 @@ namespace MyToDos.View.TasksPage.ControlsInAddingTaskControl
             add { AddHandler(RepeatChangedEvent, value); }
             remove { RemoveHandler(RepeatChangedEvent, value); }
         }
-
-        private void OpenPopupBox(object sender, RoutedEventArgs e)
+        public bool SetRepeatPropertyWithSave = false;
+        public void Save()
         {
-            
-            PopupBox.IsOpen = true;
-        }
-        private void RemoveRepeat(object sender, RoutedEventArgs e)
-        {
-            
-        }
-        private void Save(object sender, RoutedEventArgs e)
-        {
-            
-            PopupBox.IsOpen = false;
-        }
-        private void Cancel(object sender, RoutedEventArgs e)
-        {
-            PopupBox.IsOpen = false;
+            SetRepeatPropertyWithSave = true;
+            //Repeat output = new Repeat();
+            //Repeat = output;
+            SetRepeatPropertyWithSave = false;
         }
     }
+    
 }

@@ -42,6 +42,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -56,8 +58,6 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -77,6 +77,8 @@
     <Compile Include="View\Converters\Dividing.cs" />
     <Compile Include="View\Converters\DockToColumns.cs" />
     <Compile Include="View\Converters\DockToRows.cs" />
+    <Compile Include="View\Converters\IndexToVisibility.cs" />
+    <Compile Include="View\Converters\SelectionBoxItemConvertor.cs" />
     <Compile Include="View\CustomizedControls\Calendar.xaml.cs">
       <DependentUpon>Calendar.xaml</DependentUpon>
     </Compile>
@@ -99,16 +101,22 @@
     <Compile Include="View\CustomizedControls\NumbericTextBox.xaml.cs">
       <DependentUpon>NumbericTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\CustomizedControls\RoundedButton.cs" />
     <Compile Include="View\CustomizedControls\SpecialTextBox.xaml.cs">
       <DependentUpon>SpecialTextBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CustomizedControls\TimeAdjuster.xaml.cs">
       <DependentUpon>TimeAdjuster.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\CustomizedModels\MaterialIconSelection.cs" />
     <Compile Include="View\IWindowPage.cs" />
-    <Compile Include="View\TasksPage\ControlsInAddingTaskControl\EditingRepeatControl.xaml.cs">
+    <Compile Include="View\TasksPage\ControlsInEditingTaskControl\DisplayingRepeatButton.xaml.cs">
+      <DependentUpon>DisplayingRepeatButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TasksPage\ControlsInEditingTaskControl\EditingRepeatControl.xaml.cs">
       <DependentUpon>EditingRepeatControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\TasksPage\ControlsInEditingTaskControl\IControlsInEditingTaskControl.cs" />
     <Page Include="ConsoleLog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -169,7 +177,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\TasksPage\ControlsInAddingTaskControl\EditingRepeatControl.xaml">
+    <Page Include="View\TasksPage\ControlsInEditingTaskControl\DisplayingRepeatButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TasksPage\ControlsInEditingTaskControl\EditingRepeatControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

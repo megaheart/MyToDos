@@ -5,6 +5,7 @@
     <SolidColorBrush x:Key="Color_Button_Background" Color="#FF232323"></SolidColorBrush>
     <SolidColorBrush x:Key="Color_Button_Hover_Background" Color="#FF303030"></SolidColorBrush>
     <SolidColorBrush x:Key="Color_Button_Press_Background" Color="#FF212121"></SolidColorBrush>
+    <SolidColorBrush x:Key="Color_Button_Selected_Background" Color="#FF404040"></SolidColorBrush>
     <SolidColorBrush x:Key="Color_TextBox_Background" Color="#FF313131"></SolidColorBrush>
     <SolidColorBrush x:Key="Color_Foreground" Color="#FFFFFFFF"></SolidColorBrush>
     <SolidColorBrush x:Key="Color_Foreground_Dark" Color="#FFe6e6e6"></SolidColorBrush>

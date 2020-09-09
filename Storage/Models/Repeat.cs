@@ -13,7 +13,7 @@ namespace Storage.Model
     }
     public enum RepeatType
     {
-        NonRepeat = 0,
+        //NonRepeat = 0,
         Daily = 1,
         Weekly = 2,
         Monthly = 3,

@@ -50,6 +50,11 @@
     <sys:String x:Key="Lang_Tomorrow">Tomorrow</sys:String>
     <sys:String x:Key="Lang_Yesterday">Yesterday</sys:String>
     <sys:String x:Key="Lang_Today">Today</sys:String>
+    <sys:String x:Key="Lang_Daily">Daily</sys:String>
+    <sys:String x:Key="Lang_Weekly">Weekly</sys:String>
+    <sys:String x:Key="Lang_Monthly">Monthly</sys:String>
+    <sys:String x:Key="Lang_Once">Once</sys:String>
+    <sys:String x:Key="Lang_Custom">Custom</sys:String>
     <!--(number){0}: days from today-->
     <sys:String x:Key="Lang_DateTimePicker_001">{0} days later</sys:String>
     <!--(number){0}: days from today-->

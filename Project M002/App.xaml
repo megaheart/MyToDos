@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:MyToDos"
              xmlns:conv="clr-namespace:MyToDos.View.Converters"
              xmlns:ctrl="clr-namespace:MyToDos.View.CustomizedControls"
+             xmlns:m="clr-namespace:MyToDos.View.CustomizedModels"
              Startup="Application_Startup" ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <ResourceDictionary>
@@ -160,6 +161,51 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <Style TargetType="ButtonBase" x:Key="RoundedButtonStyleV2">
+                <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+                <Setter Property="Cursor" Value="Hand"></Setter>
+                <Setter Property="Foreground" Value="{DynamicResource Color_Foreground}"></Setter>
+                <Setter Property="Padding" Value="8,7"></Setter>
+                <Setter Property="FontSize" Value="14"></Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ButtonBase">
+                            <Border CornerRadius="2" x:Name="border" Padding="{TemplateBinding Padding}" Background="{DynamicResource Color_Button_Background}">
+                                <Border.RenderTransform>
+                                    <ScaleTransform x:Name="scale" 
+                                                        CenterX="{Binding ElementName=border,Path=ActualWidth, Converter={StaticResource DividingConverter},ConverterParameter=2}"
+                                                        CenterY="{Binding ElementName=border,Path=ActualHeight, Converter={StaticResource DividingConverter},ConverterParameter=2}"></ScaleTransform>
+                                </Border.RenderTransform>
+                                <ContentPresenter VerticalAlignment="Center"></ContentPresenter>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource Color_Button_Hover_Background}"></Setter>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource Color_Button_Press_Background}"></Setter>
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Duration="0:0:0.2" Storyboard.TargetName="scale" Storyboard.TargetProperty="ScaleX" To="0.94"></DoubleAnimation>
+                                                <DoubleAnimation Duration="0:0:0.2" Storyboard.TargetName="scale" Storyboard.TargetProperty="ScaleY" To="0.94"></DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Duration="0:0:0.2" Storyboard.TargetName="scale" Storyboard.TargetProperty="ScaleX" To="1"></DoubleAnimation>
+                                                <DoubleAnimation Duration="0:0:0.2" Storyboard.TargetName="scale" Storyboard.TargetProperty="ScaleY" To="1"></DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
             <Style TargetType="TabItem">
                 <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
                 <Setter Property="Cursor" Value="Hand"></Setter>
@@ -254,6 +300,7 @@
             </Style>
             <Style TargetType="ContentControl" x:Key="PopupContentStyle">
                 <Setter Property="Padding" Value="0,4,0,4"></Setter>
+                <Setter Property="Background" Value="{DynamicResource Color_Button_Background}"></Setter>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ContentControl">
@@ -263,7 +310,7 @@
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
-                                <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="2" Padding="{TemplateBinding Padding}" CornerRadius="3" Background="{DynamicResource Color_Background}">
+                                <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Padding="{TemplateBinding Padding}" CornerRadius="3" Background="{TemplateBinding Background}">
                                     <!--<Border.Effect>
                                                 <DropShadowEffect Direction="270" BlurRadius="2" ShadowDepth="1" Opacity="0.9"/>
                                             </Border.Effect>-->
@@ -274,7 +321,7 @@
                                                 <DropShadowEffect Direction="270" BlurRadius="2" ShadowDepth="-2" Opacity="0.9"/>
                                             </Path.Effect>-->
                                 </Path>
-                                <Path Data="M7 14l5-5 5 5z" Margin="30,3,0,-2" Fill="{DynamicResource Color_Background}" HorizontalAlignment="Left" Height="8" Grid.Row="0" Stretch="Fill"  VerticalAlignment="Top" Width="14">
+                                <Path Data="M7 14l5-5 5 5z" Margin="30,2,0,-1" Fill="{TemplateBinding Background}" HorizontalAlignment="Left" Height="8" Grid.Row="0" Stretch="Fill"  VerticalAlignment="Top" Width="14">
                                     <!--<Path.Effect>
                                                 <DropShadowEffect Direction="270" BlurRadius="2" ShadowDepth="-2" Opacity="0.9"/>
                                             </Path.Effect>-->
@@ -284,12 +331,131 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            <Style TargetType="{x:Type Popup}" x:Key="BasicPopup">
-                <Setter Property="AllowsTransparency" Value="True"></Setter>
-                <Setter Property="Placement" Value="Bottom"></Setter>
-                <Setter Property="StaysOpen" Value="False"></Setter>
-                <Setter Property="PopupAnimation" Value="Fade"></Setter>
+            <Style x:Key="ComboBoxItemStyleForComboBoxWithoutTextBox" TargetType="{x:Type ComboBoxItem}">
+                <Setter Property="SnapsToDevicePixels" Value="true" />
+                <Setter Property="OverridesDefaultStyle" Value="true" />
+                <Setter Property="Foreground" Value="{DynamicResource Color_Foreground}"></Setter>
+                <Setter Property="FontSize" Value="14"></Setter>
+                <Setter Property="MinHeight" Value="40"></Setter>
+                <Setter Property="Background" Value="{DynamicResource Color_Button_Background}"></Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                            <Border x:Name="border" Background="{TemplateBinding Background}">
+                                <ContentPresenter VerticalAlignment="Center"></ContentPresenter>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource Color_Button_Hover_Background}"></Setter>
+                        <Setter Property="Cursor" Value="Hand"></Setter>
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                    </Trigger>
+                </Style.Triggers>
             </Style>
+            <Style TargetType="ComboBox" x:Key="ComboBoxWithoutTextBoxStyle">
+                <Setter Property="Foreground" Value="{DynamicResource Color_Foreground}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ComboBox}">
+                            <Grid>
+                                <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false" ClickMode="Press"
+                                                    IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border x:Name="border" CornerRadius="2" BorderThickness="1" BorderBrush="Gray" 
+                                                        Background="{DynamicResource Color_Button_Background}">
+                                                <TextBlock FontFamily="Material Icons" FontSize="20"
+                                                                VerticalAlignment="Center" HorizontalAlignment="Right"
+                                                                Foreground="{DynamicResource Color_Foreground_Dark2}"
+                                                                IsHitTestVisible="False" Margin="0,0,8,0">
+                                                    <TextBlock.RenderTransform>
+                                                        <RotateTransform x:Name="textboxTransform" Angle="0" CenterX="10" CenterY="10"></RotateTransform>
+                                                    </TextBlock.RenderTransform>
+                                                        keyboard_arrow_down</TextBlock>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" TargetName="border" 
+                                                                Value="{DynamicResource Color_Button_Hover_Background}"></Setter>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter Property="Background" TargetName="border" 
+                                                                Value="{DynamicResource Color_Button_Press_Background}"></Setter>
+                                                </Trigger>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Trigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Duration="0:0:0.2" 
+                                                                             Storyboard.TargetName="textboxTransform"
+                                                                             Storyboard.TargetProperty="Angle"
+                                                                             From="0" To="180"></DoubleAnimation>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.EnterActions>
+                                                    <Trigger.ExitActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Duration="0:0:0.2" 
+                                                                             Storyboard.TargetName="textboxTransform"
+                                                                             Storyboard.TargetProperty="Angle"
+                                                                             From="180" To="360"></DoubleAnimation>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.ExitActions>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
+                                                    Content="{TemplateBinding SelectionBoxItem}"
+                                                    ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                    ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                    
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Left">
+                                </ContentPresenter>
+                                <Popup x:Name="Popup"
+                                            Placement="Bottom"
+                                            IsOpen="{TemplateBinding IsDropDownOpen}"
+                                            AllowsTransparency="True"
+                                            Focusable="False"
+                                            PopupAnimation="Fade"
+                                            >
+                                    <ContentControl x:Name="DropDown" Style="{StaticResource PopupContentStyle}"
+                                                        Width="{TemplateBinding ActualWidth}"
+                                                        Padding="0,3" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                        <ScrollViewer SnapsToDevicePixels="True">
+                                            <StackPanel IsItemsHost="True">
+                                                <StackPanel.Resources>
+                                                    <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource ComboBoxItemStyleForComboBoxWithoutTextBox}"></Style>
+                                                </StackPanel.Resources>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </ContentControl>
+                                </Popup>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsGrouping" Value="true">
+                                    <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <DataTemplate DataType="{x:Type m:MaterialIconSelection}" x:Key="DataTemplateForMaterialIconSelection">
+                <StackPanel Orientation="Horizontal" Margin="15,8">
+                    <TextBlock FontFamily="Material Icons" FontSize="20" Text="{Binding MaterialIconCode}"></TextBlock>
+                    <TextBlock VerticalAlignment="Center" FontSize="14" Margin="7,0,0,0" Text="{Binding Content}"></TextBlock>
+                </StackPanel>
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

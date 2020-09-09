@@ -78,7 +78,6 @@
     <Compile Include="Models\ISQLUpdatePropertyChanged.cs" />
     <Compile Include="Models\IRecyclable.cs" />
     <Compile Include="Models\Monthly.cs" />
-    <Compile Include="Models\NonRepeater.cs" />
     <Compile Include="Models\NoteInfo.cs" />
     <Compile Include="Models\NoteTaking.cs" />
     <Compile Include="Models\NotifialeObject.cs" />
