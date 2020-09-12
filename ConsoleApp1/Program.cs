@@ -69,7 +69,7 @@ namespace ConsoleApp1
             Repeat daily = new Daily();
             Repeat nonRepeat = new Once();
             Func<Repeat> monthly = () => new Monthly(new int[] { random.Next(1, 32) });
-            Func<Repeat> customRepeat = () => new CustomRepeat(random.Next(1, 8));
+            Func<Repeat> customRepeat = () => new CustomRepeat(DateTime.Now,random.Next(1, 8));
             Func<Repeat> weekly = () => new Weekly(new int[] { random.Next(0, 7) });
             Func<Repeat> once = () => new Once();
             Func<DateTime> startTime = () => DateTime.Now.Date.Add(new TimeSpan(random.Next(3, 100), random.Next(0, 24), random.Next(0, 60), 0));

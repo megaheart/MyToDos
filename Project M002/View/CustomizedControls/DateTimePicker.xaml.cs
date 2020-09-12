@@ -56,7 +56,7 @@ namespace MyToDos.View.CustomizedControls
                         DateTimeTxt.Text = string.Format(FindResource("Lang_DateTimePicker_002").ToString() + FindResource("Lang_DateTimePicker_003").ToString(),
                             -time.Days, SelectedDateTime.Value.TimeOfDay.ToString("hh\\:mm"));
                 }
-                DateTimeNumber.Text = SelectedDateTime.Value.ToString("HH:mm dd/MM/yyyy");
+                DateTimeNumber.Text = SelectedDateTime.Value.ToString("HH:mm dd/MM/yyyy") + " [" + FindResource("Lang_" + SelectedDateTime.Value.ToString("dddd")) + "]";
 
             }
             else
@@ -138,7 +138,7 @@ namespace MyToDos.View.CustomizedControls
                         ctrl.DateTimeTxt.Text = string.Format(ctrl.FindResource("Lang_DateTimePicker_002").ToString() + ctrl.FindResource("Lang_DateTimePicker_003").ToString(),
                             -time.Days, newDatetime.Value.TimeOfDay.ToString("hh\\:mm"));
                 }
-                ctrl.DateTimeNumber.Text = newDatetime.Value.ToString("HH:mm dd/MM/yyyy");
+                ctrl.DateTimeNumber.Text = newDatetime.Value.ToString("HH:mm dd/MM/yyyy") + " [" + ctrl.FindResource("Lang_" + newDatetime.Value.ToString("dddd")) + "]";
 
             }
             else

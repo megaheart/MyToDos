@@ -8,13 +8,22 @@ namespace Storage.Model
 {
     public class CustomRepeat : Repeat
     {
-        public CustomRepeat(int repeatEveryNDays)
+        /// <summary>
+        /// Constructor of <seealso cref="CustomRepeat"/>
+        /// </summary>
+        /// <param name="milestone"></param>
+        /// <param name="repeatEveryNDays"></param>
+        public CustomRepeat(DateTime milestone, int repeatEveryNDays)
         {
-            int days = (int) checked(DateTime.Now.Ticks / 864000000000);
-            _dates = new int[] { days, repeatEveryNDays };
+            int _milestone = (int) checked(milestone.Date.Ticks / 864000000000);
+            _dates = new int[] { _milestone, repeatEveryNDays };
             Type = RepeatType.Custom;
             Mode = RepeatMode.MultiTimes;
         }
+        /// <summary>
+        /// Constructor of <seealso cref="CustomRepeat"/>. Be careful when using it!
+        /// </summary>
+        /// <param name="dates"></param>
         public CustomRepeat(int[] dates)
         {
             _dates = dates;

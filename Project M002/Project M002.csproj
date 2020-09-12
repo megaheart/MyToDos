@@ -79,6 +79,7 @@
     <Compile Include="View\Converters\DockToRows.cs" />
     <Compile Include="View\Converters\IndexToVisibility.cs" />
     <Compile Include="View\Converters\SelectionBoxItemConvertor.cs" />
+    <Compile Include="View\CustomizedControls\AlignableWrapPanel.cs" />
     <Compile Include="View\CustomizedControls\Calendar.xaml.cs">
       <DependentUpon>Calendar.xaml</DependentUpon>
     </Compile>

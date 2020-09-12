@@ -67,7 +67,7 @@
     <Compile Include="QueryMethods\Extensions.cs" />
     <Compile Include="Models\CollectionForIdentificationObject.cs" />
     <Compile Include="Models\Config.cs" />
-    <Compile Include="Models\CustomRepeater.cs" />
+    <Compile Include="Models\CustomRepeat.cs" />
     <Compile Include="Models\Daily.cs" />
     <Compile Include="Models\DailyWeatherInformation.cs" />
     <Compile Include="Models\IdentifiedObject.cs" />

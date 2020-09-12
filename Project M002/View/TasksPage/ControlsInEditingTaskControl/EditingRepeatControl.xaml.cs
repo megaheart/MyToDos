@@ -60,12 +60,14 @@ namespace MyToDos.View.TasksPage.ControlsInEditingTaskControl
             remove { RemoveHandler(RepeatChangedEvent, value); }
         }
         public bool SetRepeatPropertyWithSave = false;
-        public void Save()
+        public Exception[] Save()
         {
             SetRepeatPropertyWithSave = true;
             //Repeat output = new Repeat();
             //Repeat = output;
             SetRepeatPropertyWithSave = false;
+
+            return null;
         }
     }
     

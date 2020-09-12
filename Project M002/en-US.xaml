@@ -3,6 +3,7 @@
                     xmlns:local="clr-namespace:MyToDos"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <!--Default Language Pack Version 1-->
+    
     <sys:String x:Key="Lang_MainWindow_Tasks">Tasks</sys:String>
     <sys:String x:Key="Lang_MainWindow_TimeTable">TimeTable</sys:String>
     <sys:String x:Key="Lang_MainWindow_NonSchedules">NonSchedules</sys:String>
@@ -22,6 +23,13 @@
     <sys:String x:Key="Lang_Thu">Thu</sys:String>
     <sys:String x:Key="Lang_Fri">Fri</sys:String>
     <sys:String x:Key="Lang_Sat">Sat</sys:String>
+    <sys:String x:Key="Lang_Sunday">Sunday</sys:String>
+    <sys:String x:Key="Lang_Monday">Monday</sys:String>
+    <sys:String x:Key="Lang_Tuesday">Tuesday</sys:String>
+    <sys:String x:Key="Lang_Wednesday">Wednesday</sys:String>
+    <sys:String x:Key="Lang_Thursday">Thursday</sys:String>
+    <sys:String x:Key="Lang_Friday">Friday</sys:String>
+    <sys:String x:Key="Lang_Saturday">Saturday</sys:String>
     <sys:String x:Key="Lang_January">January</sys:String>
     <sys:String x:Key="Lang_February">February</sys:String>
     <sys:String x:Key="Lang_March">March</sys:String>
@@ -61,4 +69,6 @@
     <sys:String x:Key="Lang_DateTimePicker_002">{0} days ago</sys:String>
     <!--{1}: time of day (time of day format, EX: 03:00, 04:00)-->
     <sys:String x:Key="Lang_DateTimePicker_003">&#160;at {1}</sys:String>
+
+    
 </ResourceDictionary>
